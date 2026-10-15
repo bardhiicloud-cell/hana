@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=7">
+<link rel="stylesheet" href="css/shop.css?v=9">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Ballina", "item": "https://hanafreeshop.com/"}, {"@type": "ListItem", "position": 2, "name": "Çokollata & Ëmbëlsira", "item": "https://hanafreeshop.com/embelsira"}]}</script>
 <script type="importmap">
 {"imports":{
@@ -92,8 +92,8 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l3 5v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7l3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg>
    <span class="badge gold" id="cartCount">0</span>
   </button>
-  <button class="icon-btn profile-btn" id="accountBtn" aria-label="Llogaria ime">
-   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  <button class="icon-btn" id="trackBtn" aria-label="Gjurmo porosinë" title="Gjurmo porosinë">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
   </button>
   </div>
  </div>
@@ -125,7 +125,7 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
  <button class="bn-item" data-nav="kategorite" aria-label="Kategoritë"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span>Kategoritë</span></button>
  <button class="bn-item" data-nav="kerko" aria-label="Kërko"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg></span><span>Kërko</span></button>
  <button class="bn-item" data-nav="shporta" aria-label="Shporta"><span class="bn-icon cart-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h12l3 5v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7l3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg><span class="bn-badge" id="bnCartCount">0</span></span><span>Shporta</span></button>
- <button class="bn-item" data-nav="llogaria" aria-label="Llogaria"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Llogaria</span></button>
+ <button class="bn-item" data-nav="porosite" aria-label="Gjurmo porosinë"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><span>Porositë</span></button>
  </nav>
 
  <!-- CART FLY ANIMATION -->
@@ -220,10 +220,11 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
 
    <fieldset class="co-block">
     <legend>Kontakti</legend>
-    <div class="form-group"><label for="coName">Emri dhe mbiemri</label><input id="coName" class="input" placeholder="Filan Fisteku" required autocomplete="name"></div>
+    <p class="co-note">Telefoni dhe emaili janë të detyrueshëm: ne të telefonojmë për konfirmim. Pas porosisë merr një <b>ID</b> për ta gjurmuar porosinë, pa llogari.</p>
+    <div class="form-group"><label for="coName">Emri dhe mbiemri <span class="req" aria-hidden="true">*</span></label><input id="coName" class="input" placeholder="Filan Fisteku" required autocomplete="name"></div>
     <div class="form-row">
-     <div class="form-group"><label for="coPhone">Telefoni</label><input id="coPhone" class="input" type="tel" placeholder="+383 49 123 456" required autocomplete="tel" inputmode="tel"></div>
-     <div class="form-group"><label for="coEmail">Email</label><input id="coEmail" class="input" type="email" placeholder="emri@email.com" required autocomplete="email"></div>
+     <div class="form-group"><label for="coPhone">Telefoni <span class="req" aria-hidden="true">*</span></label><input id="coPhone" class="input" type="tel" placeholder="+383 49 123 456" required autocomplete="tel" inputmode="tel"></div>
+     <div class="form-group"><label for="coEmail">Email <span class="req" aria-hidden="true">*</span></label><input id="coEmail" class="input" type="email" placeholder="emri@email.com" required autocomplete="email"></div>
     </div>
    </fieldset>
 
@@ -234,7 +235,7 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
      <button type="button" class="co-geo-btn" id="coLocBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg><span>Përdor lokacionin tim</span></button>
      <div class="co-geo-status" id="coGeoStatus" role="status">Lejo lokacionin që korrieri ta gjejë më shpejt adresën tënde.</div>
     </div>
-    <div class="form-group"><label for="coAddress">Adresa</label><input id="coAddress" class="input" placeholder="Rruga, numri, lagjja" required autocomplete="street-address"></div>
+    <div class="form-group"><label for="coAddress">Adresa <span class="req" aria-hidden="true">*</span></label><input id="coAddress" class="input" placeholder="Rruga, numri, lagjja" required autocomplete="street-address"></div>
     <div class="form-group"><label for="coNotes">Shënim për korrierin <span class="muted">(opsionale)</span></label><textarea id="coNotes" class="input" style="height:64px" placeholder="P.sh. kati 2, dera majtas"></textarea></div>
     <label class="co-check"><input type="checkbox" id="saveAddressCheck"> <span>Ruaj adresën për herën tjetër</span></label>
    </fieldset>
@@ -259,67 +260,29 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
    <svg class="success-check" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M14 27l8 8 16-17"/></svg>
    <h3 id="successTitle">Porosia u pranua!</h3>
    <p id="successMsg"></p>
-   <div class="success-id" id="successId"></div>
+   <div class="success-idrow"><div class="success-id" id="successId"></div><button type="button" class="success-copy" id="successCopy" aria-label="Kopjo ID-në">Kopjo</button></div>
+   <p class="success-save">Ruaje këtë ID: me të e gjurmon porosinë nga butoni "Porositë".</p>
    <div class="success-actions"><button type="button" class="btn btn-gold full" id="successTrack">Gjurmo porosinë</button><button type="button" class="btn btn-outline full" id="successClose">Vazhdo blerjen</button></div>
   </div>
  </div>
 
-  <!-- ORDER TRACKING MODAL - ENHANCED 100K -->
+ <!-- GJURMIMI I PORosisë -->
  <div class="modal-backdrop" id="trackingBackdrop"></div>
- <div class="modal tracking-modal" id="trackingModal">
- <div class="modal-head"><h3>📦 Gjurmo Porosinë</h3><button class="icon-btn" id="closeTracking" aria-label="Mbyll">✕</button></div>
- <div class="modal-body">
-  <div class="tracking-search"><input id="trackingInput" class="input" placeholder="Shkruaj ID e porosisë (p.sh. ORD-ABC123)"><button class="btn btn-gold" id="trackingSearchBtn">Kërko</button></div>
-  <div id="trackingResult" style="margin-top:16px"></div>
-  <div id="trackingTimeline" style="margin-top:16px;"></div>
-  <div id="trackingMap" style="margin-top:16px;height:200px;background:var(--bg-2);border-radius:12px;display:none;place-items:center;color:var(--text-3);">🗺️ Harta e dërgesës - Google Maps integrimi</div>
-  <div class="tracking-info" style="margin-top:20px">
-  <h4 style="font-size:14px;margin-bottom:8px">Si funksionon?</h4>
-  <div class="tracking-steps">
-   <div class="t-step"><span class="t-dot pending"></span><div><strong>Pending</strong><small>Porosia u pranua</small></div></div>
-   <div class="t-step"><span class="t-dot confirmed"></span><div><strong>Konfirmuar</strong><small>Ne ju thirrëm, u konfirmua</small></div></div>
-   <div class="t-step"><span class="t-dot on_the_way"></span><div><strong>Në rrugë</strong><small>Korrieri është nisur</small></div></div>
-   <div class="t-step"><span class="t-dot delivered"></span><div><strong>Dërguar</strong><small>Porosia u dorëzua</small></div></div>
+ <div class="modal tracking-modal" id="trackingModal" role="dialog" aria-modal="true" aria-labelledby="trTitle">
+  <div class="modal-head"><h3 id="trTitle">Gjurmo porosinë</h3><button class="icon-btn" id="closeTracking" aria-label="Mbyll">✕</button></div>
+  <div class="modal-body tr-body">
+   <p class="tr-hint">Shkruaj ID-në që more kur bëre porosinë (p.sh. <b>ORD-K7M2XQ9PTR</b>). Nuk ke nevojë për llogari.</p>
+   <div class="tracking-search">
+    <input id="trackingInput" class="input" placeholder="ORD-XXXXXXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="ID e porosisë">
+    <button class="btn btn-gold" id="trackingSearchBtn">Gjurmo</button>
+   </div>
+   <div id="trackingResult" class="tr-result"></div>
+   <div id="trackingTimeline" hidden></div>
+   <p class="tr-help">Ke problem me porosinë? Telefono <a id="trPhone" href="tel:+38348588886">+383 48 588 886</a>.</p>
   </div>
-  </div>
- </div>
  </div>
 
- <!-- ACCOUNT MODAL -->
- <div class="modal-backdrop" id="accountBackdrop"></div>
- <div class="modal account-modal" id="accountModal">
- <div class="modal-head"><h3>Llogaria Ime</h3><button class="icon-btn" id="closeAccount" aria-label="Mbyll">✕</button></div>
- <div class="modal-body">
-  <div id="authState">
-  <div class="auth-icon">H</div>
-  <h4>Mirë se erdhe në Hana Free Shop</h4>
-  <p>Hyr për të ruajtur adresat dhe për të ndjekur porositë.</p>
-  <div class="auth-form">
-   <button class="btn full" id="googleLoginBtn" style="background:#fff;color:#1A1A1A;border:1px solid rgba(0,0,0,0.1);height:48px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 16px rgba(0,0,0,0.1);margin-bottom:4px">
-     <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-     Vazhdo me Google
-   </button>
-   <div style="display:flex;align-items:center;gap:12px;margin:12px 0"><div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div><span style="font-size:11px;color:var(--text-4);font-weight:700;letter-spacing:0.08em">OSE</span><div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div></div>
-   <input id="authEmail" type="email" placeholder="Email" class="input" autocomplete="email">
-   <input id="authPass" type="password" placeholder="Fjalëkalimi" class="input" autocomplete="current-password">
-   <button class="btn btn-gold full" id="loginBtn">Hyr</button>
-   <button class="btn btn-outline full" id="registerBtn">Krijo llogari</button>
-   <button class="btn btn-outline full" id="trackingOpenBtn">📦 Gjurmo porosinë me ID</button>
-  </div>
-  </div>
-  <div id="userState" style="display:none">
-  <div class="user-info"><strong id="userEmail"></strong><span id="userMeta"></span></div>
-  <div class="account-actions">
-   <button class="btn btn-outline full" id="myOrdersBtn">📦 Porositë e mia & Tracking</button>
-   <button class="btn btn-outline full">📍 Adresat e mia</button>
-   <a href="/admin/" id="adminLink" class="btn btn-gold full" style="display:none;background:linear-gradient(135deg,#FFF1C6,#D4AF37);color:#1A1200;font-weight:800">👑 SUPER ADMIN CMS • Owner</a>
-   <button class="btn btn-gold full" id="logoutBtn">Dil</button>
-  </div>
-  </div>
- </div>
- </div>
-
- <!-- COOKIE BANNER - GDPR -->
+  <!-- COOKIE BANNER - GDPR -->
  <div id="cookieBanner" style="position:fixed;bottom:0;left:0;right:0;background:var(--bg-2);border-top:1px solid var(--border);padding:14px 20px;z-index:9997;display:none;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
    <div style="font-size:13px;color:var(--text-2);flex:1;min-width:200px;">🍪 Përdorim cookies për të përmirësuar përvojën tuaj. Duke vazhduar, pranoni përdorimin e cookies. <a href="/privacy.html" style="color:var(--gold-300);">Mëso më shumë</a></div>
    <div style="display:flex;gap:8px;">
@@ -355,12 +318,12 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
 <script src="js/cities.js?v=1"></script>
 <script src="js/site-render.js?v=2"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=18"></script>
+<script type="module" src="js/app.js?v=19"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
 <script src="js/auto-bg.js?v=2"></script>
 <script src="js/home.js?v=3"></script>
-<script src="js/shop-ux.js?v=3"></script>
+<script src="js/shop-ux.js?v=4"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>

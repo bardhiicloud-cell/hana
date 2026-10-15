@@ -94,7 +94,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=7">
+<link rel="stylesheet" href="css/shop.css?v=9">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -155,8 +155,8 @@ def header(active):
    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{BAG}</svg>
    <span class="badge gold" id="cartCount">0</span>
   </button>
-  <button class="icon-btn profile-btn" id="accountBtn" aria-label="Llogaria ime">
-   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  <button class="icon-btn" id="trackBtn" aria-label="Gjurmo porosinë" title="Gjurmo porosinë">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
   </button>
   </div>
  </div>
@@ -181,12 +181,12 @@ SCRIPTS = '''
 <script src="js/cities.js?v=1"></script>
 <script src="js/site-render.js?v=2"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=18"></script>
+<script type="module" src="js/app.js?v=19"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
 <script src="js/auto-bg.js?v=2"></script>
 <script src="js/home.js?v=3"></script>
-<script src="js/shop-ux.js?v=3"></script>
+<script src="js/shop-ux.js?v=4"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>

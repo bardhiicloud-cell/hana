@@ -862,6 +862,13 @@ function openCheckout(){
 }
 function closeCheckout(){ $('#checkoutModal')?.classList.remove('open'); $('#checkoutBackdrop')?.classList.remove('open'); document.body.style.overflow=''; }
 function openTracking(){ $('#trackingModal')?.classList.add('open'); $('#trackingBackdrop')?.classList.add('open'); }
+function openTrackingPanel(){
+ openTracking();
+ const res = $('#trackingResult');
+ if(res) res.innerHTML = '';
+ try{ if(JSON.parse(localStorage.getItem(isFirebaseEnabled()?'hana_my_orders':'hana_orders')||'[]').length) renderMyOrders(); }catch{}
+ setTimeout(()=>$('#trackingInput')?.focus(), 350);
+}
 function closeTracking(){ $('#trackingModal')?.classList.remove('open'); $('#trackingBackdrop')?.classList.remove('open'); }
 
 // HERO SLER - 4 SLES PROFESSIONAL
@@ -1198,10 +1205,10 @@ function renderMyOrders(){
  const result = $('#trackingResult');
  let orders=[]; try{ orders=JSON.parse(localStorage.getItem(isFirebaseEnabled()?'hana_my_orders':'hana_orders')||'[]'); }catch{}
  if(orders.length===0){
- result.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><h3>Asnjë porosi</h3><p>Porositë tuaja do shfaqen këtu me për tracking</p></div>`;
+ result.innerHTML = `<div class="tr-empty"><p>Porositë që bën nga kjo pajisje shfaqen këtu. Ose shkruaj ID-në më sipër.</p></div>`;
  return;
  }
- result.innerHTML = `<div style="display:grid;gap:8px">${orders.map(o=>`<button class="loc-option" data-track="${o.id}" style="cursor:pointer"><div class="loc-opt-text"><strong>${o.id}</strong><span>${new Date(o.createdAt).toLocaleDateString('sq-AL')} • ${formatPrice(o.total)} • ${o.status}</span></div><span class="promo-arrow">→</span></button>`).join('')}</div>`;
+ result.innerHTML = `<div style="display:grid;gap:8px">${orders.map(o=>`<button class="loc-option" data-track="${o.id}" style="cursor:pointer"><div class="loc-opt-text"><strong>${o.id}</strong><span>${new Date(o.createdAt).toLocaleDateString('sq-AL')} • ${formatPrice(o.total)}</span></div><span class="promo-arrow">→</span></button>`).join('')}</div>`;
  result.querySelectorAll('[data-track]').forEach(b=>b.addEventListener('click', ()=>{ $('#trackingInput').value=b.dataset.track; renderTrackingResult(b.dataset.track); }));
 }
 
@@ -1217,12 +1224,12 @@ function initNavigation(){
  else if(nav==='kategorite'){ if(onHome) $('#kategorite')?.scrollIntoView({behavior:'smooth'}); else location.href='/#kategorite'; }
  else if(nav==='kerko') openSearch();
  else if(nav==='shporta') openCart();
- else if(nav==='llogaria') openAccount();
+ else if(nav==='porosite') openTrackingPanel();
  });
  });
  $('#cartBtn')?.addEventListener('click', openCart);
  $('#wishlistBtn')?.addEventListener('click', openWishlist);
- $('#accountBtn')?.addEventListener('click', openAccount);
+ $('#trackBtn')?.addEventListener('click', openTrackingPanel);
  $('#drawerBackdrop')?.addEventListener('click', ()=>{ closeCart(); closeWishlist(); });
  $$('.close-drawer').forEach(b=>b.addEventListener('click', ()=>{ if(b.dataset.close==='wishlist') closeWishlist(); else closeCart(); }));
  $('#accountBackdrop')?.addEventListener('click', closeAccount);
@@ -1569,7 +1576,7 @@ async function init(){
  // initHero();
  initNavigation();
  initSearch();
- initAuth();
+ // initAuth(); — pa llogari klienti: porosi si vizitor, gjurmim me ID
  initCheckout();
  initTracking();
  // initSmoothAnimations();
@@ -1602,10 +1609,17 @@ async function init(){
  });
 
 
+ try{
+  const qp = new URLSearchParams(location.search);
+  const tid = qp.get('track');
+  if(tid){ openTracking(); const ti=$('#trackingInput'); if(ti) ti.value=tid.toUpperCase(); renderTrackingResult(tid.toUpperCase()); }
+  else if(qp.get('tracking')) openTrackingPanel();
+ }catch{}
  console.log('[Hana Premium Fixed] App initialized - Super Huge Professional', {products:PRODUCTS.length, categories:CATEGORIES.length, city:currentCity, firebase:isFirebaseEnabled()});
 }
 
 document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', ()=>{ const ph = window.HANA_CONFIG?.phone; const a = document.getElementById('trPhone'); if(a && ph){ a.textContent = ph; a.href = 'tel:' + ph.replace(/[^\d+]/g,''); } });
 window.HANA = {
   getProducts:()=>PRODUCTS, getCart:()=>cart,
   getCartSummary:()=>({ count:cartCount(), subtotal:cartSubtotal(), total:(typeof calculateTotals==='function'? calculateTotals().grand : cartSubtotal()) }),

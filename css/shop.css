@@ -268,7 +268,7 @@ img{max-width:100%}
 /* ================= Header në ekrane të ngushta ================= */
 @media(max-width:420px){
   .header-main{gap:10px;padding:0 12px}
-  #accountBtn{display:none}
+  #trackBtn{display:none}
   .location{padding:6px 10px;font-size:12.5px}
   .logo-text span{display:none}
 }
@@ -283,3 +283,37 @@ img{max-width:100%}
 .s-main-list .product-grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr))}
 @media(min-width:480px){.s-main-list .product-grid{grid-template-columns:repeat(auto-fill,minmax(166px,1fr))}}
 @media(min-width:900px){.s-main-list .product-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}}
+
+/* ================= Gjurmimi i porosisë (pa llogari) ================= */
+.tracking-modal{width:min(520px,94vw);max-height:92vh;display:flex;flex-direction:column}
+.tracking-modal .modal-body{overflow:auto;padding:16px 18px 24px}
+@media(max-width:700px){
+  .tracking-modal{left:0!important;right:0!important;top:auto!important;bottom:0!important;width:100%!important;max-width:none!important;border-radius:26px 26px 0 0;
+    transform:translateY(105%)!important;opacity:1;transition:transform .5s cubic-bezier(.22,1,.36,1);max-height:92vh}
+  .tracking-modal.open{transform:translateY(0)!important}
+}
+.tr-hint{font-size:13.5px;line-height:1.55;color:var(--text-3);margin-bottom:14px}
+.tr-hint b{color:var(--gold-300);font-weight:700;letter-spacing:.04em}
+.tracking-search{display:flex;gap:10px}
+.tracking-search .input{flex:1;height:50px;border-radius:14px;font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;text-transform:uppercase}
+.tracking-search .btn{height:50px;border-radius:14px;padding:0 20px;font-weight:800}
+.tr-result{margin-top:16px;display:grid;gap:10px}
+.tr-empty{padding:14px;border-radius:14px;background:var(--bg-2);border:1px dashed rgba(255,255,255,.12);font-size:13px;color:var(--text-3);text-align:center}
+.tr-help{margin-top:18px;font-size:12.5px;color:var(--text-4);text-align:center}
+.tr-help a{color:var(--gold-300);font-weight:700}
+.tr-result .loc-option{min-height:64px}
+#trackBtn{flex:none}
+@media(max-width:420px){#trackBtn{display:none}}
+
+/* ================= Checkout: të detyrueshme + shënim ================= */
+.co-form .req{color:var(--gold-300);font-weight:800}
+.co-note{font-size:12.5px;line-height:1.55;color:var(--text-3);margin:-2px 0 2px}
+.co-note b{color:var(--gold-300)}
+
+/* ================= Sukses: kopjo ID ================= */
+.success-idrow{display:flex;align-items:center;gap:8px;max-width:100%}
+.success-copy{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--border-strong);background:var(--bg-2);color:var(--gold-300);font-weight:700;font-size:13px;cursor:pointer;transition:background .2s}
+.success-copy:hover{background:var(--bg-3)}
+.success-save{font-size:12.5px;color:var(--text-4);max-width:32ch}
+
+.tr-hint b{white-space:nowrap}

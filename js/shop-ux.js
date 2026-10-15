@@ -157,6 +157,12 @@
   document.addEventListener('click', e => {
     if (e.target.closest('#coLocBtn')) onLocClick();
     if (e.target.closest('#miniCartBtn')) window.HANA && window.HANA.openCart();
+    if (e.target.closest('#successCopy')) {
+      const id = $('#successId').textContent;
+      const done = () => { const b = $('#successCopy'); b.textContent = 'U kopjua'; setTimeout(() => { b.textContent = 'Kopjo'; }, 1800); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(id).then(done, () => {});
+      else { const t = document.createElement('textarea'); t.value = id; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); done(); } catch (x) { /* */ } t.remove(); }
+    }
     if (e.target.closest('#successClose') || e.target.id === 'successBackdrop') closeSuccess();
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSuccess(); });
