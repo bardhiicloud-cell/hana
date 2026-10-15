@@ -186,6 +186,16 @@ const CAT_ALIAS = { alkoholi:'alkool', duhani:'cigare', buldak:'bulldak', pije:'
 const CAT_PATH = { 'alkool':'/alkoholi', 'cigare':'/cigare', 'bulldak':'/buldak', 'pije-tonike':'/pije', 'cokollata-embelsira':'/embelsira', 'ushqime-pije':'/ushqime' };
 const catHref = id => CAT_PATH[id] || `/market?cat=${encodeURIComponent(id)}`;
 
+function applyHomeContent(){
+ try{
+  if(window.HanaSite){
+   const cats = CATEGORIES.filter(c=>c.visible!==false && PRODUCTS.some(p=>p.category===c.id)).sort((x,y)=>(x.order||0)-(y.order||0)).map(c=>({name:c.name, href:catHref(c.id)}));
+   window.HanaSite.apply({ hero:HERO_SLIDES, settings:STORE_SETTINGS||{}, categories:cats });
+  }
+ }catch(e){ console.warn('applyHomeContent', e); }
+}
+const homeLimit = (key, d) => Number(window.HANA_HOMECFG?.sections?.[key]?.limit) || d;
+
 function setupPageContext(){
  const page = document.body.dataset.page || 'home';
  if(page==='category') activeCategory = document.body.dataset.cat || null;
@@ -229,7 +239,7 @@ function renderProducts(){
  if(!grid) return;
  const page = document.body.dataset.page || 'home';
  let list = getFilteredProducts();
- if(page==='home') list = list.filter(p=>p.discount>0 || p.weeklyOffer).slice(0,8);
+ if(page==='home') list = list.filter(p=>p.discount>0 || p.weeklyOffer).slice(0, homeLimit('offers',8));
  if(page==='market' && new URLSearchParams(location.search).get('filter')==='oferta') list = list.filter(p=>p.discount>0);
  const count = $('#resultCount');
  if(count) count.textContent = `${list.length} ${list.length===1?'produkt':'produkte'}`;
@@ -407,7 +417,7 @@ function renderBuldakGrid(){
 function renderPopularGrid(){
  const grid = $('#popularGrid');
  if(!grid) return;
- const list = PRODUCTS.filter(p=>p.popular).slice(0,8);
+ const list = PRODUCTS.filter(p=>p.popular).slice(0, homeLimit('best',8));
  grid.innerHTML = list.map((p,i)=>renderProductCard(p,i)).join('');
  bindProductGridEvents(grid);
 }
@@ -1433,6 +1443,7 @@ async function init(){
  PRODUCTS = local.products; CATEGORIES = local.categories; PROMOS = local.promos; HERO_SLIDES = local.hero||[]; BRANDS = local.brands||[]; BANNERS = local.banners||[]; OFFERS = local.offers||[]; STORE_SETTINGS = local.storeSettings||null; DELIVERY_ZONES = local.deliveryZones||[];
  }
  setupPageContext();
+ applyHomeContent();
  renderCategories();
  renderProducts();
  renderAlcoholGrid();

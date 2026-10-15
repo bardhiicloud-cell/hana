@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 """Gjeneron faqet statike: index.html, market/index.html dhe faqet e kategorive.
 
-Përdorim:  python scripts/build-pages.py
-Pjesët e përbashkëta (modalet, shporta, checkout) janë te src/partials/.
+Përdorim:  python scripts/build-pages.py        (kërkon Node.js)
+
+- Përmbajtja e ballinës vjen nga src/home-defaults.json (e njëjta që admini mund ta ndryshojë).
+- HTML-ja e hero/seksioneve/footer gjenerohet nga js/site-render.js (e njëjta logjikë si në shfletues).
+- Pjesët e përbashkëta (modalet, shporta, checkout) janë te src/partials/.
 """
-import os, json
+import json
+import os
+import subprocess
+import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
@@ -29,8 +35,29 @@ def read(path):
         return f.read()
 
 
+def write(path, content):
+    os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
+    with open(path, 'w', encoding='utf-8', newline='\n') as f:
+        f.write(content)
+    print('wrote', path)
+
+
+def fragments():
+    cats = [{'name': c[2], 'href': '/' + c[0]} for c in CATS]
+    with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False, encoding='utf-8') as tf:
+        json.dump(cats, tf, ensure_ascii=False)
+        tmp = tf.name
+    try:
+        out = subprocess.run(['node', 'scripts/render-fragments.cjs', tmp], capture_output=True, check=True, encoding='utf-8')
+    finally:
+        os.unlink(tmp)
+    return json.loads(out.stdout)
+
+
 LOCATION = read('src/partials/location.html')
 OVERLAYS = read('src/partials/overlays.html')
+FRAG = fragments()
+ORDER = FRAG['order']
 
 BAG = '<path d="M6 2h12l3 5v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7l3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/>'
 
@@ -66,7 +93,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
-<link rel="stylesheet" href="css/site.css?v=6">
+<link rel="stylesheet" href="css/site.css?v=7">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -77,6 +104,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 }}}}
 </script>
 <script src="js/config.js?v=12"></script>
+<script src="js/home-defaults.js?v=1"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}
 (function(){{var id=window.HANA_CONFIG&&window.HANA_CONFIG.gaId;if(!id)return;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id='+id;document.head.appendChild(s);gtag('js',new Date());gtag('config',id,{{anonymize_ip:true}});}})();
@@ -140,43 +168,24 @@ def header(active):
 '''
 
 
-FOOTER = f'''
- <footer class="s-footer">
-  <div class="s-footer-grid">
-   <div>
-    <div class="s-footer-brand">HANA <span>FREE SHOP</span></div>
-    <p>General Wesley Clark, Pejë<br>Çdo ditë 08:00–22:00<br>Dorëzim brenda 30 minutash</p>
-    <p><a href="tel:{TEL}">{PHONE}</a> · <a href="https://wa.me/{TEL.lstrip('+')}" rel="noopener" target="_blank">WhatsApp</a></p>
-   </div>
-   <div>
-    <h4>Kategoritë</h4>
-    <a href="/alkoholi">Alkool</a><a href="/cigare">Cigare & Duhan</a><a href="/buldak">Buldak & Ice Cups</a><a href="/pije">Pije & Energjike</a><a href="/embelsira">Çokollata & Ëmbëlsira</a><a href="/ushqime">Ushqime & Snacks</a>
-   </div>
-   <div>
-    <h4>Informacion</h4>
-    <a href="/shipping.html">Dërgesa</a><a href="/returns.html">Kthimet</a><a href="/terms.html">Kushtet</a><a href="/privacy.html">Privatësia</a>
-   </div>
-  </div>
-  <div class="s-footer-bottom">© 2026 Hana Free Shop. Të gjitha të drejtat e rezervuara.</div>
- </footer>
-'''
+FOOTER = f'\n <footer class="s-footer" id="siteFooter">{FRAG["footer"]}</footer>\n'
 
 SCRIPTS = '''
 </div>
 <script src="js/security.js?v=11-super-huge"></script>
 <script src="js/features-100k.js?v=11-super-huge"></script>
 <script src="js/pwa.js?v=11-super-huge"></script>
+<script src="js/home-defaults.js?v=1"></script>
+<script src="js/site-render.js?v=1"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=12"></script>
+<script type="module" src="js/app.js?v=13"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/auto-bg.js?v=1"></script>
-<script src="js/home.js?v=2"></script>
+<script src="js/home.js?v=3"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>
 '''
-
-CARD_BAG = f'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{BAG}</svg>'
 
 
 def home():
@@ -191,103 +200,20 @@ def home():
              'Hana Free Shop në Pejë: alkool, cigare, pije energjike, çokollata dhe ushqime të importuara. Dorëzim brenda 30 minutash, çdo ditë 08:00–22:00.',
              '/', 'images/hero-premium-bag-800w.webp', 'home',
              extra_ld=f'<script type="application/ld+json">{ld}</script>\n')
-    def slide(img, eyebrow, title, text, ctas, first=False):
-        tag = 'h1' if first else 'h2'
-        load = 'fetchpriority="high" decoding="async"' if first else 'loading="lazy" decoding="async"'
-        base = img.rsplit('.', 1)[0]
-        return f'''<article class="s-slide">
-     <picture>
-      <source type="image/webp" srcset="{base}-800w.webp 800w, {base}-1200w.webp 1200w" sizes="(max-width:1280px) 100vw, 1280px">
-      <img src="{base}-1200w.webp" alt="{title.replace('<br>', ' ')}" width="1200" height="800" {load}>
-     </picture>
-     <div class="s-hero-body">
-      <span class="s-eyebrow">{eyebrow}</span>
-      <{tag}>{title}</{tag}>
-      <p>{text}</p>
-      <div class="s-cta">{ctas}</div>
-     </div>
-    </article>'''
 
-    slides = ''.join([
-        slide('images/hero-premium-bag.webp', 'Hana Free Shop · Pejë', 'Marka botërore,<br>në Pejë',
-              'Dorëzim brenda 30 minutash, çdo ditë 08:00–22:00. Pagesa në dorë.',
-              f'<a class="s-btn s-btn-gold" href="/market">Shiko produktet</a><a class="s-btn s-btn-ghost" href="tel:{TEL}">Telefono</a>', True),
-        slide('images/hero-alcohol-variety.webp', 'Alkool Premium', "Grey Goose, Jack Daniel's<br>dhe më shumë",
-              'Marka origjinale për çdo rast. Dorëzim brenda 30 minutash.',
-              '<a class="s-btn s-btn-gold" href="/alkoholi">Shiko alkoolin</a>'),
-        slide('images/hero-buldak-ice.webp', 'Trendi i momentit', 'Buldak<br>& Ice Cups',
-              'Noodles pikante koreane dhe akullore, të gatshme brenda 30 minutash.',
-              '<a class="s-btn s-btn-gold" href="/buldak">Zbulo</a>'),
-        slide('images/hero-puro-tobacco.webp', 'Cigare & Duhan', 'Puro, Golden Eagle<br>dhe OCB',
-              'Marka të njohura, gjithmonë në stok.',
-              '<a class="s-btn s-btn-gold" href="/cigare">Shiko koleksionin</a>'),
-    ])
-    dots = ''.join(f'<button type="button" class="s-dot{" active" if i == 0 else ""}" aria-label="Slide {i+1}"></button>' for i in range(4))
-    brands = ['Red Bull', 'Lindt', 'Ferrero', 'Kinder', 'Grey Goose', "Jack Daniel's", 'Puro', 'Golden Eagle', 'OCB', "Lay's", 'Buldak']
-    marq = ''.join(f'<span>{b}</span>' for b in brands)
-    rail_arrows = lambda t: f'<div class="s-arrows"><button type="button" class="s-arrow" data-rail="{t}" data-dir="-1" aria-label="Mbrapa">‹</button><button type="button" class="s-arrow" data-rail="{t}" data-dir="1" aria-label="Para">›</button></div>'
+    def sec(idv, key, frag, cls='s-section s-reveal'):
+        return f'  <section id="{idv}" class="{cls}" style="order:{ORDER[key]}">{FRAG[frag]}</section>\n'
 
     main = f'''>
 {header('home')}
  <main class="s-main">
   <section class="s-hero" id="ballina" aria-roledescription="karusel">
-   <div class="s-slides" id="heroSlides">{slides}</div>
-   <div class="s-dots" id="heroDots">{dots}</div>
+   <div class="s-slides" id="heroSlides">{FRAG['heroSlides']}</div>
+   <div class="s-dots" id="heroDots">{FRAG['heroDots']}</div>
   </section>
-
-  <section class="s-strip s-reveal" aria-label="Si porosit">
-   <div><strong>30 min</strong><span>Dorëzim në Pejë</span></div>
-   <div><strong>Cash</strong><span>Pagesa në dorë</span></div>
-   <div><strong>08–22</strong><span>Çdo ditë</span></div>
-  </section>
-
-  <div class="s-marquee s-reveal" aria-label="Markat tona"><div class="s-marquee-track">{marq}{marq}</div></div>
-
-  <section id="kategorite" class="s-section s-reveal">
-   <div class="s-head"><h2>Kategoritë</h2><a href="/market" class="s-link">Të gjitha produktet →</a></div>
-   <div class="cat-track" id="catTrack"></div>
-  </section>
-
-  <section id="ofertat" class="s-section s-reveal">
-   <div class="s-head"><h2>Ofertat</h2>{rail_arrows('productGrid')}<a href="/market?filter=oferta" class="s-link">Shiko të gjitha →</a></div>
-   <div class="product-grid s-rail" id="productGrid"></div>
-   <div class="empty-state" id="emptyState" style="display:none"><h3>Nuk ka oferta për momentin</h3><p>Shiko të gjitha produktet.</p><a class="s-btn s-btn-gold" href="/market">Produktet</a></div>
-  </section>
-
-  <section id="best" class="s-section s-reveal">
-   <div class="s-head"><h2>Më të kërkuarat</h2>{rail_arrows('popularGrid')}<a href="/market" class="s-link">Shiko të gjitha →</a></div>
-   <div class="product-grid s-rail" id="popularGrid"></div>
-  </section>
-
-  <section class="s-section s-reveal" id="si-funksionon">
-   <div class="s-head"><h2>Si funksionon</h2></div>
-   <ol class="s-steps">
-    <li><span class="s-step-n">1</span><h3>Zgjidh produktet</h3><p>Shfleto kategoritë dhe shtoji në shportë me një klik.</p></li>
-    <li><span class="s-step-n">2</span><h3>Dërgo porosinë</h3><p>Shkruaj emrin, telefonin dhe adresën. Ne të telefonojmë për konfirmim.</p></li>
-    <li><span class="s-step-n">3</span><h3>Merre brenda 30 minutash</h3><p>Korrieri e sjell te dera. Paguan në dorë. Gjurmo porosinë me ID.</p></li>
-   </ol>
-  </section>
-
-  <section class="s-section s-reveal s-why">
-   <div class="s-head"><h2>Pse Hana</h2></div>
-   <div class="s-why-grid">
-    <div><h3>Marka origjinale</h3><p>Red Bull, Lindt, Grey Goose, Jack Daniel's, Puro dhe marka të tjera të njohura.</p></div>
-    <div><h3>Dorëzim i shpejtë</h3><p>Brenda 30 minutash në Pejë qytet. Dërgesa është falas mbi 25 €.</p></div>
-    <div><h3>Pagesë e thjeshtë</h3><p>Paguan në dorë kur e merr porosinë. Pa llogari, pa komplikime.</p></div>
-   </div>
-  </section>
-
-  <section class="s-cta-band s-reveal">
-   <div>
-    <h2>Gati për porosi?</h2>
-    <p>Telefono ose shkruaj në WhatsApp. Jemi hapur çdo ditë 08:00–22:00.</p>
-   </div>
-   <div class="s-cta">
-    <a class="s-btn s-btn-gold" href="/market">Shiko produktet</a>
-    <a class="s-btn s-btn-ghost" href="tel:{TEL}">{PHONE}</a>
-    <a class="s-btn s-btn-ghost" href="https://wa.me/{TEL.lstrip('+')}" target="_blank" rel="noopener">WhatsApp</a>
-   </div>
-  </section>
+  <section class="s-strip s-reveal" id="hm-strip" style="order:5" aria-label="Si porosit">{FRAG['strip']}</section>
+  <div class="s-marquee s-reveal" id="hm-marquee" style="order:6" aria-label="Markat tona"><div class="s-marquee-track">{FRAG['marquee']}</div></div>
+{sec('kategorite', 'categories', 'categories')}{sec('ofertat', 'offers', 'offers')}{sec('best', 'best', 'best')}{sec('si-funksionon', 'steps', 'steps')}{sec('hm-why', 'why', 'why', 's-section s-reveal s-why')}{sec('hm-cta', 'cta', 'cta', 's-cta-band s-reveal')}
  </main>
 {FOOTER}
 {OVERLAYS}
@@ -317,7 +243,7 @@ def listing(slug, cat_id, title, desc, image):
     intro = 'Zgjidh nga e gjithë gama e Hana Free Shop. Dorëzim brenda 30 minutash në Pejë.' if is_market else desc
     main = f''' {attrs}>
 {header('market' if is_market else 'c_' + slug)}
- <main class="s-main">
+ <main class="s-main s-main-list">
   <section class="s-page-head">
    <nav class="s-crumbs" aria-label="Breadcrumb"><a href="/">Ballina</a><span>/</span><span>{page_title}</span></nav>
    <h1>{page_title}</h1>
@@ -334,20 +260,14 @@ def listing(slug, cat_id, title, desc, image):
     return h + main
 
 
-def write(path, content):
-    os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
-    with open(path, 'w', encoding='utf-8', newline='\n') as f:
-        f.write(content)
-    print('wrote', path)
-
-
 if __name__ == '__main__':
+    defaults = json.loads(read('src/home-defaults.json'))
+    write('js/home-defaults.js', '// Gjeneruar nga scripts/build-pages.py nga src/home-defaults.json — mos e ndrysho me dorë\nwindow.HANA_HOME_DEFAULTS = ' + json.dumps(defaults, ensure_ascii=False) + ';\n')
     write('index.html', home())
     write('market/index.html', listing(None, None, None, None, None))
     for slug, cid, title, desc, img in CATS:
         write(f'{slug}/index.html', listing(slug, cid, title, desc, img))
 
-    # sitemap
     urls = [('/', '1.0', 'daily'), ('/market', '0.9', 'daily')] + [(f'/{c[0]}', '0.8', 'daily') for c in CATS]
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for loc, pr, cf in urls:

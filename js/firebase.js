@@ -16,7 +16,7 @@ const LS_KEYS = {
   CATEGORIES: 'hana_categories_v3',
   PROMOS: 'hana_promos_v2',
   BRANDS: 'hana_brands_v1',
-  HERO: 'hana_hero_v1',
+  HERO: 'hana_hero_v2',
   BANNERS: 'hana_banners_v1',
   OFFERS: 'hana_offers_v1',
   MEDIA: 'hana_media_v1',
@@ -70,12 +70,7 @@ export const FALLBACK_PROMOS = [
  { id:'popular', title:'Produktet më të kërkuara', subtitle:'Më të shiturat', active:true, type:'popular', order:2 },
 ];
 
-export const FALLBACK_HERO = [
-  { id:'hero-1', eyebrow:'HANA EXCLUSIVE • PEJË', headline:'Marka botërore,\nnë Pejë', subtext:'Koleksioni premium i importuar — Red Bull, Lindt, Ferrero, Kinder Bueno, Lay\'s dhe marka të tjera botërore, vetëm në Hana Free Shop. Cilësi e garantuar, dërgesë e shpejtë.', primaryBtnText:'Eksploro koleksionin →', primaryBtnLink:'#ofertat', secondaryBtnText:'Të gjitha kategoritë', secondaryBtnLink:'/market', desktopImage:'images/hero-premium-bag.jpg', mobileImage:'images/hero-premium-bag.jpg', focalPoint:'center', overlayIntensity:0.6, textAlign:'left', visible:true, order:1, scheduleStart:null, scheduleEnd:null, status:'published', createdAt:new Date().toISOString() },
-  { id:'hero-2', eyebrow:'MARKA TË NJOHURA • ORIGJINALE', headline:'Duhani\nPremium', subtext:'Koleksioni më i kompletuar në Pejë — Puro origjinal, Golden Eagle, OCB, cigare premium. Marka të njohura botërore, cilësi e garantuar, stok i plotë çdo ditë.', primaryBtnText:'Shiko koleksionin →', primaryBtnLink:'/market?cat=cigare', secondaryBtnText:'Markat →', secondaryBtnLink:'/market?cat=cigare', desktopImage:'images/hero-puro-tobacco.jpg', mobileImage:'images/hero-puro-tobacco.jpg', focalPoint:'center', overlayIntensity:0.65, textAlign:'left', visible:true, order:2, scheduleStart:null, scheduleEnd:null, status:'published', createdAt:new Date().toISOString() },
-  { id:'hero-3', eyebrow:'TRENDI VIRAL • TIKTOK FAMOUS', headline:'Bulldak &\nIce Cups', subtext:'Trendi viral i momentit — Noodles koreane Bulldak pikante dhe akullore Ice Cups. Më të kërkuarat në TikTok, tani në Pejë me çmime super dhe dërgesë të shpejtë.', primaryBtnText:'Zbulo trendin →', primaryBtnLink:'/market?cat=ushqime', secondaryBtnText:'Shiko viral →', secondaryBtnLink:'/market?cat=bulldak', desktopImage:'images/hero-buldak-ice.jpg', mobileImage:'images/hero-buldak-ice.jpg', focalPoint:'center', overlayIntensity:0.6, textAlign:'left', visible:true, order:3, scheduleStart:null, scheduleEnd:null, status:'published', createdAt:new Date().toISOString() },
-  { id:'hero-4', eyebrow:'KOLEKSIONI PREMIUM • BOTËROR', headline:'Grey Goose &\nJack Daniel\'s', subtext:'Për momente speciale — Grey Goose Vodka, Jack Daniel\'s Whiskey, Hennessy dhe marka të tjera premium botërore. Origjinale 100%, paketim luksoz Hana Bag.', primaryBtnText:'Shiko alkoolin →', primaryBtnLink:'/market?cat=alkool', secondaryBtnText:'Koleksioni premium →', secondaryBtnLink:'/market?cat=alkool', desktopImage:'images/hero-alcohol-variety.jpg', mobileImage:'images/hero-alcohol-variety.jpg', focalPoint:'center', overlayIntensity:0.65, textAlign:'left', visible:true, order:4, scheduleStart:null, scheduleEnd:null, status:'published', createdAt:new Date().toISOString() },
-];
+export const FALLBACK_HERO = (typeof window !== 'undefined' && window.HANA_HOME_DEFAULTS && window.HANA_HOME_DEFAULTS.hero) ? window.HANA_HOME_DEFAULTS.hero.map(h=>({...h, createdAt:new Date().toISOString()})) : [];
 
 export const FALLBACK_BANNERS = [
   { id:'ribbon-1', message:'Ofertat e javës', icon:'🏷️', bgColor:'rgba(232,198,122,0.12)', textColor:'#E8C67A', link:'#ofertat', animation:'glow', speed:'normal', visible:true, startDate:null, endDate:null, order:1 },

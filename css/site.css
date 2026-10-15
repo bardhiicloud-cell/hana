@@ -224,3 +224,65 @@ html.js .s-reveal.in .s-head h2{opacity:1;translate:0 0}
   html.js .s-slide .s-hero-body>*,html.js .s-reveal .product-card,html.js .s-reveal .cat-huge,html.js .s-reveal .s-steps li,html.js .s-reveal .s-why-grid>div,html.js .s-strip.s-reveal>div,html.js .s-reveal .s-head h2{opacity:1!important;translate:none!important;animation:none!important;transition:none!important}
   .s-slide.is-active img,.s-dot.active::after{animation:none!important}
 }
+
+/* ================= DIZAJN FINAL v7 ================= */
+
+/* Struktura: seksionet renditen nga CMS me `order` */
+.s-main{display:flex;flex-direction:column;max-width:1280px;margin:0 auto;padding:16px 16px 56px}
+.s-main>*{min-width:0}
+.s-hero{order:0}
+@media(min-width:900px){.s-main{padding:24px 32px 72px}}
+
+/* Header përputhet me gjerësinë e përmbajtjes */
+.header-main,.search-wrap{max-width:1280px;margin-left:auto;margin-right:auto}
+@media(min-width:900px){.header-main,.search-wrap{padding-left:32px;padding-right:32px}}
+
+/* Hero: gradient nga e majta në desktop, teksti qendër-vertikal; foto e pastër në të djathtë */
+.s-slide .s-hero-body{display:flex;flex-direction:column;align-items:flex-start}
+.s-slide.ta-center .s-hero-body{align-items:center;text-align:center;margin-left:auto;margin-right:auto}
+.s-slide.ta-right .s-hero-body{align-items:flex-end;text-align:right;margin-left:auto}
+.s-slide::after{background:linear-gradient(180deg,rgba(7,7,9,calc(var(--ov,.6)*.1)) 0%,rgba(7,7,9,calc(var(--ov,.6)*.85)) 55%,rgba(7,7,9,.95) 100%)}
+.s-slide .s-cta{justify-content:inherit}
+@media(min-width:900px){
+  .s-slide{align-items:center}
+  .s-slide::after{background:linear-gradient(90deg,rgba(7,7,9,.94) 0%,rgba(7,7,9,calc(var(--ov,.6)*1.05)) 38%,rgba(7,7,9,.05) 72%)}
+  .s-slide.ta-right::after{background:linear-gradient(270deg,rgba(7,7,9,.94) 0%,rgba(7,7,9,calc(var(--ov,.6)*1.05)) 38%,rgba(7,7,9,.05) 72%)}
+  .s-slide.ta-center::after{background:radial-gradient(ellipse at center,rgba(7,7,9,.7),rgba(7,7,9,.25))}
+  .s-slide .s-hero-body{padding:56px 64px 80px;max-width:620px}
+  .s-slide h1,.s-slide h2{font-size:clamp(52px,5.2vw,78px)}
+  .s-slide p{font-size:17px}
+}
+
+/* Shiriti me ikona */
+.s-strip div{display:flex;flex-direction:column;align-items:center;gap:2px;padding:18px 10px}
+.s-strip-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(232,198,122,.1);color:var(--gold-300);margin-bottom:6px}
+.s-strip strong{font-size:18px}
+@media(min-width:900px){.s-strip{margin-top:20px}.s-strip div{flex-direction:row;justify-content:center;gap:14px;padding:22px 16px;text-align:left}.s-strip-ic{margin:0;flex:none}.s-strip div>strong,.s-strip div>span:last-child{display:block}}
+
+/* Shiriti i markave — pa mbivendosje */
+.s-marquee-track{gap:0}
+.s-marquee-track span{flex:none;padding:0 26px;position:relative}
+.s-marquee-track span::after{content:"";position:absolute;right:-2px;top:50%;width:4px;height:4px;margin-top:-2px;border-radius:50%;background:var(--gold-500);opacity:.7}
+@keyframes s-marq{to{transform:translateX(-50%)}}
+
+/* Titujt e seksioneve me kicker */
+.s-kicker{display:block;font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-300);margin-bottom:6px}
+.s-head{align-items:flex-end}
+.s-head h2{padding-bottom:12px}
+
+/* Seksionet e fshehura nga admini */
+[hidden]{display:none!important}
+
+/* Kartat e kategorive: foto më e ndritshme, tekst më i qartë */
+.cat-huge::after{background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(0,0,0,.9) 100%)}
+
+/* Hapat: lidhëse midis numrave në desktop */
+@media(min-width:760px){.s-steps li:not(:last-child)::after{content:"";position:absolute;top:39px;right:-13px;width:14px;height:1px;background:var(--border-strong)}}
+
+/* Banneri i fundit */
+.s-cta-band{order:60}
+.s-cta-band .s-cta{flex-shrink:0}
+
+/* Footer */
+.s-footer-grid>div>a{transition:color .2s,translate .2s}
+.s-footer-grid>div>a:hover{translate:3px 0}

@@ -74,7 +74,7 @@ function setView(view){
   if(view==='offers') renderOffers();
   if(view==='promos') renderPromos();
   if(view==='hero') renderHero();
-  if(view==='homepage') renderHomepageSections();
+  if(view==='homepage') renderHomepageEditor();
   if(view==='orders') renderOrders();
   if(view==='customers') renderCustomers();
   if(view==='delivery') renderDelivery();
@@ -1590,7 +1590,7 @@ async function init(){
   });
 
   // Homepage
-  $('#saveHomepageBtn').addEventListener('click', ()=>{toast('✅ Seksionet e faqes kryesore u ruajtën');});
+  $('#saveHomepageBtn')?.addEventListener('click', ()=>saveHomepageConfig());
 
   // Orders
   $('#orderSearch').addEventListener('input', renderOrders);
@@ -1790,6 +1790,153 @@ window.saveOrderNote = (id)=>{
 };
 
 function saveLS(k,v){ try{localStorage.setItem(k, JSON.stringify(v));}catch{} }
+
+
+// ================= FAQJA KRYESORE — EDITOR REAL (ruhet te STORE_SETTINGS.homepage) =================
+const hpEsc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const HP_ICONS = ['clock', 'cash', 'calendar', 'truck', 'shield', 'star', 'phone'];
+
+function hpConfig(){
+  const S = window.HanaSite;
+  return S ? S.buildConfig(window.HANA_HOME_DEFAULTS || {}, STORE_SETTINGS) : (window.HANA_HOME_DEFAULTS || {});
+}
+
+function hpField(path, label, value, opts = {}){
+  const type = opts.type || 'text';
+  const v = hpEsc(value);
+  if(type === 'textarea') return `<div class="form-group"><label>${label}</label><textarea class="input" data-hp="${path}" rows="${opts.rows || 3}">${v}</textarea></div>`;
+  if(type === 'check') return `<label class="check" style="margin:0"><input type="checkbox" data-hp="${path}" data-hp-type="bool" ${value !== false ? 'checked' : ''}> ${label}</label>`;
+  return `<div class="form-group"><label>${label}</label><input class="input" type="${type}" data-hp="${path}" ${type === 'number' ? 'data-hp-type="number"' : ''} value="${v}"${opts.ph ? ` placeholder="${hpEsc(opts.ph)}"` : ''}></div>`;
+}
+
+function hpListEditor(path, items, fields){
+  const rows = (items || []).map((it, i) => `
+    <div class="hp-row" data-hp-row style="display:grid;gap:8px;padding:12px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.02)">
+      ${fields.map(f => f.type === 'icon'
+        ? `<div class="form-group"><label>${f.label}</label><select class="input" data-hp-item="${f.key}">${HP_ICONS.map(ic => `<option value="${ic}" ${it[f.key] === ic ? 'selected' : ''}>${ic}</option>`).join('')}</select></div>`
+        : f.type === 'textarea'
+          ? `<div class="form-group"><label>${f.label}</label><textarea class="input" rows="2" data-hp-item="${f.key}">${hpEsc(it[f.key])}</textarea></div>`
+          : `<div class="form-group"><label>${f.label}</label><input class="input" data-hp-item="${f.key}" value="${hpEsc(it[f.key])}"></div>`).join('')}
+      <div><button type="button" class="btn btn-danger btn-xs" data-hp-del>Fshi rreshtin</button></div>
+    </div>`).join('');
+  return `<div data-hp-list="${path}" data-hp-fields='${hpEsc(JSON.stringify(fields.map(f => f.key)))}' style="display:grid;gap:10px">${rows}<div><button type="button" class="btn btn-outline btn-sm" data-hp-add>+ Shto rresht</button></div></div>`;
+}
+
+function hpSectionCard(title, desc, body){
+  return `<div class="card" style="padding:18px"><div style="margin-bottom:12px"><strong style="font-size:15px">${title}</strong>${desc ? `<div style="font-size:12px;color:var(--text-4);margin-top:3px">${desc}</div>` : ''}</div><div style="display:grid;gap:12px">${body}</div></div>`;
+}
+
+function renderHomepageEditor(){
+  const c = hpConfig();
+  const S = c.sections || {};
+  const secBasics = (key, withLimit) => `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end">
+      ${hpField(`sections.${key}.visible`, 'E dukshme', S[key].visible, { type: 'check' })}
+      ${hpField(`sections.${key}.order`, 'Renditja (numër më i vogël = më lart)', S[key].order, { type: 'number' })}
+      ${withLimit ? hpField(`sections.${key}.limit`, 'Sa produkte shfaq', S[key].limit, { type: 'number' }) : ''}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+      ${hpField(`sections.${key}.kicker`, 'Etiketa e vogël', S[key].kicker)}
+      ${hpField(`sections.${key}.title`, 'Titulli', S[key].title)}
+      ${hpField(`sections.${key}.linkText`, 'Teksti i lidhjes', S[key].linkText)}
+      ${hpField(`sections.${key}.linkHref`, 'Lidhja (p.sh. /market)', S[key].linkHref)}
+    </div>`;
+  const itemFields = [{ key: 'title', label: 'Titulli' }, { key: 'text', label: 'Teksti', type: 'textarea' }];
+
+  $('#homepageSections').innerHTML = [
+    hpSectionCard('🎬 Hero (foto e madhe me slide-et)', 'Slide-et, fotot, tekstet dhe butonat e hero menaxhohen te "Hero & Banners".',
+      `<div><button type="button" class="btn btn-gold btn-sm" data-hp-goto="hero">Hap Hero & Banners →</button></div>`),
+
+    hpSectionCard('⚡ Shiriti i shpejtë (poshtë hero)', '3 pika me ikonë: p.sh. 30 min / Cash / 08–22',
+      hpField('strip.visible', 'E dukshme', c.strip.visible, { type: 'check' }) +
+      hpListEditor('strip.items', c.strip.items, [{ key: 'icon', label: 'Ikona', type: 'icon' }, { key: 'value', label: 'Vlera (e madhe)' }, { key: 'label', label: 'Përshkrimi' }])),
+
+    hpSectionCard('🏷️ Markat (shiriti që lëviz)', 'Një markë për rresht.',
+      hpField('brands.visible', 'E dukshme', c.brands.visible, { type: 'check' }) +
+      `<div class="form-group"><label>Markat (një për rresht)</label><textarea class="input" rows="6" data-hp="brands.items" data-hp-type="lines">${hpEsc((c.brands.items || []).join('\n'))}</textarea></div>`),
+
+    hpSectionCard('🗂️ Seksioni: Kategoritë', 'Kategoritë (fotot, emrat, renditja) menaxhohen te "Kategoritë".',
+      secBasics('categories', false) + `<div><button type="button" class="btn btn-outline btn-sm" data-hp-goto="categories">Hap Kategoritë →</button></div>`),
+
+    hpSectionCard('🔥 Seksioni: Ofertat', 'Shfaq produktet me zbritje. Zbritjet vendosen te produkti ose te "Oferta & Zbritje".',
+      secBasics('offers', true)),
+
+    hpSectionCard('✨ Seksioni: Më të kërkuarat', 'Shfaq produktet e shënuara si "popular" te produkti.',
+      secBasics('best', true)),
+
+    hpSectionCard('🧭 Seksioni: Si funksionon', 'Hapat e porosisë.',
+      secBasics('steps', false) + hpListEditor('sections.steps.items', S.steps.items, itemFields)),
+
+    hpSectionCard('💎 Seksioni: Pse ne', 'Arsyet pse të zgjedhin Hana.',
+      secBasics('why', false) + hpListEditor('sections.why.items', S.why.items, itemFields)),
+
+    hpSectionCard('📞 Banneri i fundit (thirrje për veprim)', 'Telefoni dhe WhatsApp merren nga "Cilësimet".',
+      `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end">${hpField('sections.cta.visible', 'E dukshme', S.cta.visible, { type: 'check' })}${hpField('sections.cta.order', 'Renditja', S.cta.order, { type: 'number' })}</div>` +
+      hpField('sections.cta.title', 'Titulli', S.cta.title) +
+      hpField('sections.cta.text', 'Teksti', S.cta.text, { type: 'textarea', rows: 2 }) +
+      `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">${hpField('sections.cta.primaryText', 'Teksti i butonit', S.cta.primaryText)}${hpField('sections.cta.primaryHref', 'Lidhja e butonit', S.cta.primaryHref)}</div>` +
+      `<div><button type="button" class="btn btn-outline btn-sm" data-hp-goto="settings">Hap Cilësimet (telefon, adresë, orar) →</button></div>`),
+
+    `<div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="btn btn-gold" id="saveHomepageBtn2">💾 Ruaj Faqen Kryesore</button><button type="button" class="btn btn-outline" id="resetHomepageBtn">↺ Kthe te default</button><a class="btn btn-outline" href="../" target="_blank" rel="noopener">👁️ Hap faqen</a></div>`
+  ].join('');
+
+  const root = $('#homepageSections');
+  root.querySelectorAll('[data-hp-goto]').forEach(b => b.addEventListener('click', () => setView(b.dataset.hpGoto)));
+  root.querySelectorAll('[data-hp-del]').forEach(b => b.addEventListener('click', () => b.closest('[data-hp-row]').remove()));
+  root.querySelectorAll('[data-hp-add]').forEach(b => b.addEventListener('click', () => {
+    const list = b.closest('[data-hp-list]');
+    const first = list.querySelector('[data-hp-row]');
+    const row = first ? first.cloneNode(true) : null;
+    if(!row){ toast('Rindërto faqen për të shtuar rresht'); return; }
+    row.querySelectorAll('[data-hp-item]').forEach(i => { if(i.tagName !== 'SELECT') i.value = ''; });
+    row.querySelector('[data-hp-del]').addEventListener('click', () => row.remove());
+    list.insertBefore(row, b.parentElement);
+  }));
+  $('#saveHomepageBtn2').addEventListener('click', saveHomepageConfig);
+  $('#resetHomepageBtn').addEventListener('click', async () => {
+    if(!confirm('Të kthehet faqja kryesore te teksti dhe renditja fillestare?')) return;
+    delete STORE_SETTINGS.homepage;
+    saveLocalStoreSettings(STORE_SETTINGS);
+    await upsertStoreSettings(STORE_SETTINGS);
+    renderHomepageEditor();
+    toast('✅ U kthye te default');
+  });
+}
+
+function hpSetPath(obj, path, val){
+  const parts = path.split('.');
+  let o = obj;
+  parts.slice(0, -1).forEach(k => { o[k] = o[k] && typeof o[k] === 'object' ? o[k] : {}; o = o[k]; });
+  o[parts[parts.length - 1]] = val;
+}
+
+async function saveHomepageConfig(){
+  const out = {};
+  const root = $('#homepageSections');
+  root.querySelectorAll('[data-hp]').forEach(el => {
+    const type = el.dataset.hpType;
+    let v;
+    if(type === 'bool') v = el.checked;
+    else if(type === 'number') v = el.value === '' ? undefined : Number(el.value);
+    else if(type === 'lines') v = el.value.split('\n').map(s => s.trim()).filter(Boolean);
+    else v = el.value.trim();
+    if(v !== undefined) hpSetPath(out, el.dataset.hp, v);
+  });
+  root.querySelectorAll('[data-hp-list]').forEach(list => {
+    const keys = JSON.parse(list.dataset.hpFields);
+    const items = [...list.querySelectorAll('[data-hp-row]')].map(row => {
+      const it = {};
+      keys.forEach(k => { it[k] = (row.querySelector(`[data-hp-item="${k}"]`)?.value || '').trim(); });
+      return it;
+    }).filter(it => Object.values(it).some(v => v));
+    hpSetPath(out, list.dataset.hpList, items);
+  });
+  STORE_SETTINGS.homepage = out;
+  saveLocalStoreSettings(STORE_SETTINGS);
+  await upsertStoreSettings(STORE_SETTINGS);
+  try{ await addAuditLog({ action: 'update_homepage', collection: 'storeSettings', docId: 'main', data: { sections: Object.keys(out) } }); }catch{}
+  toast('✅ Faqja kryesore u ruajt — rifresko faqen publike për ta parë');
+}
 
 // Foto me rrugë relative (images/..., image-search/...) ruhen për faqen kryesore; admini jeton te /admin/ → shtoji ../
 (function fixAdminImagePaths(){
