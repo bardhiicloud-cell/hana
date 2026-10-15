@@ -66,7 +66,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
-<link rel="stylesheet" href="css/site.css?v=1">
+<link rel="stylesheet" href="css/site.css?v=3">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -170,6 +170,7 @@ SCRIPTS = '''
 <script type="module" src="js/app.js?v=12"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/auto-bg.js?v=1"></script>
+<script src="js/home.js?v=1"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>
@@ -190,48 +191,101 @@ def home():
              'Hana Free Shop në Pejë: alkool, cigare, pije energjike, çokollata dhe ushqime të importuara. Dorëzim brenda 30 minutash, çdo ditë 08:00–22:00.',
              '/', 'images/hero-premium-bag-800w.webp', 'home',
              extra_ld=f'<script type="application/ld+json">{ld}</script>\n')
+    def slide(img, eyebrow, title, text, ctas, first=False):
+        tag = 'h1' if first else 'h2'
+        load = 'fetchpriority="high" decoding="async"' if first else 'loading="lazy" decoding="async"'
+        base = img.rsplit('.', 1)[0]
+        return f'''<article class="s-slide">
+     <picture>
+      <source type="image/webp" srcset="{base}-800w.webp 800w, {base}-1200w.webp 1200w" sizes="(max-width:1280px) 100vw, 1280px">
+      <img src="{base}-1200w.webp" alt="{title.replace('<br>', ' ')}" width="1200" height="800" {load}>
+     </picture>
+     <div class="s-hero-body">
+      <span class="s-eyebrow">{eyebrow}</span>
+      <{tag}>{title}</{tag}>
+      <p>{text}</p>
+      <div class="s-cta">{ctas}</div>
+     </div>
+    </article>'''
+
+    slides = ''.join([
+        slide('images/hero-premium-bag.webp', 'Hana Free Shop · Pejë', 'Marka botërore,<br>në Pejë',
+              'Dorëzim brenda 30 minutash, çdo ditë 08:00–22:00. Pagesa në dorë.',
+              f'<a class="s-btn s-btn-gold" href="/market">Shiko produktet</a><a class="s-btn s-btn-ghost" href="tel:{TEL}">Telefono</a>', True),
+        slide('images/hero-alcohol-variety.webp', 'Alkool Premium', "Grey Goose, Jack Daniel's<br>dhe më shumë",
+              'Marka origjinale për çdo rast. Dorëzim brenda 30 minutash.',
+              '<a class="s-btn s-btn-gold" href="/alkoholi">Shiko alkoolin</a>'),
+        slide('images/hero-buldak-ice.webp', 'Trendi i momentit', 'Buldak<br>& Ice Cups',
+              'Noodles pikante koreane dhe akullore, të gatshme brenda 30 minutash.',
+              '<a class="s-btn s-btn-gold" href="/buldak">Zbulo</a>'),
+        slide('images/hero-puro-tobacco.webp', 'Cigare & Duhan', 'Puro, Golden Eagle<br>dhe OCB',
+              'Marka të njohura, gjithmonë në stok.',
+              '<a class="s-btn s-btn-gold" href="/cigare">Shiko koleksionin</a>'),
+    ])
+    dots = ''.join(f'<button type="button" class="s-dot{" active" if i == 0 else ""}" aria-label="Slide {i+1}"></button>' for i in range(4))
+    brands = ['Red Bull', 'Lindt', 'Ferrero', 'Kinder', 'Grey Goose', "Jack Daniel's", 'Puro', 'Golden Eagle', 'OCB', "Lay's", 'Buldak']
+    marq = ''.join(f'<span>{b}</span>' for b in brands)
+    rail_arrows = lambda t: f'<div class="s-arrows"><button type="button" class="s-arrow" data-rail="{t}" data-dir="-1" aria-label="Mbrapa">‹</button><button type="button" class="s-arrow" data-rail="{t}" data-dir="1" aria-label="Para">›</button></div>'
+
     main = f'''>
 {header('home')}
  <main class="s-main">
-  <section class="s-hero" id="ballina">
-   <picture>
-    <source type="image/webp" srcset="images/hero-premium-bag-800w.webp 800w, images/hero-premium-bag-1200w.webp 1200w" sizes="(max-width:1280px) 100vw, 1280px">
-    <img src="images/hero-premium-bag-1200w.webp" alt="Hana Free Shop - marka botërore në Pejë" width="1200" height="800" fetchpriority="high" decoding="async">
-   </picture>
-   <div class="s-hero-body">
-    <span class="s-eyebrow">Hana Free Shop · Pejë</span>
-    <h1>Marka botërore,<br>në Pejë</h1>
-    <p>Dorëzim brenda 30 minutash, çdo ditë 08:00–22:00. Pagesa në dorë.</p>
-    <div class="s-cta">
-     <a class="s-btn s-btn-gold" href="/market">Shiko produktet</a>
-     <a class="s-btn s-btn-ghost" href="tel:{TEL}">Telefono</a>
-    </div>
-   </div>
+  <section class="s-hero" id="ballina" aria-roledescription="karusel">
+   <div class="s-slides" id="heroSlides">{slides}</div>
+   <div class="s-dots" id="heroDots">{dots}</div>
   </section>
 
-  <section class="s-strip" aria-label="Si funksionon">
+  <section class="s-strip s-reveal" aria-label="Si porosit">
    <div><strong>30 min</strong><span>Dorëzim në Pejë</span></div>
    <div><strong>Cash</strong><span>Pagesa në dorë</span></div>
    <div><strong>08–22</strong><span>Çdo ditë</span></div>
   </section>
 
-  <section id="kategorite" class="s-section">
+  <div class="s-marquee s-reveal" aria-label="Markat tona"><div class="s-marquee-track">{marq}{marq}</div></div>
+
+  <section id="kategorite" class="s-section s-reveal">
    <div class="s-head"><h2>Kategoritë</h2><a href="/market" class="s-link">Të gjitha produktet →</a></div>
    <div class="cat-track" id="catTrack"></div>
   </section>
 
-  <section id="ofertat" class="s-section">
-   <div class="s-head"><h2>Ofertat</h2><a href="/market?filter=oferta" class="s-link">Shiko të gjitha →</a></div>
-   <div class="product-grid" id="productGrid"></div>
+  <section id="ofertat" class="s-section s-reveal">
+   <div class="s-head"><h2>Ofertat</h2>{rail_arrows('productGrid')}<a href="/market?filter=oferta" class="s-link">Shiko të gjitha →</a></div>
+   <div class="product-grid s-rail" id="productGrid"></div>
    <div class="empty-state" id="emptyState" style="display:none"><h3>Nuk ka oferta për momentin</h3><p>Shiko të gjitha produktet.</p><a class="s-btn s-btn-gold" href="/market">Produktet</a></div>
   </section>
 
-  <section class="s-section s-why">
+  <section id="best" class="s-section s-reveal">
+   <div class="s-head"><h2>Më të kërkuarat</h2>{rail_arrows('popularGrid')}<a href="/market" class="s-link">Shiko të gjitha →</a></div>
+   <div class="product-grid s-rail" id="popularGrid"></div>
+  </section>
+
+  <section class="s-section s-reveal" id="si-funksionon">
+   <div class="s-head"><h2>Si funksionon</h2></div>
+   <ol class="s-steps">
+    <li><span class="s-step-n">1</span><h3>Zgjidh produktet</h3><p>Shfleto kategoritë dhe shtoji në shportë me një klik.</p></li>
+    <li><span class="s-step-n">2</span><h3>Dërgo porosinë</h3><p>Shkruaj emrin, telefonin dhe adresën. Ne të telefonojmë për konfirmim.</p></li>
+    <li><span class="s-step-n">3</span><h3>Merre brenda 30 minutash</h3><p>Korrieri e sjell te dera. Paguan në dorë. Gjurmo porosinë me ID.</p></li>
+   </ol>
+  </section>
+
+  <section class="s-section s-reveal s-why">
    <div class="s-head"><h2>Pse Hana</h2></div>
    <div class="s-why-grid">
     <div><h3>Marka origjinale</h3><p>Red Bull, Lindt, Grey Goose, Jack Daniel's, Puro dhe marka të tjera të njohura.</p></div>
-    <div><h3>Dorëzim i shpejtë</h3><p>Porosia arrin brenda 30 minutash në Pejë qytet. Falas mbi 25 €.</p></div>
-    <div><h3>Pagesë e thjeshtë</h3><p>Paguan në dorë kur e merr porosinë. Konfirmim me telefon.</p></div>
+    <div><h3>Dorëzim i shpejtë</h3><p>Brenda 30 minutash në Pejë qytet. Dërgesa është falas mbi 25 €.</p></div>
+    <div><h3>Pagesë e thjeshtë</h3><p>Paguan në dorë kur e merr porosinë. Pa llogari, pa komplikime.</p></div>
+   </div>
+  </section>
+
+  <section class="s-cta-band s-reveal">
+   <div>
+    <h2>Gati për porosi?</h2>
+    <p>Telefono ose shkruaj në WhatsApp. Jemi hapur çdo ditë 08:00–22:00.</p>
+   </div>
+   <div class="s-cta">
+    <a class="s-btn s-btn-gold" href="/market">Shiko produktet</a>
+    <a class="s-btn s-btn-ghost" href="tel:{TEL}">{PHONE}</a>
+    <a class="s-btn s-btn-ghost" href="https://wa.me/{TEL.lstrip('+')}" target="_blank" rel="noopener">WhatsApp</a>
    </div>
   </section>
  </main>
