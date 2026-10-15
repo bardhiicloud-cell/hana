@@ -164,6 +164,8 @@
   window.HanaShopUX = { locate, getLocation: () => loc, resetGeo, cartChanged, orderSuccess, closeSuccess };
 
   initParallax();
+  const pg = document.body.dataset.page || 'home';
+  document.querySelectorAll('.bn-item').forEach(b => b.classList.toggle('active', b.dataset.nav === (pg === 'home' ? 'ballina' : 'kategorite')));
   // mini shporta pas ngarkimit të shportës
   window.addEventListener('load', () => setTimeout(cartChanged, 600));
 })();

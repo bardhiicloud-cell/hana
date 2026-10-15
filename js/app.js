@@ -26,6 +26,7 @@ let searchQuery = '';
 let heroIndex = 0;
 let heroTimer = null;
 let currentCity = 'peje';
+let sortMode = 'default';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -41,6 +42,7 @@ function formatPrice(p){ return p.toFixed(2)+'€'; }
 
 // TOAST - professional with animation
 function toast(msg, type='default'){
+ msg = String(msg).replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u,'');
  const stack = $('#toastStack');
  if(!stack) return;
  const el = document.createElement('div');
@@ -297,6 +299,13 @@ function renderProducts(){
  let list = getFilteredProducts();
  if(page==='home') list = list.filter(p=>p.discount>0 || p.weeklyOffer).slice(0, homeLimit('offers',8));
  if(page==='market' && new URLSearchParams(location.search).get('filter')==='oferta') list = list.filter(p=>p.discount>0);
+ if(page!=='home'){
+  const byPrice = p=>getProductFinalPrice(p).finalPrice;
+  if(sortMode==='price-asc') list = [...list].sort((a,b)=>byPrice(a)-byPrice(b));
+  else if(sortMode==='price-desc') list = [...list].sort((a,b)=>byPrice(b)-byPrice(a));
+  else if(sortMode==='discount') list = [...list].sort((a,b)=>(b.discount||0)-(a.discount||0));
+  else if(sortMode==='name') list = [...list].sort((a,b)=>String(a.name).localeCompare(String(b.name),'sq'));
+ }
  const count = $('#resultCount');
  if(count) count.textContent = `${list.length} ${list.length===1?'produkt':'produkte'}`;
  if(list.length===0){
@@ -359,16 +368,18 @@ function renderProductCard(p,i=0){
  <button class="wish-btn ${isWish?'active':''} btn-press" data-wish="${p.id}" aria-label="Wishlist ${safeName}">
  <svg width="16" height="16" viewBox="0 0 24 24" fill="${isWish?'currentColor':'none'}" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-1.3 1.3-1.3-1.3c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l8 8 8-8c1.5-1.5 1.5-4 0-5.5z"/></svg>
  </button>
- <img src="${isHero?webp400:(hasWebP?webpSrc:mainImg)}" ${isHero?`srcset="${webp400} 400w, ${webp800} 800w, ${webpSrc} 1200w" sizes="(max-width:768px) 50vw, 280px"`:''} alt="${safeBrand} ${safeName} - ${p.category} - Marka botërore origjinale Pejë" loading="lazy" decoding="async" class="main-image loaded" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.removeAttribute('srcset');this.src='${mainImg}'}else{this.src='images/hero-premium-bag-400w.webp'}">
+ <img src="${isHero?webp800:(hasWebP?webpSrc:mainImg)}" ${isHero?`srcset="${webp400} 400w, ${webp800} 800w, ${webpSrc} 1200w" sizes="(max-width:768px) 50vw, 280px"`:''} alt="${safeBrand} ${safeName} - ${p.category} - Marka botërore origjinale Pejë" loading="lazy" decoding="async" class="main-image loaded${isHero?' scene':''}" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.removeAttribute('srcset');this.src='${mainImg}'}else{this.src='images/hero-premium-bag-400w.webp'}">
  </div>
  <div class="product-info">
- <span class="product-brand">${p.brand}</span>
- <h3 class="product-name">${p.name}</h3>
- <div class="product-prices">
- ${displayOriginal?`<span class="price-old">${formatPrice(displayOriginal)}</span>`:''}
- <span class="price-new ${hasDiscount?'gold':''}">${formatPrice(displayPrice)}</span>
+ <span class="product-brand">${safeBrand}</span>
+ <h3 class="product-name">${safeName}</h3>
+ <div class="product-bottom">
+  <div class="product-prices">
+   ${displayOriginal?`<span class="price-old">${formatPrice(displayOriginal)}</span>`:''}
+   <span class="price-new ${hasDiscount?'gold':''}">${formatPrice(displayPrice)}</span>
+  </div>
+  ${cardFootHtml(p)}
  </div>
- ${cardFootHtml(p)}
  </div>
  </article>`;
 }
@@ -376,13 +387,12 @@ function renderProductCard(p,i=0){
 function cardFootHtml(p){
  const out = p.stock<=0 || p.availability==='out_of_stock';
  const it = cart.find(c=>c.id===p.id);
- const bagIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l3 5v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7l3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg>';
  if(out) return `<div class="product-foot" data-qty="x"><span class="stock-out">Jashtë stokut</span></div>`;
  if(it){
   const max = typeof p.stock==='number' && it.qty>=p.stock;
   return `<div class="product-foot in-cart" data-qty="${it.qty}"><div class="qty-stepper"><button type="button" data-dec="${p.id}" aria-label="Pakëso">−</button><span>${it.qty}</span><button type="button" data-inc="${p.id}" aria-label="Shto edhe një" ${max?'disabled':''}>+</button></div></div>`;
  }
- return `<div class="product-foot" data-qty="0"><button type="button" class="add-btn" data-add="${p.id}" aria-label="Shto ${String(p.name).replace(/"/g,'')} në shportë">${bagIcon}<span>Shto në shportë</span></button></div>`;
+ return `<div class="product-foot" data-qty="0"><button type="button" class="add-btn" data-add="${p.id}" aria-label="Shto ${String(p.name).replace(/"/g,'')} në shportë"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div>`;
 }
 
 function syncCardControls(){
@@ -603,7 +613,7 @@ function updateFreeShipping(){
  if(freeTop) freeTop.style.display='block';
  if(isFreeShipping){
  freeRemaining.textContent = '0.00 €';
- if(freeText) freeText.innerHTML = `🎉 <strong style="color:#6EE7B7">Keni dërgesë falas në ${cityName()}!</strong>`;
+ if(freeText) freeText.innerHTML = `<strong style="color:#6EE7B7">Dërgesa në ${cityName()} është falas</strong>`;
  if(freePercent) freePercent.textContent = '100%';
  if(freeProgress) freeProgress.style.width = '100%';
  if(freeProgress) freeProgress.style.background = 'linear-gradient(90deg,#6EE7B7,#10B981)';
@@ -1544,6 +1554,7 @@ async function init(){
  }
  if(window.HanaCities){ window.HanaCities.setOverrides(STORE_SETTINGS && STORE_SETTINGS.cities, STORE_SETTINGS && STORE_SETTINGS.deliveryConfig); const cc = window.HanaCities.current(); if(cc) currentCity = cc.id; }
  setupPageContext();
+ $('#sortSelect')?.addEventListener('change', e=>{ sortMode = e.target.value; renderProducts(); });
  applyHomeContent();
  refreshCityTexts();
  renderCategories();

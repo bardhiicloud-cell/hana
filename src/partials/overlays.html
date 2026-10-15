@@ -19,19 +19,19 @@
 
  <div class="drawer-body" id="cartBody">
   <div class="free-shipping" id="freeShipping">
-  <div class="free-top"><span class="free-icon">🚚</span><span class="free-text">Edhe <strong id="freeRemaining">3.10 €</strong> për dërgesë falas në Pejë</span><span class="free-percent" id="freePercent">88%</span></div>
+  <div class="free-top"><span class="free-icon"><svg class="free-ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h13v10H1zM14 10h5l3 3v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span><span class="free-text">Edhe <strong id="freeRemaining">3.10 €</strong> për dërgesë falas në Pejë</span><span class="free-percent" id="freePercent">88%</span></div>
   <div class="free-bar"><div class="free-progress" id="freeProgress" style="width:88%"></div></div>
   </div>
 
   <div id="cartItems"></div>
 
   <div class="cart-suggest" id="cartSuggest">
-  <div class="suggest-head"><span>✨ Shto të preferuarat me 1 klik:</span><span class="muted small">Sugjerime</span></div>
+  <div class="suggest-head"><span>Shto edhe këto</span></div>
   <div class="suggest-track" id="suggestTrack"></div>
   </div>
 
   <div class="cart-gift">
-  <label class="gift-option"><div class="gift-icon">🎁</div><span>Paketim Dhuratë Luksoze (Hana Bag)</span><input type="checkbox" id="giftWrap"><span class="gift-check"></span></label>
+  <label class="gift-option"><span>Paketim dhuratë (Hana Bag)</span><input type="checkbox" id="giftWrap"><span class="gift-check"></span></label>
   </div>
   <button class="gift-note-btn" id="giftNoteBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg> Shto porosi ose shënim për paketimin</button>
   <div class="gift-note-input" id="giftNoteInput" style="display:none"><textarea id="giftNoteText" class="input" placeholder="Shkruaj shënimin për paketimin ose porosinë..."></textarea><div id="giftPreview"></div></div>
@@ -42,7 +42,7 @@
   </div>
 
   <div class="discount-row">
-  <div class="discount-field"><span class="disc-icon">🏷️</span><input id="discountInput" type="text" placeholder="Kodi i zbritjes (p.sh. HANA15, PEJA)"><button class="btn btn-gold btn-sm" id="discountApply">Apliko</button></div>
+  <div class="discount-field"><input id="discountInput" type="text" placeholder="Kodi i zbritjes"><button class="btn btn-gold btn-sm" id="discountApply">Apliko</button></div>
   <div class="discount-msg" id="discountMsg" style="display:none"></div>
   <div class="coupon-list" id="couponList" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;"></div>
   </div>

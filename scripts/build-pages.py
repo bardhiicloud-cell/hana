@@ -94,7 +94,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=5">
+<link rel="stylesheet" href="css/shop.css?v=7">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -181,12 +181,12 @@ SCRIPTS = '''
 <script src="js/cities.js?v=1"></script>
 <script src="js/site-render.js?v=2"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=15"></script>
+<script type="module" src="js/app.js?v=18"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
 <script src="js/auto-bg.js?v=2"></script>
 <script src="js/home.js?v=3"></script>
-<script src="js/shop-ux.js?v=2"></script>
+<script src="js/shop-ux.js?v=3"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>
@@ -258,7 +258,8 @@ def listing(slug, cat_id, title, desc, image):
    <p data-tpl="{intro_tpl}">{intro}</p>
   </section>
   <div class="s-chips" role="navigation" aria-label="Kategoritë">{''.join(chips)}</div>
-  <div class="s-count" id="resultCount"></div>
+  <div class="s-toolbar"><div class="s-count" id="resultCount"></div>
+   <label class="s-sort"><span>Rendit</span><select id="sortSelect" aria-label="Rendit produktet"><option value="default">Të rekomanduara</option><option value="price-asc">Çmimi: ulët → lartë</option><option value="price-desc">Çmimi: lartë → ulët</option><option value="discount">Zbritjet më të mëdha</option><option value="name">Emri A–Z</option></select></label></div>
   <div class="product-grid" id="productGrid"></div>
   <div class="empty-state" id="emptyState" style="display:none"><h3>Nuk u gjet asnjë produkt</h3><p>Provo një kategori tjetër.</p><a class="s-btn s-btn-gold" href="/market">Të gjitha produktet</a></div>
  </main>
