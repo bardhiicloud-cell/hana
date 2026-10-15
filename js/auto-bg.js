@@ -89,7 +89,7 @@
     } catch (e) { cache.set(src, null); }
   }
 
-  const SEL = '.product-card .product-media img.main-image, #productModalImg, .admin-product-photo';
+  const SEL = '.product-card .product-media img.main-image, #productModalImg, .pm-img, .sr-img img, .pm-rel-img img, .admin-product-photo';
   function scan(root) {
     (root || document).querySelectorAll(SEL).forEach(img => {
       if (img.complete && img.naturalWidth) process(img);

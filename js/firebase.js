@@ -98,7 +98,7 @@ export const FALLBACK_STORE_SETTINGS = {
   phone:'+383 48 588 886',
   whatsapp:'+383 48 588 886',
   email:'info@hanafreeshop.com',
-  socialLinks:{facebook:'https://facebook.com/hanafreeshop', instagram:'https://instagram.com/hanafreeshop', tiktok:'https://tiktok.com/@hanafreeshop'},
+  socialLinks:{facebook:'', instagram:'', tiktok:''},
   openingHours:{
     monday:{open:'08:00', close:'22:00', closed:false},
     tuesday:{open:'08:00', close:'22:00', closed:false},

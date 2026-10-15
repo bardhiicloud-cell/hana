@@ -256,6 +256,8 @@ function setupPageContext(){
  else if(page==='market'){
   const c = new URLSearchParams(location.search).get('cat');
   if(c) activeCategory = CAT_ALIAS[c] || c;
+  const q = new URLSearchParams(location.search).get('q');
+  if(q){ searchQuery = q; const si=$('#searchInput'); if(si) si.value=q; }
  }
 }
 
@@ -281,8 +283,8 @@ function getFilteredProducts(){
  if(activePromo==='week') list = list.filter(p=>p.weeklyOffer);
  else if(activePromo==='popular') list = list.filter(p=>p.popular);
  if(searchQuery){
- const q = searchQuery.toLowerCase();
- list = list.filter(p=> p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || (CATEGORIES.find(c=>c.id===p.category)?.name.toLowerCase().includes(q)) );
+ const ids = new Set(searchProducts(searchQuery, 500).map(p=>p.id));
+ list = list.filter(p=>ids.has(p.id));
  }
  return list;
 }
@@ -789,15 +791,43 @@ function updateWishlistUI(){
 }
 
 // SEARCH
+const normQ = x => String(x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ç/g,'c');
+
+function searchProducts(q, limit=20){
+ const toks = normQ(q).split(/\s+/).filter(Boolean);
+ if(!toks.length) return [];
+ return PRODUCTS.filter(p=>p.status!=='archived').map(p=>{
+  const catName = CATEGORIES.find(c=>c.id===p.category)?.name || '';
+  const hay = normQ([p.name, p.brand, catName, p.sku].join(' '));
+  const hit = toks.every(t=>hay.includes(t));
+  const score = hit ? (normQ(p.name).startsWith(toks[0]) || normQ(p.brand).startsWith(toks[0]) ? 2 : 1) : 0;
+  return {p, score};
+ }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,limit).map(x=>x.p);
+}
+
 function renderSearchResults(q){
  const container = $('#searchResults');
  if(!container) return;
- if(!q){ container.innerHTML = ''; $('#searchSuggestions').style.display='block'; return; }
- $('#searchSuggestions').style.display='none';
- const filtered = PRODUCTS.filter(p=> p.name.toLowerCase().includes(q.toLowerCase()) || p.brand.toLowerCase().includes(q.toLowerCase()) ).slice(0,12);
- if(filtered.length===0){ container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><h3>Asnjë rezultat për "${q}"</h3></div>`; return; }
- container.innerHTML = filtered.map(p=>`<article class="product-card" data-id="${p.id}"><div class="product-media"><img src="${p.image||p.mainImage}" alt="${p.name}"></div><div class="product-info"><span class="product-brand">${p.brand}</span><h3 class="product-name">${p.name}</h3><div class="product-prices"><span class="price-new gold">${formatPrice(p.price)}</span></div></div></article>`).join('');
- container.querySelectorAll('.product-card').forEach(card=>{ card.addEventListener('click', ()=>{ closeSearch(); activeCategory = PRODUCTS.find(x=>x.id===card.dataset.id)?.category || null; renderCategories(); renderProducts(); $('#ofertat')?.scrollIntoView({behavior:'smooth'}); }); });
+ const sug = $('#searchSuggestions');
+ if(!q){ container.innerHTML = ''; if(sug) sug.style.display='block'; return; }
+ if(sug) sug.style.display='none';
+ const list = searchProducts(q);
+ const safeQ = String(q).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ if(list.length===0){
+  container.innerHTML = `<div class="sr-empty"><h3>Asnjë rezultat për "${safeQ}"</h3><p>Provo një emër tjetër ose shfleto kategoritë.</p><a class="s-btn s-btn-gold" href="/market">Shiko të gjitha produktet</a></div>`;
+  return;
+ }
+ container.innerHTML = `<div class="sr-count">${list.length} ${list.length===1?'rezultat':'rezultate'}</div>` + list.map(p=>{
+  const pr = getProductFinalPrice(p);
+  const out = p.stock<=0 || p.availability==='out_of_stock';
+  const img = p.mainImage || p.image || 'images/hero-premium-bag-400w.webp';
+  return `<div class="sr-row" data-id="${p.id}" role="button" tabindex="0">
+   <span class="sr-img"><img src="${img}" alt="" loading="lazy"></span>
+   <span class="sr-info"><small>${p.brand}</small><strong>${p.name}</strong><em>${formatPrice(Math.max(0,pr.finalPrice))}${pr.originalPrice && pr.originalPrice>pr.finalPrice?` <s>${formatPrice(pr.originalPrice)}</s>`:''}</em></span>
+   ${out?'<span class="sr-out">Jashtë stokut</span>':`<button type="button" class="sr-add" data-add="${p.id}" aria-label="Shto ${String(p.name).replace(/"/g,'')} në shportë">+</button>`}
+  </div>`;
+ }).join('');
+ if(window.HanaAutoBg) window.HanaAutoBg.scan(container);
 }
 
 // DRAWER CONTROLS
@@ -1217,9 +1247,18 @@ function initNavigation(){
 function initSearch(){
  const input = $('#searchInput');
  const overlayInput = $('#searchOverlayInput');
- function onSearch(val){ searchQuery = val.trim(); renderProducts(); renderSearchResults(val.trim()); }
+ function onSearch(val){ renderSearchResults(val.trim()); }
  input?.addEventListener('input', e=>onSearch(e.target.value));
- input?.addEventListener('focus', openSearch);
+ input?.addEventListener('focus', ()=>{ openSearch(); });
+ const goSearch = v=>{ const q=String(v||'').trim(); if(q) location.href='/market?q='+encodeURIComponent(q); };
+ overlayInput?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); goSearch(overlayInput.value); } });
+ $('#searchResults')?.addEventListener('click', e=>{
+  const add = e.target.closest('[data-add]');
+  if(add){ e.stopPropagation(); addToCart(add.dataset.add,1,add.closest('.sr-row')?.querySelector('img')); return; }
+  const row = e.target.closest('.sr-row');
+  if(row){ closeSearch(); if(window.openProductModal) window.openProductModal(row.dataset.id); }
+ });
+ $('#searchResults')?.addEventListener('keydown', e=>{ if((e.key==='Enter'||e.key===' ') && e.target.classList.contains('sr-row')){ e.preventDefault(); e.target.click(); } });
  overlayInput?.addEventListener('input', e=>onSearch(e.target.value));
  $$('.suggestion-chips .chip').forEach(chip=>{ chip.addEventListener('click', ()=>{ const v=chip.textContent; if(input) input.value=v; if(overlayInput) overlayInput.value=v; onSearch(v); }); });
  document.addEventListener('keydown', e=>{
@@ -1561,6 +1600,12 @@ window.HANA = {
   getCartSummary:()=>({ count:cartCount(), subtotal:cartSubtotal(), total:(typeof calculateTotals==='function'? calculateTotals().grand : cartSubtotal()) }),
   openCart:()=>openCart(), closeCart:()=>closeCart(),
   openTracking:(id)=>{ openTracking(); if(id){ const i=$('#trackingInput'); if(i) i.value=id; renderTrackingResult(id); } },
-  setCity:(id)=>setCity(id)
+  setCity:(id)=>setCity(id),
+  addToCart:(id,qty,el)=>addToCart(id,qty,el),
+  toggleWishlist:(id)=>{ toggleWishlist(id); syncCardControls(); },
+  isWished:(id)=>wishlist.includes(id),
+  priceOf:(p)=>{ const r=getProductFinalPrice(p); return {finalPrice:Math.max(0,r.finalPrice), originalPrice:r.originalPrice, discount:r.discount}; },
+  getCategories:()=>CATEGORIES,
+  catHref:(id)=>catHref(id)
 };
 document.addEventListener('hana:city', ()=>{ /* sinkronizim nga skeda tjetër */ });

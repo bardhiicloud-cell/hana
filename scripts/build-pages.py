@@ -94,7 +94,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=2">
+<link rel="stylesheet" href="css/shop.css?v=5">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -132,6 +132,7 @@ def header(active):
         flags[active] = 'class="active"'
     nav = NAV.format(**flags)
     return f'''<div class="app">
+<a class="skip-link" href="#main-content">Kalo te përmbajtja</a>
 {LOCATION}
  <header class="header" id="header">
  <div class="header-main">
@@ -180,9 +181,10 @@ SCRIPTS = '''
 <script src="js/cities.js?v=1"></script>
 <script src="js/site-render.js?v=2"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=14"></script>
+<script type="module" src="js/app.js?v=15"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
-<script src="js/auto-bg.js?v=1"></script>
+<script src="js/product-modal.js?v=1"></script>
+<script src="js/auto-bg.js?v=2"></script>
 <script src="js/home.js?v=3"></script>
 <script src="js/shop-ux.js?v=2"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
@@ -209,7 +211,7 @@ def home():
 
     main = f'''>
 {header('home')}
- <main class="s-main">
+ <main class="s-main" id="main-content">
   <section class="s-hero" id="ballina" aria-roledescription="karusel">
    <div class="s-slides" id="heroSlides">{FRAG['heroSlides']}</div>
    <div class="s-dots" id="heroDots">{FRAG['heroDots']}</div>
@@ -249,7 +251,7 @@ def listing(slug, cat_id, title, desc, image):
     intro = intro.replace('{minutes}', '30').replace('{city}', 'Pejë')
     main = f''' {attrs}>
 {header('market' if is_market else 'c_' + slug)}
- <main class="s-main s-main-list">
+ <main class="s-main s-main-list" id="main-content">
   <section class="s-page-head">
    <nav class="s-crumbs" aria-label="Breadcrumb"><a href="/">Ballina</a><span>/</span><span>{page_title}</span></nav>
    <h1>{page_title}</h1>
