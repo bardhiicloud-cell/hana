@@ -12,8 +12,8 @@ const DEFAULT_CONFIG_KEY = 'hana_firebase_config';
 
 // LocalStorage keys - versioned for clean migrations
 const LS_KEYS = {
-  PRODUCTS: 'hana_products_v6_final_clean',
-  CATEGORIES: 'hana_categories_v2',
+  PRODUCTS: 'hana_products_v7',
+  CATEGORIES: 'hana_categories_v3',
   PROMOS: 'hana_promos_v2',
   BRANDS: 'hana_brands_v1',
   HERO: 'hana_hero_v1',
@@ -32,13 +32,12 @@ const LS_KEYS = {
 
 // Fallback data - real business data, never fake
 export const FALLBACK_CATEGORIES = [
- { id:'ushqime-pije', name:'Ushqime & Pije', name_en:'Food & Drinks', description:'Ushqime dhe pije premium të importuara', image:'https://images.unsplash.com/photo-1566478989037-eec170784d0b?q=80&w=400&auto=format&fit=crop', slug:'ushqime-pije', parentId:null, order:1, visible:true, featured:true, productCount:0, seoTitle:'Ushqime & Pije Premium - Hana Free Shop Pejë', seoDesc:'Ushqime dhe pije premium të importuara në Pejë' },
- { id:'cokollata-embelsira', name:'Çokollata & Ëmbëlsira', name_en:'Chocolate & Sweets', description:'Çokollata dhe ëmbëlsira premium', image:'https://images.unsplash.com/photo-1549007994-cb92caebd54b?q=80&w=400&auto=format&fit=crop', slug:'cokollata-embelsira', parentId:null, order:2, visible:true, featured:true, productCount:0, seoTitle:'Çokollata & Ëmbëlsira Premium', seoDesc:'Çokollata Lindt, Kinder, Ferrero dhe më shumë' },
- { id:'pije-tonike', name:'Pije & Tonikë', name_en:'Drinks & Tonics', description:'Pije freskuese dhe tonikë premium', image:'https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?q=80&w=400&auto=format&fit=crop', slug:'pije-tonike', parentId:null, order:3, visible:true, featured:true, productCount:0, seoTitle:'Pije & Tonikë Premium', seoDesc:'Red Bull, pije premium dhe tonikë' },
- { id:'kafe-caj', name:'Kafe & Çaj', name_en:'Coffee & Tea', description:'Kafe dhe çaj premium', image:'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=400&auto=format&fit=crop', slug:'kafe-caj', parentId:null, order:4, visible:true, featured:false, productCount:0, seoTitle:'Kafe & Çaj Premium', seoDesc:'Lavazza dhe marka të tjera premium' },
- { id:'produkte-shtepi', name:'Produkte për Shtëpi', name_en:'Home Products', description:'Produkte për shtëpi', image:'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=400&auto=format&fit=crop', slug:'produkte-shtepi', parentId:null, order:5, visible:true, featured:false, productCount:0, seoTitle:'Produkte për Shtëpi', seoDesc:'Produkte për shtëpi' },
- { id:'produkte-importuara', name:'Produkte të Importuara', name_en:'Imported Products', description:'Produkte të importuara ekskluzive', image:'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?q=80&w=400&auto=format&fit=crop', slug:'produkte-importuara', parentId:null, order:6, visible:true, featured:true, productCount:0, seoTitle:'Produkte të Importuara', seoDesc:'Produkte të importuara ekskluzive' },
- { id:'oferta-speciale', name:'Oferta Speciale', name_en:'Special Offers', description:'Oferta speciale dhe zbritje', image:'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=400&auto=format&fit=crop', slug:'oferta-speciale', parentId:null, order:7, visible:true, featured:true, productCount:0, seoTitle:'Oferta Speciale', seoDesc:'Oferta speciale dhe zbritje' },
+ { id:'alkool', name:'Alkool Premium', name_en:'Premium Spirits', description:'Grey Goose, Jack Daniel\'s dhe marka të tjera botërore', image:'images/hero-alcohol-variety-800w.webp', accent:'#B8862E', slug:'alkool', parentId:null, order:1, visible:true, featured:true },
+ { id:'cigare', name:'Cigare & Duhan', name_en:'Tobacco', description:'Puro, Golden Eagle, OCB', image:'images/hero-puro-tobacco-800w.webp', accent:'#8A5A2B', slug:'cigare', parentId:null, order:2, visible:true, featured:true },
+ { id:'bulldak', name:'Buldak & Ice Cups', name_en:'Viral Food', description:'Noodles pikante koreane dhe akullore', image:'images/hero-buldak-ice-800w.webp', accent:'#C0392B', slug:'bulldak', parentId:null, order:3, visible:true, featured:true },
+ { id:'pije-tonike', name:'Pije & Energjike', name_en:'Drinks & Energy', description:'Red Bull dhe pije premium', image:'images/products/redbull-250ml.webp', accent:'#2E6FBF', slug:'pije-tonike', parentId:null, order:4, visible:true, featured:true },
+ { id:'cokollata-embelsira', name:'Çokollata & Ëmbëlsira', name_en:'Chocolate & Sweets', description:'Lindt, Ferrero, Kinder', image:'images/products/lindt-lindor-dark-200g.webp', accent:'#7B3F2A', slug:'cokollata-embelsira', parentId:null, order:5, visible:true, featured:true },
+ { id:'ushqime-pije', name:'Ushqime & Snacks', name_en:'Food & Snacks', description:'Snacks dhe ushqime të importuara', image:'images/hero-premium-bag-800w.webp', accent:'#D4AF37', slug:'ushqime-pije', parentId:null, order:6, visible:true, featured:true },
 ];
 
 export const FALLBACK_BRANDS = [
@@ -58,12 +57,12 @@ export const FALLBACK_BRANDS = [
 export const FALLBACK_PRODUCTS = [
  { id:'lindt-lindor-dark-200', brand:'Lindt', name:'Lindor Dark 200g', name_en:'Lindor Dark 200g', category:'cokollata-embelsira', subcategory:null, sku:'LNDT-DARK-200', barcode:'', shortDesc:'Çokollata Lindor Dark premium', fullDesc:'Lindt Lindor Dark 200g - çokollata premium zvicerane me mbushje të butë. Origjinale 100% nga Zvicra.', purchaseCost:4.50, price:6.39, originalPrice:7.99, discount:20, promoPrice:null, images:['images/products/lindt-lindor-dark-200g.jpg'], mainImage:'images/products/lindt-lindor-dark-200g.jpg', gallery:['images/products/lindt-lindor-dark-200g.jpg'], stock:42, lowStockThreshold:10, availability:'in_stock', variants:[], weight:200, dimensions:{l:15,w:10,h:5}, featured:true, newArrival:false, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Lindt Lindor Dark 200g - Hana Free Shop', seoDesc:'Lindt Lindor Dark 200g çokollata premium zvicerane', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
  { id:'redbull-250', brand:'Red Bull', name:'Energy Drink 250ml', name_en:'Energy Drink 250ml', category:'pije-tonike', sku:'RB-250', barcode:'', shortDesc:'Red Bull energjik', fullDesc:'Red Bull Energy Drink 250ml - pija energjike nr.1 në botë.', purchaseCost:0.90, price:1.52, originalPrice:1.79, discount:15, promoPrice:null, images:['images/products/redbull-250ml.jpg'], mainImage:'images/products/redbull-250ml.jpg', gallery:['images/products/redbull-250ml.jpg'], stock:120, lowStockThreshold:20, availability:'in_stock', variants:[], weight:250, dimensions:{l:6,w:6,h:12}, featured:true, newArrival:false, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Red Bull 250ml', seoDesc:'Red Bull Energy Drink', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
- { id:'grey-goose-700', brand:'Grey Goose', name:'Vodka 700ml Premium', name_en:'Vodka 700ml Premium', category:'pije-tonike', sku:'GG-700', barcode:'', shortDesc:'Vodka premium franceze', fullDesc:'Grey Goose Vodka 700ml - vodka premium franceze e distiluar nga gruri më i mirë.', purchaseCost:20.00, price:28.99, originalPrice:34.99, discount:17, promoPrice:null, images:['image-search/grey-goose-vodka-bottle-premium-1.jpg'], mainImage:'image-search/grey-goose-vodka-bottle-premium-1.jpg', gallery:['image-search/grey-goose-vodka-bottle-premium-1.jpg'], stock:18, lowStockThreshold:5, availability:'in_stock', variants:[], weight:700, dimensions:{l:8,w:8,h:25}, featured:true, newArrival:true, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Grey Goose Vodka 700ml', seoDesc:'Grey Goose Vodka premium', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
- { id:'jack-daniels-700', brand:'Jack Daniel’s', name:'Old No.7 700ml', name_en:'Old No.7 700ml', category:'pije-tonike', sku:'JD-700', barcode:'', shortDesc:'Whiskey amerikan', fullDesc:'Jack Daniel’s Old No.7 700ml - whiskey amerikan legjendar nga Tennessee.', purchaseCost:15.00, price:22.49, originalPrice:26.99, discount:16, promoPrice:null, images:['image-search/jack-daniels-whiskey-bottle-premium-1.jpg'], mainImage:'image-search/jack-daniels-whiskey-bottle-premium-1.jpg', gallery:['image-search/jack-daniels-whiskey-bottle-premium-1.jpg'], stock:22, lowStockThreshold:5, availability:'in_stock', variants:[], weight:700, dimensions:{l:8,w:8,h:24}, featured:true, newArrival:false, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Jack Daniels 700ml', seoDesc:'Jack Daniel’s Old No.7', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
- { id:'puro-premium', brand:'Puro', name:'Puro Premium', name_en:'Puro Premium', category:'pije-tonike', sku:'PURO-PREM', barcode:'', shortDesc:'Puro premium', fullDesc:'Puro Premium - duhani premium për shije autentike.', purchaseCost:4.00, price:5.99, originalPrice:7.50, discount:20, promoPrice:null, images:['images/hero-puro-tobacco.jpg'], mainImage:'images/hero-puro-tobacco.jpg', gallery:['images/hero-puro-tobacco.jpg'], stock:40, lowStockThreshold:10, availability:'in_stock', variants:[], weight:50, dimensions:{l:10,w:5,h:2}, featured:true, newArrival:false, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Puro Premium', seoDesc:'Puro Premium duhani', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
- { id:'golden-eagle', brand:'Golden Eagle', name:'Cigare Golden Eagle', name_en:'Golden Eagle Cigarettes', category:'pije-tonike', sku:'GE-CIG', barcode:'', shortDesc:'Cigare premium', fullDesc:'Golden Eagle cigare premium - marka e njohur me cilësi të garantuar.', purchaseCost:2.00, price:3.20, originalPrice:3.80, discount:16, promoPrice:null, images:['images/hero-puro-tobacco.jpg'], mainImage:'images/hero-puro-tobacco.jpg', gallery:['images/hero-puro-tobacco.jpg'], stock:60, lowStockThreshold:15, availability:'in_stock', variants:[], weight:20, dimensions:{l:8,w:5,h:2}, featured:true, newArrival:false, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Golden Eagle Cigare', seoDesc:'Golden Eagle cigare premium', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
- { id:'buldak-noodles', brand:'Buldak', name:'Spicy Noodles Hot', name_en:'Spicy Noodles Hot', category:'ushqime-pije', sku:'BUL-HOT', barcode:'', shortDesc:'Noodles pikante koreane', fullDesc:'Buldak Spicy Noodles Hot - noodles koreane pikante, trendi viral në TikTok.', purchaseCost:1.50, price:2.49, originalPrice:2.99, discount:17, promoPrice:null, images:['images/hero-buldak-ice.jpg'], mainImage:'images/hero-buldak-ice.jpg', gallery:['images/hero-buldak-ice.jpg'], stock:70, lowStockThreshold:20, availability:'in_stock', variants:[{name:'Pikante', options:['Mild','Hot','2x Spicy']}], weight:140, dimensions:{l:15,w:10,h:5}, featured:true, newArrival:true, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Buldak Noodles Hot', seoDesc:'Buldak Spicy Noodles', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
- { id:'ice-cups', brand:'Ice', name:'Ice Cups Premium', name_en:'Ice Cups Premium', category:'ushqime-pije', sku:'ICE-CUP', barcode:'', shortDesc:'Akullore premium', fullDesc:'Ice Cups Premium - akullore premium në gota praktike.', purchaseCost:1.20, price:1.99, originalPrice:null, discount:0, promoPrice:null, images:['images/hero-buldak-ice.jpg'], mainImage:'images/hero-buldak-ice.jpg', gallery:['images/hero-buldak-ice.jpg'], stock:50, lowStockThreshold:10, availability:'in_stock', variants:[], weight:120, dimensions:{l:8,w:8,h:8}, featured:true, newArrival:true, bestSeller:false, homepageVisible:true, searchVisible:true, seoTitle:'Ice Cups Premium', seoDesc:'Ice Cups akullore', popular:true, weeklyOffer:false, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
+ { id:'grey-goose-700', brand:'Grey Goose', name:'Vodka 700ml Premium', name_en:'Vodka 700ml Premium', category:'alkool', sku:'GG-700', barcode:'', shortDesc:'Vodka premium franceze', fullDesc:'Grey Goose Vodka 700ml - vodka premium franceze e distiluar nga gruri më i mirë.', purchaseCost:20.00, price:28.99, originalPrice:34.99, discount:17, promoPrice:null, images:['image-search/grey-goose-vodka-bottle-premium-1.jpg'], mainImage:'image-search/grey-goose-vodka-bottle-premium-1.jpg', gallery:['image-search/grey-goose-vodka-bottle-premium-1.jpg'], stock:18, lowStockThreshold:5, availability:'in_stock', variants:[], weight:700, dimensions:{l:8,w:8,h:25}, featured:true, newArrival:true, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Grey Goose Vodka 700ml', seoDesc:'Grey Goose Vodka premium', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
+ { id:'jack-daniels-700', brand:'Jack Daniel’s', name:'Old No.7 700ml', name_en:'Old No.7 700ml', category:'alkool', sku:'JD-700', barcode:'', shortDesc:'Whiskey amerikan', fullDesc:'Jack Daniel’s Old No.7 700ml - whiskey amerikan legjendar nga Tennessee.', purchaseCost:15.00, price:22.49, originalPrice:26.99, discount:16, promoPrice:null, images:['image-search/jack-daniels-whiskey-bottle-premium-1.jpg'], mainImage:'image-search/jack-daniels-whiskey-bottle-premium-1.jpg', gallery:['image-search/jack-daniels-whiskey-bottle-premium-1.jpg'], stock:22, lowStockThreshold:5, availability:'in_stock', variants:[], weight:700, dimensions:{l:8,w:8,h:24}, featured:true, newArrival:false, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Jack Daniels 700ml', seoDesc:'Jack Daniel’s Old No.7', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
+ { id:'puro-premium', brand:'Puro', name:'Puro Premium', name_en:'Puro Premium', category:'cigare', sku:'PURO-PREM', barcode:'', shortDesc:'Puro premium', fullDesc:'Puro Premium - duhani premium për shije autentike.', purchaseCost:4.00, price:5.99, originalPrice:7.50, discount:20, promoPrice:null, images:['images/hero-puro-tobacco.jpg'], mainImage:'images/hero-puro-tobacco.jpg', gallery:['images/hero-puro-tobacco.jpg'], stock:40, lowStockThreshold:10, availability:'in_stock', variants:[], weight:50, dimensions:{l:10,w:5,h:2}, featured:true, newArrival:false, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Puro Premium', seoDesc:'Puro Premium duhani', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
+ { id:'golden-eagle', brand:'Golden Eagle', name:'Cigare Golden Eagle', name_en:'Golden Eagle Cigarettes', category:'cigare', sku:'GE-CIG', barcode:'', shortDesc:'Cigare premium', fullDesc:'Golden Eagle cigare premium - marka e njohur me cilësi të garantuar.', purchaseCost:2.00, price:3.20, originalPrice:3.80, discount:16, promoPrice:null, images:['images/hero-puro-tobacco.jpg'], mainImage:'images/hero-puro-tobacco.jpg', gallery:['images/hero-puro-tobacco.jpg'], stock:60, lowStockThreshold:15, availability:'in_stock', variants:[], weight:20, dimensions:{l:8,w:5,h:2}, featured:true, newArrival:false, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Golden Eagle Cigare', seoDesc:'Golden Eagle cigare premium', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
+ { id:'buldak-noodles', brand:'Buldak', name:'Spicy Noodles Hot', name_en:'Spicy Noodles Hot', category:'bulldak', sku:'BUL-HOT', barcode:'', shortDesc:'Noodles pikante koreane', fullDesc:'Buldak Spicy Noodles Hot - noodles koreane pikante, trendi viral në TikTok.', purchaseCost:1.50, price:2.49, originalPrice:2.99, discount:17, promoPrice:null, images:['images/hero-buldak-ice.jpg'], mainImage:'images/hero-buldak-ice.jpg', gallery:['images/hero-buldak-ice.jpg'], stock:70, lowStockThreshold:20, availability:'in_stock', variants:[{name:'Pikante', options:['Mild','Hot','2x Spicy']}], weight:140, dimensions:{l:15,w:10,h:5}, featured:true, newArrival:true, bestSeller:true, homepageVisible:true, searchVisible:true, seoTitle:'Buldak Noodles Hot', seoDesc:'Buldak Spicy Noodles', popular:true, weeklyOffer:true, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
+ { id:'ice-cups', brand:'Ice', name:'Ice Cups Premium', name_en:'Ice Cups Premium', category:'bulldak', sku:'ICE-CUP', barcode:'', shortDesc:'Akullore premium', fullDesc:'Ice Cups Premium - akullore premium në gota praktike.', purchaseCost:1.20, price:1.99, originalPrice:null, discount:0, promoPrice:null, images:['images/hero-buldak-ice.jpg'], mainImage:'images/hero-buldak-ice.jpg', gallery:['images/hero-buldak-ice.jpg'], stock:50, lowStockThreshold:10, availability:'in_stock', variants:[], weight:120, dimensions:{l:8,w:8,h:8}, featured:true, newArrival:true, bestSeller:false, homepageVisible:true, searchVisible:true, seoTitle:'Ice Cups Premium', seoDesc:'Ice Cups akullore', popular:true, weeklyOffer:false, status:'active', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
 ];
 
 export const FALLBACK_PROMOS = [
@@ -88,8 +87,8 @@ export const FALLBACK_OFFERS = [
 ];
 
 export const FALLBACK_DELIVERY_ZONES = [
-  { id:'zone-peje', name:'Pejë Qytet', description:'Dërgesë brenda qytetit të Pejës', fee:2.00, freeThreshold:25.00, expressFee:4.00, estimatedWindow:'30-60 min', visible:true, order:1, postcodes:['30000'], municipalities:['Pejë'] },
-  { id:'zone-peje-rrethine', name:'Rrethina e Pejës', description:'Fshatrat përreth Pejës', fee:3.50, freeThreshold:35.00, expressFee:6.00, estimatedWindow:'60-90 min', visible:true, order:2, postcodes:['30010'], municipalities:['Pejë'] },
+  { id:'zone-peje', name:'Pejë Qytet', description:'Dërgesë brenda qytetit të Pejës', fee:2.00, freeThreshold:25.00, expressFee:4.00, estimatedWindow:'30 min', visible:true, order:1, postcodes:['30000'], municipalities:['Pejë'] },
+  { id:'zone-peje-rrethine', name:'Rrethina e Pejës', description:'Fshatrat përreth Pejës', fee:3.50, freeThreshold:35.00, expressFee:6.00, estimatedWindow:'45 min', visible:true, order:2, postcodes:['30010'], municipalities:['Pejë'] },
 ];
 
 export const FALLBACK_STORE_SETTINGS = {
@@ -117,7 +116,7 @@ export const FALLBACK_STORE_SETTINGS = {
   holidaySchedules:[],
   temporaryClosures:[],
   supportInfo:'Për pyetje, telefononi +383 48 588 886 çdo ditë 08:00-22:00',
-  deliveryInfo:'Dërgesë e shpejtë në Pejë - Falas mbi 25€. Dërgesë 30-60 minuta në qytet.',
+  deliveryInfo:'Dërgesë e shpejtë në Pejë - Falas mbi 25€. Dorëzim brenda 30 minutash në qytet.',
   pickupInfo:'Mund të merrni porosinë në dyqan - General Wesley Clark, Pejë. Hapni 08:00-22:00',
   currency:'EUR',
   logo:'images/hero-premium-bag.jpg',
@@ -586,20 +585,26 @@ export function onAuthState(cb){
 
 // ADMIN EMAIL — bardhiicloud@gmail.com is owner
 export const ADMIN_OWNER_EMAIL = 'bardhiicloud@gmail.com';
+// Vetëm për teste në localhost — fshije para publikimit
+const TEST_ADMIN = { email:'admin@hana.com', pass:'admin123' };
 
 export async function signInLocal(email, pass){
   if(firebaseEnabled && auth){
     const { signInWithEmailAndPassword } = await import('firebase/auth');
     return signInWithEmailAndPassword(auth, email, pass);
   } else {
-    // Check admin users list for role — bardhiicloud@gmail.com is always owner
+    // MODALITET LOKAL (vetëm localhost): llogari testimi admin@hana.com / admin123 (hiqet para publikimit)
+    if(!isLocalDemoHost()) throw new Error('Hyrja kërkon Firebase të konfiguruar (js/config.js).');
+    const norm = String(email||'').trim().toLowerCase();
     let adminUsers = loadLS(LS_KEYS.ADMIN_USERS, []);
-    let adminUser = adminUsers.find(u=>u.email===email);
+    let adminUser = adminUsers.find(u=>u.email===norm);
     let role = adminUser?.role || 'customer';
-    if(email.toLowerCase() === ADMIN_OWNER_EMAIL.toLowerCase()) role = 'owner';
-    else if(email.includes('admin')) role = 'owner';
-    else if(adminUser) role = adminUser.role;
-    
+    if(norm === TEST_ADMIN.email){
+      if(pass !== TEST_ADMIN.pass) throw new Error('Fjalëkalim i gabuar');
+      role = 'owner';
+    } else if(norm === ADMIN_OWNER_EMAIL.toLowerCase()){
+      throw new Error('Owner hyn me Google (Firebase). Për test përdor admin@hana.com');
+    }
     const user = { email, uid:'local-'+btoa(email).slice(0,8), displayName: email.split('@')[0], role, provider:'password' };
     localStorage.setItem('hana_user', JSON.stringify(user));
     localStorage.setItem('hana_user_id', user.uid);
@@ -617,9 +622,8 @@ export async function signUpLocal(email, pass){
     const { createUserWithEmailAndPassword } = await import('firebase/auth');
     return createUserWithEmailAndPassword(auth, email, pass);
   } else {
-    let role = 'customer';
-    if(email.toLowerCase() === ADMIN_OWNER_EMAIL.toLowerCase()) role = 'owner';
-    else role = 'owner'; // For demo, first user is owner
+    if(!isLocalDemoHost()) throw new Error('Regjistrimi kërkon Firebase të konfiguruar (js/config.js).');
+    const role = 'customer';
     
     const user = { email, uid:'local-'+btoa(email).slice(0,8), displayName: email.split('@')[0], role, provider:'password' };
     localStorage.setItem('hana_user', JSON.stringify(user));

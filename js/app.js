@@ -4,6 +4,7 @@ import { initFirebase, fetchProducts, fetchCategories, fetchPromos, fetchHero, f
 
 const LS_CART = 'hana_cart_v3';
 const LS_WISH = 'hana_wish_v3';
+try{ localStorage.removeItem('hana_express'); }catch{}
 const LS_LOCATION = 'hana_location_selected';
 const LS_LOCATION_CITY = 'hana_location_city';
 
@@ -149,6 +150,8 @@ function cartFlyAnimation(productId, startEl){
 function addToCart(id, qty=1, startEl=null){
  const prod = PRODUCTS.find(p=>p.id===id);
  if(!prod) return;
+ const have = (cart.find(c=>c.id===id)?.qty)||0;
+ if(typeof prod.stock==='number' && have+qty>prod.stock){ toast(`Vetëm ${prod.stock} copë në stok për ${prod.name}`); return; }
  if(startEl) cartFlyAnimation(id, startEl);
  const existing = cart.find(c=>c.id===id);
  if(existing) existing.qty += qty;
@@ -182,11 +185,15 @@ function toggleWishlist(id){
 function renderCategories(){
  const track = $('#catTrack');
  if(!track) return;
- track.innerHTML = CATEGORIES.map((cat,i)=>{
+ const visible = CATEGORIES.filter(c=>c.visible!==false).sort((x,y)=>(x.order||0)-(y.order||0));
+ track.classList.add('cat-grid-huge');
+ track.innerHTML = visible.map((cat,i)=>{
  const active = activeCategory===cat.id ? ' active' : '';
- return `<button class="cat-item${active}" data-cat="${cat.id}" style="animation-delay:${i*0.05}s">
- <span class="cat-thumb"><img src="${cat.image}" alt="${cat.name}" loading="lazy"></span>
- <span class="cat-label">${cat.name}</span>
+ const count = PRODUCTS.filter(p=>p.category===cat.id && p.status!=='archived').length;
+ const src = cat.image || 'images/hero-premium-bag-800w.webp';
+ return `<button class="cat-item cat-huge${active}" data-cat="${cat.id}" style="--accent:${cat.accent||'#D4AF37'};animation-delay:${i*0.06}s" aria-label="${cat.name}">
+ <span class="cat-thumb"><img src="${src}" alt="${cat.name}" loading="lazy" decoding="async"></span>
+ <span class="cat-meta"><span class="cat-label">${cat.name}</span><span class="cat-count">${count} produkte →</span></span>
  </button>`;
  }).join('');
  track.querySelectorAll('.cat-item').forEach(btn=>{
@@ -245,10 +252,7 @@ function renderProducts(){
   ${hasDiscount?`<span class="price-old">${formatPrice(p.originalPrice)}</span>`:''}
   <span class="price-new ${hasDiscount?'gold':''}">${formatPrice(p.price)}</span>
  </div>
- <div class="product-foot">
-  ${inCart?`<div class="qty-mini"><button data-dec="${p.id}">−</button><span>${inCart.qty}</span><button data-inc="${p.id}">+</button></div>`:`<span style="font-size:11px;color:var(--text-4)">${p.stock>0?'Në stok • ':''}</span>`}
-  <button class="add-btn" data-add="${p.id}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 8h-3l-4 9h18l-4-9h-3"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></button>
- </div>
+ ${cardFootHtml(p)}
  </div>
  </article>`;
  }).join('');
@@ -306,7 +310,8 @@ function renderProductCard(p,i=0){
  const webp400 = mainImg.replace(/\.(jpg|jpeg|png)$/i, '-400w.webp');
  const webp800 = mainImg.replace(/\.(jpg|jpeg|png)$/i, '-800w.webp');
  const lqip = mainImg.replace(/\.(jpg|jpeg|png|webp)$/i, '-lqip.jpg');
- const hasWebP = mainImg.includes('hero-') || mainImg.includes('products/') || mainImg.includes('image-search/');
+ const isHero = mainImg.includes('hero-');
+ const hasWebP = isHero || mainImg.includes('products/') || mainImg.includes('image-search/');
  return `<article class="product-card tilt-card ${isOutOfStock?'out-of-stock':''}" data-id="${p.id}" style="animation-delay:${i*0.04}s" role="article" aria-label="${safeBrand} ${safeName} - ${p.price}€">
  <div class="product-media image-wrapper">
  ${hasWebP?`<img class="lqip" src="${lqip}" alt="" loading="eager" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(20px);transform:scale(1.1);" onerror="this.style.display='none'">`:''}
@@ -317,7 +322,7 @@ function renderProductCard(p,i=0){
  <button class="wish-btn ${isWish?'active':''} btn-press" data-wish="${p.id}" aria-label="Wishlist ${safeName}">
  <svg width="16" height="16" viewBox="0 0 24 24" fill="${isWish?'currentColor':'none'}" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-1.3 1.3-1.3-1.3c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l8 8 8-8c1.5-1.5 1.5-4 0-5.5z"/></svg>
  </button>
- <img src="${hasWebP?webp400:mainImg}" srcset="${hasWebP?`${webp400} 400w, ${webp800} 800w, ${webpSrc} 1200w`:''}" sizes="(max-width:768px) 50vw, 280px" alt="${safeBrand} ${safeName} - ${p.category} - Marka botërore origjinale Pejë" loading="lazy" decoding="async" class="main-image" onload="this.classList.add('loaded'); const lq=this.parentElement.querySelector('.lqip'); if(lq) lq.classList.add('hidden')" onerror="this.src='https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=600&auto=format&fit=crop'; this.removeAttribute('srcset')">
+ <img src="${isHero?webp400:(hasWebP?webpSrc:mainImg)}" ${isHero?`srcset="${webp400} 400w, ${webp800} 800w, ${webpSrc} 1200w" sizes="(max-width:768px) 50vw, 280px"`:''} alt="${safeBrand} ${safeName} - ${p.category} - Marka botërore origjinale Pejë" loading="lazy" decoding="async" class="main-image loaded" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.removeAttribute('srcset');this.src='${mainImg}'}else{this.src='images/hero-premium-bag-400w.webp'}">
  </div>
  <div class="product-info">
  <span class="product-brand">${p.brand}</span>
@@ -328,26 +333,76 @@ function renderProductCard(p,i=0){
  </div>
  <div class="product-foot">
  ${isOutOfStock?`<span style="font-size:11px;color:#FCA5A5">Jashtë stokut</span>`:inCart?`<div class="qty-mini"><button data-dec="${p.id}">−</button><span>${inCart.qty}</span><button data-inc="${p.id}">+</button></div>`:`<span style="font-size:11px;color:var(--text-4)">${p.stock>0?'Në stok':''}</span>`}
- <button class="add-btn" data-add="${p.id}" ${isOutOfStock?'disabled style="opacity:.4;pointer-events:none"':''}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 8h-3l-4 9h18l-4-9h-3"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></button>
+ <button class="add-btn" data-add="${p.id}" ${isOutOfStock?'disabled style="opacity:.4;pointer-events:none"':''}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h12l3 5v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7l3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg></button>
  </div>
  </div>
  </article>`;
 }
 
-function bindProductGridEvents(grid){
- grid.querySelectorAll('[data-add]').forEach(b=>{
- b.addEventListener('click', e=>{
- e.stopPropagation();
- const card = b.closest('.product-card');
- const img = card?.querySelector('.product-media img');
- addToCart(b.dataset.add,1,img||b);
- renderAllGrids();
- });
- });
- grid.querySelectorAll('[data-wish]').forEach(b=>b.addEventListener('click', e=>{ e.stopPropagation(); toggleWishlist(b.dataset.wish); renderAllGrids(); }));
- grid.querySelectorAll('[data-inc]').forEach(b=>b.addEventListener('click', ()=>{ const it=cart.find(c=>c.id===b.dataset.inc); if(it) setQty(b.dataset.inc,it.qty+1); renderAllGrids(); }));
- grid.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click', ()=>{ const it=cart.find(c=>c.id===b.dataset.dec); if(it) setQty(b.dataset.dec,it.qty-1); renderAllGrids(); }));
+function cardFootHtml(p){
+ const out = p.stock<=0 || p.availability==='out_of_stock';
+ const it = cart.find(c=>c.id===p.id);
+ const bagIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l3 5v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7l3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg>';
+ if(out) return `<div class="product-foot" data-qty="x"><span class="stock-out">Jashtë stokut</span></div>`;
+ if(it){
+  const max = typeof p.stock==='number' && it.qty>=p.stock;
+  return `<div class="product-foot in-cart" data-qty="${it.qty}"><div class="qty-stepper"><button type="button" data-dec="${p.id}" aria-label="Pakëso">−</button><span>${it.qty}</span><button type="button" data-inc="${p.id}" aria-label="Shto edhe një" ${max?'disabled':''}>+</button></div></div>`;
+ }
+ return `<div class="product-foot" data-qty="0"><button type="button" class="add-btn" data-add="${p.id}" aria-label="Shto ${String(p.name).replace(/"/g,'')} në shportë">${bagIcon}<span>Shto në shportë</span></button></div>`;
 }
+
+function syncCardControls(){
+ document.querySelectorAll('.product-card').forEach(card=>{
+  const p = PRODUCTS.find(x=>x.id===card.dataset.id);
+  if(!p) return;
+  const foot = card.querySelector('.product-foot');
+  if(foot){
+   const it = cart.find(c=>c.id===p.id);
+   const q = it ? String(it.qty) : '0';
+   if(foot.dataset.qty!==q && foot.dataset.qty!=='x'){
+    foot.outerHTML = cardFootHtml(p);
+    card.querySelector('.product-foot')?.animate([{transform:'scale(.94)',opacity:.6},{transform:'scale(1)',opacity:1}],{duration:200,easing:'ease-out'});
+   }
+  }
+  const w = card.querySelector('.wish-btn');
+  if(w){ const on = wishlist.includes(p.id); w.classList.toggle('active',on); w.querySelector('svg')?.setAttribute('fill',on?'currentColor':'none'); }
+ });
+}
+
+function bindProductGridEvents(grid){
+ if(grid.dataset.bound) return;
+ grid.dataset.bound = '1';
+ grid.addEventListener('click', e=>{
+  const add = e.target.closest('[data-add]');
+  const inc = e.target.closest('[data-inc]');
+  const dec = e.target.closest('[data-dec]');
+  const wish = e.target.closest('[data-wish]');
+  if(add){
+   e.stopPropagation();
+   const card = add.closest('.product-card');
+   addToCart(add.dataset.add, 1, card?.querySelector('.product-media img.main-image') || add);
+  } else if(inc){
+   e.stopPropagation();
+   const id = inc.dataset.inc; const it = cart.find(c=>c.id===id); const p = PRODUCTS.find(x=>x.id===id);
+   if(it && !(typeof p?.stock==='number' && it.qty>=p.stock)) setQty(id,it.qty+1);
+  } else if(dec){
+   e.stopPropagation();
+   const id = dec.dataset.dec; const it = cart.find(c=>c.id===id);
+   if(it) setQty(id,it.qty-1);
+  } else if(wish){
+   e.stopPropagation();
+   toggleWishlist(wish.dataset.wish); syncCardControls();
+  }
+ });
+}
+
+// Hap modalin e produktit (delegim: punon edhe pasi kartat rindërtohen)
+document.addEventListener('click', e=>{
+ const card = e.target.closest('.product-card');
+ if(!card || e.target.closest('button,a,input')) return;
+ if(card.closest('#searchResults')) return;
+ if(card.dataset.id && window.openProductModal) window.openProductModal(card.dataset.id);
+});
 
 function renderAllGrids(){
  renderProducts();
@@ -360,7 +415,7 @@ function renderAllGrids(){
 function renderAlcoholGrid(){
  const grid = $('#alcoholGrid');
  if(!grid) return;
- const list = PRODUCTS.filter(p=> p.category==='pije-tonike' && (p.id.includes('grey')||p.id.includes('jack')||p.id.includes('redbull')||p.brand==='Grey Goose'||p.brand.includes('Jack')||p.brand==='Red Bull')).slice(0,8);
+ const list = PRODUCTS.filter(p=> p.category==='alkool').slice(0,8);
  grid.innerHTML = list.map((p,i)=>renderProductCard(p,i)).join('');
  bindProductGridEvents(grid);
 }
@@ -368,7 +423,7 @@ function renderAlcoholGrid(){
 function renderTobaccoGrid(){
  const grid = $('#tobaccoGrid');
  if(!grid) return;
- const list = PRODUCTS.filter(p=> p.id.includes('puro')||p.id.includes('golden')||p.id.includes('ocb')||p.name.toLowerCase().includes('puro')||p.name.toLowerCase().includes('eagle')||p.name.toLowerCase().includes('ocb')).slice(0,8);
+ const list = PRODUCTS.filter(p=>p.category==='cigare').slice(0,8);
  grid.innerHTML = list.map((p,i)=>renderProductCard(p,i)).join('');
  bindProductGridEvents(grid);
 }
@@ -376,7 +431,7 @@ function renderTobaccoGrid(){
 function renderBuldakGrid(){
  const grid = $('#bulldakGrid');
  if(!grid) return;
- const list = PRODUCTS.filter(p=> p.id.includes('buldak')||p.id.includes('ice')||p.name.toLowerCase().includes('buldak')||p.name.toLowerCase().includes('ice')||p.category==='ushqime-pije').slice(0,8);
+ const list = PRODUCTS.filter(p=>p.category==='bulldak').slice(0,8);
  grid.innerHTML = list.map((p,i)=>renderProductCard(p,i)).join('');
  bindProductGridEvents(grid);
 }
@@ -687,7 +742,7 @@ function updateCartUI(){
  el.style.display = count>0 ? 'grid' : 'none';
  });
  renderCartDrawer();
- renderProducts();
+ syncCardControls();
 }
 function updateWishlistUI(){
  const c = wishlist.length;
@@ -1448,7 +1503,7 @@ async function init(){
  e.preventDefault();
  const cat = btn.dataset.filterSection;
  if(cat==='pije-tonike') location.href='/market?cat=alkool';
- else if(cat==='ushqime-pije') location.href='/market?cat=ushqime';
+ else if(cat==='ushqime-pije') location.href='/market?cat=ushqime-pije';
  else location.href=`/market?cat=${cat}`;
  });
  });

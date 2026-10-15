@@ -576,18 +576,6 @@ function init100KEnhancements() {
       }
     });
     
-    // Add click to product cards for modal
-    document.querySelectorAll('.product-card').forEach(card => {
-      if(!card.dataset.modalEnhanced) {
-        card.dataset.modalEnhanced = '1';
-        card.addEventListener('click', (e) => {
-          if(e.target.closest('button')) return; // Don't open modal if clicking button
-          const id = card.dataset.id;
-          if(id) openProductModal(id);
-        });
-      }
-    });
-    
     console.log('[100K] Enhancements initialized - 100k ready');
   }, 1500);
 }
