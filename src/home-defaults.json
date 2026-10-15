@@ -5,9 +5,9 @@
       "order": 1,
       "visible": true,
       "status": "published",
-      "eyebrow": "Hana Free Shop · Pejë",
-      "headline": "Marka botërore,\nnë Pejë",
-      "subtext": "Dorëzim brenda 30 minutash, çdo ditë 08:00–22:00. Pagesa në dorë.",
+      "eyebrow": "Hana Free Shop · {city}",
+      "headline": "Marka botërore,\nnë {city}",
+      "subtext": "Dorëzim brenda {minutes} minutash, çdo ditë {hours}. Pagesa në dorë.",
       "primaryBtnText": "Shiko produktet",
       "primaryBtnLink": "/market",
       "secondaryBtnText": "Telefono",
@@ -27,7 +27,7 @@
       "status": "published",
       "eyebrow": "Alkool Premium",
       "headline": "Grey Goose, Jack Daniel's\ndhe më shumë",
-      "subtext": "Marka origjinale për çdo rast. Dorëzim brenda 30 minutash.",
+      "subtext": "Marka origjinale për çdo rast. Dorëzim brenda {minutes} minutash.",
       "primaryBtnText": "Shiko alkoolin",
       "primaryBtnLink": "/alkoholi",
       "secondaryBtnText": "",
@@ -47,7 +47,7 @@
       "status": "published",
       "eyebrow": "Trendi i momentit",
       "headline": "Buldak\n& Ice Cups",
-      "subtext": "Noodles pikante koreane dhe akullore, të gatshme brenda 30 minutash.",
+      "subtext": "Noodles pikante koreane dhe akullore, të gatshme brenda {minutes} minutash.",
       "primaryBtnText": "Zbulo",
       "primaryBtnLink": "/buldak",
       "secondaryBtnText": "",
@@ -86,8 +86,8 @@
     "items": [
       {
         "icon": "clock",
-        "value": "30 min",
-        "label": "Dorëzim në Pejë"
+        "value": "{minutes} min",
+        "label": "Dorëzim në {city}"
       },
       {
         "icon": "cash",
@@ -159,7 +159,7 @@
           "text": "Shkruaj emrin, telefonin dhe adresën. Ne të telefonojmë për konfirmim."
         },
         {
-          "title": "Merre brenda 30 minutash",
+          "title": "Merre brenda {minutes} minutash",
           "text": "Korrieri e sjell te dera. Paguan në dorë. Gjurmo porosinë me ID."
         }
       ]
@@ -176,7 +176,7 @@
         },
         {
           "title": "Dorëzim i shpejtë",
-          "text": "Brenda 30 minutash në Pejë qytet. Dërgesa është falas mbi 25 €."
+          "text": "Brenda {minutes} minutash në {city}. Dërgesa është falas mbi {freeThreshold} €."
         },
         {
           "title": "Pagesë e thjeshtë",
@@ -188,7 +188,7 @@
       "visible": true,
       "order": 60,
       "title": "Gati për porosi?",
-      "text": "Telefono ose shkruaj në WhatsApp. Jemi hapur çdo ditë 08:00–22:00.",
+      "text": "Telefono ose shkruaj në WhatsApp. Jemi hapur çdo ditë {hours}.",
       "primaryText": "Shiko produktet",
       "primaryHref": "/market"
     }
@@ -198,7 +198,32 @@
     "whatsapp": "38348588886",
     "address": "General Wesley Clark, Pejë",
     "hours": "Çdo ditë 08:00–22:00",
-    "delivery": "Dorëzim brenda 30 minutash",
+    "delivery": "Dorëzim brenda {minutes} minutash",
     "social": {}
-  }
+  },
+  "cities": [
+    {
+      "id": "peje",
+      "name": "Pejë",
+      "active": true,
+      "order": 1,
+      "minutes": 30,
+      "hours": "08:00–22:00",
+      "address": "",
+      "lat": 42.659,
+      "lng": 20.288,
+      "primary": true
+    },
+    {
+      "id": "prishtine",
+      "name": "Prishtinë",
+      "active": true,
+      "order": 2,
+      "minutes": 30,
+      "hours": "08:00–22:00",
+      "address": "",
+      "lat": 42.6629,
+      "lng": 21.1655
+    }
+  ]
 }

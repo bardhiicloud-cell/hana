@@ -911,7 +911,7 @@ function viewOrder(id){
   $('#orderDetailContent').innerHTML=`
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div style="display:grid;gap:12px">
-        <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:14px"><strong style="font-size:12px">👤 Klienti (vetëm për staff të autorizuar)</strong><div style="margin-top:8px;font-size:13px;line-height:1.6"><strong>${order.customer?.name||''}</strong><br>📞 ${order.customer?.phone||''}<br>📧 ${order.customer?.email||''}<br>📍 ${order.customer?.address||''}<br>🏙️ ${order.customer?.city||''}</div></div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:14px"><strong style="font-size:12px">👤 Klienti (vetëm për staff të autorizuar)</strong><div style="margin-top:8px;font-size:13px;line-height:1.6"><strong>${order.customer?.name||''}</strong><br>📞 ${order.customer?.phone||''}<br>📧 ${order.customer?.email||''}<br>📍 ${order.customer?.address||''}${order.customer?.mapsLink?`<br><a href="${order.customer.mapsLink}" target="_blank" rel="noopener" style="color:var(--gold-300)">📍 Hap lokacionin në hartë</a>`:(order.customer?.location?`<br><a href="https://www.google.com/maps?q=${order.customer.location.lat},${order.customer.location.lng}" target="_blank" rel="noopener" style="color:var(--gold-300)">📍 Hap lokacionin në hartë</a>`:'')}${order.customer?.city?`<br><small>Qyteti: ${order.customer.city}</small>`:''}<br>🏙️ ${order.customer?.city||''}</div></div>
         <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:14px"><strong style="font-size:12px">📦 Produkte</strong><div style="margin-top:8px;display:grid;gap:8px">${(order.items||[]).map(item=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:rgba(0,0,0,.2);border-radius:8px"><span>${item.name||item.id} x${item.qty}</span><strong>${(item.price*item.qty).toFixed(2)}€</strong></div>`).join('')}</div></div>
       </div>
       <div style="display:grid;gap:12px">
@@ -999,6 +999,7 @@ function renderLocations(){
     <div class="form-group"><label>Info Dërgese</label><textarea id="locDeliveryInfo" class="input">${STORE_SETTINGS.deliveryInfo||''}</textarea></div>
     <div class="form-group"><label>Udhëzime Pickup</label><textarea id="locPickupInfo" class="input">${STORE_SETTINGS.pickupInfo||''}</textarea></div>
   `;
+  renderCitiesEditor();
 }
 
 // HOURS
@@ -1936,6 +1937,83 @@ async function saveHomepageConfig(){
   await upsertStoreSettings(STORE_SETTINGS);
   try{ await addAuditLog({ action: 'update_homepage', collection: 'storeSettings', docId: 'main', data: { sections: Object.keys(out) } }); }catch{}
   toast('✅ Faqja kryesore u ruajt — rifresko faqen publike për ta parë');
+}
+
+
+// ================= QYTETET E SHËRBIMIT (Lokacionet) — ruhen te STORE_SETTINGS.cities =================
+function renderCitiesEditor(){
+  const form = $('#locationsForm');
+  if(!form || !window.HanaCities) return;
+  let host = $('#citiesEditor');
+  if(!host){ form.insertAdjacentHTML('afterend', '<div id="citiesEditor" style="margin-top:20px"></div>'); host = $('#citiesEditor'); }
+  const HC = window.HanaCities;
+  HC.setOverrides(STORE_SETTINGS.cities, STORE_SETTINGS.deliveryConfig);
+  const dc = STORE_SETTINGS.deliveryConfig || {};
+  const rows = HC.all().map(c => `
+    <div class="card city-row" data-city-id="${hpEsc(c.id)}" style="padding:16px;display:grid;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <strong style="font-size:15px">${hpEsc(c.name || c.id)} <span style="font-size:11px;color:var(--text-4)">(${hpEsc(c.id)})</span></strong>
+        <label class="check" style="margin:0"><input type="checkbox" data-cf="active" ${c.active !== false ? 'checked' : ''}> Aktiv (klientët mund ta zgjedhin)</label>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px">
+        <div class="form-group"><label>Emri</label><input class="input" data-cf="name" value="${hpEsc(c.name)}"></div>
+        <div class="form-group"><label>Minuta dorëzimi</label><input class="input" type="number" min="5" data-cf="minutes" value="${hpEsc(c.minutes || 30)}"></div>
+        <div class="form-group"><label>Orari (p.sh. 08:00–22:00)</label><input class="input" data-cf="hours" value="${hpEsc(c.hours || '')}"></div>
+        <div class="form-group"><label>Adresa e dyqanit</label><input class="input" data-cf="address" value="${hpEsc(c.address || '')}"></div>
+        <div class="form-group"><label>Lat</label><input class="input" type="number" step="0.0001" data-cf="lat" value="${hpEsc(c.lat ?? '')}"></div>
+        <div class="form-group"><label>Lng</label><input class="input" type="number" step="0.0001" data-cf="lng" value="${hpEsc(c.lng ?? '')}"></div>
+        <div class="form-group"><label>Tarifa dërgese € <span style="color:var(--text-4)">(bosh = ${dc.flatFee ?? 2})</span></label><input class="input" type="number" step="0.1" min="0" data-cf="flatFee" value="${hpEsc(c.flatFee ?? '')}"></div>
+        <div class="form-group"><label>Falas mbi € <span style="color:var(--text-4)">(bosh = ${dc.freeThreshold ?? 25})</span></label><input class="input" type="number" step="0.5" min="0" data-cf="freeThreshold" value="${hpEsc(c.freeThreshold ?? '')}"></div>
+        <div class="form-group"><label>Porosia minimale € <span style="color:var(--text-4)">(bosh = ${dc.minOrder ?? 0})</span></label><input class="input" type="number" step="0.5" min="0" data-cf="minOrder" value="${hpEsc(c.minOrder ?? '')}"></div>
+      </div>
+    </div>`).join('');
+  host.innerHTML = `
+    <div class="card" style="padding:18px">
+      <div style="margin-bottom:12px"><strong style="font-size:15px">🏙️ Qytetet ku dërgojmë</strong><div style="font-size:12px;color:var(--text-4);margin-top:3px">Klienti zgjedh qytetin kur hyn dhe te porosia. Çdo qytet ka kohë, orar, adresë dhe tarifa të veta. Lat/Lng përdoren për të gjetur qytetin më të afërt me GPS.</div></div>
+      <div style="display:grid;gap:12px">${rows}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button type="button" class="btn btn-outline btn-sm" id="addCityBtn">+ Shto qytet</button>
+        <button type="button" class="btn btn-gold btn-sm" id="saveCitiesBtn">💾 Ruaj qytetet</button>
+      </div>
+    </div>`;
+  $('#addCityBtn').addEventListener('click', () => {
+    const name = prompt('Emri i qytetit të ri (p.sh. Gjakovë):');
+    if(!name) return;
+    const id = name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ë/g, 'e').replace(/ç/g, 'c').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    if(!id || HC.get(id)){ toast('Ky qytet ekziston ose emri është i pavlefshëm'); return; }
+    const list = collectCities();
+    list.push({ id, name: name.trim(), active: false, order: list.length + 1, minutes: 30, hours: '08:00–22:00' });
+    STORE_SETTINGS.cities = list;
+    renderCitiesEditor();
+    toast('Qyteti u shtua (joaktiv). Plotëso të dhënat dhe ruaj.');
+  });
+  $('#saveCitiesBtn').addEventListener('click', async () => {
+    STORE_SETTINGS.cities = collectCities();
+    saveLocalStoreSettings(STORE_SETTINGS);
+    await upsertStoreSettings(STORE_SETTINGS);
+    HC.setOverrides(STORE_SETTINGS.cities, STORE_SETTINGS.deliveryConfig);
+    toast('✅ Qytetet u ruajtën');
+  });
+}
+
+function collectCities(){
+  return [...document.querySelectorAll('#citiesEditor .city-row')].map((row, i) => {
+    const g = k => row.querySelector(`[data-cf="${k}"]`);
+    const numOrUndef = k => { const v = g(k).value; return v === '' ? undefined : Number(v); };
+    const c = {
+      id: row.dataset.cityId,
+      order: i + 1,
+      active: g('active').checked,
+      name: g('name').value.trim() || row.dataset.cityId,
+      minutes: Number(g('minutes').value) || 30,
+      hours: g('hours').value.trim(),
+      address: g('address').value.trim(),
+      lat: numOrUndef('lat'), lng: numOrUndef('lng'),
+      flatFee: numOrUndef('flatFee'), freeThreshold: numOrUndef('freeThreshold'), minOrder: numOrUndef('minOrder')
+    };
+    Object.keys(c).forEach(k => c[k] === undefined && delete c[k]);
+    return c;
+  });
 }
 
 // Foto me rrugë relative (images/..., image-search/...) ruhen për faqen kryesore; admini jeton te /admin/ → shtoji ../

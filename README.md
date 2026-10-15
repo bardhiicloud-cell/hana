@@ -158,3 +158,10 @@ python -m http.server 3002 --bind 127.0.0.1
 
 Porositë krijohen vetëm nga Cloud Function `placeOrder` (çmime, stok, dërgesë verifikohen në server).
 Dorëzimi: brenda 30 minutash në Pejë qytet.
+
+## 🏙️ Qytetet & lokacioni
+
+- Klienti zgjedh **Pejë** ose **Prishtinë** kur hyn për herë të parë (mund ta ndryshojë nga maja e faqes). Tekstet (hero, shiriti, footer, kohët e dorëzimit) ndryshojnë sipas qytetit.
+- Te porosia ka butonin **"Përdor lokacionin tim"** (GPS, vetëm kur klienti e lejon). Ruhen koordinatat dhe linku i hartës te porosia; admini e shikon me një klik.
+- Admin → **Lokacionet** → "Qytetet ku dërgojmë": aktiv/joaktiv, minuta, orar, adresë, koordinata dhe tarifa për çdo qytet. Mund të shtohen qytete të reja.
+- Admin → **Faqja Kryesore**: seksionet, tekstet, renditja dhe shiriti i ballinës. Pas çdo ndryshimi në strukturë: `python scripts/build-pages.py`.

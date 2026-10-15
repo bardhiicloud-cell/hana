@@ -13,9 +13,11 @@ sandbox.globalThis = sandbox;
 vm.runInNewContext(fs.readFileSync(path.join(root, 'js', 'site-render.js'), 'utf8'), sandbox);
 const S = sandbox.module.exports;
 
-const cfg = S.buildConfig(defaults, {});
-const contact = S.contactFrom(defaults, {});
-const hero = S.F.hero(S.activeHero(defaults.hero));
+const city = defaults.cities[0];
+const ctx = { city: city.name, minutes: city.minutes, hours: city.hours, freeThreshold: city.freeThreshold };
+const cfg = S.deepFill(S.buildConfig(defaults, {}), ctx);
+const contact = S.deepFill(S.contactFrom(defaults, {}, city), ctx);
+const hero = S.F.hero(S.deepFill(S.activeHero(defaults.hero), ctx));
 
 const out = {
   heroSlides: hero.slides,

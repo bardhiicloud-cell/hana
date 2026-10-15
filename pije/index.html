@@ -28,6 +28,7 @@
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
+<link rel="stylesheet" href="css/shop.css?v=2">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Ballina", "item": "https://hanafreeshop.com/"}, {"@type": "ListItem", "position": 2, "name": "Pije & Energjike", "item": "https://hanafreeshop.com/pije"}]}</script>
 <script type="importmap">
 {"imports":{
@@ -49,31 +50,17 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
 <body data-page="category" data-cat="pije-tonike">
 <div class="app">
 <div class="location-modal-backdrop" id="locationBackdrop"></div>
- <div class="location-modal" id="locationModal" aria-hidden="true">
+ <div class="location-modal" id="locationModal" role="dialog" aria-modal="true" aria-labelledby="locTitle" aria-hidden="true">
  <div class="location-modal-bg"></div>
  <div class="location-modal-content">
   <div class="loc-brand"><div class="loc-mark">H</div><div class="loc-brand-text"><strong>HANA</strong><span>FREE SHOP</span></div></div>
-  <h2 class="loc-title">Zgjidh pikën tënde</h2>
-  <p class="loc-sub">Zgjidh qytetin për të parë produktet dhe ofertat e disponueshme në zonën tënde</p>
-  
-  <div class="loc-options">
-  <button class="loc-option active" data-city="peje" aria-label="Zgjidh Pejë">
-   <div class="loc-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg></div>
-   <div class="loc-opt-text"><strong>Pejë</strong><span>Hapur • 08:00-22:00 • General Wesley Clark</span></div>
-   <div class="loc-opt-check">✓</div>
-  </button>
-  <button class="loc-option disabled" data-city="prishtine" aria-label="Prishtinë Coming Soon">
-   <div class="loc-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B6B76" stroke-width="1.8"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg></div>
-   <div class="loc-opt-text"><strong>Prishtinë</strong><span>Coming Soon • Së shpejti</span></div>
-   <span class="loc-badge soon">Soon</span>
-  </button>
-  </div>
-
-  <button class="btn btn-gold full loc-continue magnetic" id="locContinue">Vazhdo me Pejë →</button>
-  <p class="loc-foot">Produkte premium me cilësi të lartë • Dërgesë e shpejtë</p>
+  <h2 class="loc-title" id="locTitle">Ku e dërgojmë?</h2>
+  <p class="loc-sub">Zgjidh qytetin për dërgesën. Mund ta ndryshosh kurdo nga maja e faqes.</p>
+  <div class="loc-options" id="locOptions"></div>
+  <button type="button" class="loc-gps" id="locGps"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg> Gjej qytetin me lokacionin tim</button>
+  <p class="loc-note" id="locNote" role="status"></p>
  </div>
  </div>
-
 
  <header class="header" id="header">
  <div class="header-main">
@@ -121,7 +108,7 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
   <section class="s-page-head">
    <nav class="s-crumbs" aria-label="Breadcrumb"><a href="/">Ballina</a><span>/</span><span>Pije & Energjike</span></nav>
    <h1>Pije & Energjike</h1>
-   <p>Red Bull dhe pije të tjera të njohura. Dorëzim brenda 30 minutash në Pejë.</p>
+   <p data-tpl="Red Bull dhe pije të tjera të njohura. Dorëzim brenda {minutes} minutash në {city}.">Red Bull dhe pije të tjera të njohura. Dorëzim brenda 30 minutash në Pejë.</p>
   </section>
   <div class="s-chips" role="navigation" aria-label="Kategoritë"><a class="s-chip" href="/market">Të gjitha</a><a class="s-chip" href="/alkoholi">Alkool Premium</a><a class="s-chip" href="/cigare">Cigare & Duhan</a><a class="s-chip" href="/buldak">Buldak & Ice Cups</a><a class="s-chip active" href="/pije">Pije & Energjike</a><a class="s-chip" href="/embelsira">Çokollata & Ëmbëlsira</a><a class="s-chip" href="/ushqime">Ushqime & Snacks</a></div>
   <div class="s-count" id="resultCount"></div>
@@ -171,7 +158,7 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
 
   <div class="delivery-30" role="note">
     <span class="d30-icon">⚡</span>
-    <div><strong>Dorëzim brenda 30 minutash</strong><small>Në Pejë qytet • çdo ditë 08:00–22:00 • pagesa në dorë</small></div>
+    <div><strong data-tpl="Dorëzim brenda {minutes} minutash">Dorëzim brenda 30 minutash</strong><small data-tpl="Në {city} • çdo ditë {hours} • pagesa në dorë">Në Pejë • çdo ditë 08:00–22:00 • pagesa në dorë</small></div>
   </div>
 
   <div class="discount-row">
@@ -180,19 +167,19 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
   <div class="coupon-list" id="couponList" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;"></div>
   </div>
 
-  <div class="cart-totals-premium" id="cartTotalsPremium">
-  <div class="total-row"><span>Nëntotali i artikujve:</span><strong id="cartSubtotal" class="count-up">21.90 €</strong></div>
-  <div class="total-row"><span>Dërgesa në <span class="cart-city-name">Pejë</span>:</span><strong id="cartDelivery">2.00 €</strong></div>
-  <div class="total-row" id="discountRow" style="display:none;"><span>Zbritja:</span><strong id="cartDiscount" style="color:#4ade80;">-0.00 €</strong></div>
-  <div class="total-row grand"><span>Gjithsej për pagesë:</span><strong id="cartGrandTotal" class="gold">23.90 €</strong></div>
-  </div>
 
   <div class="cart-contact"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> <span>Pyetje? Thirr <strong>+383 48 588 886</strong> • Hana Free Shop</span></div>
  </div>
 
  <div class="drawer-foot premium-foot">
+  <div class="cart-totals-premium" id="cartTotalsPremium">
+  <div class="total-row"><span>Nëntotali i artikujve:</span><strong id="cartSubtotal" class="count-up">21.90 €</strong></div>
+  <div class="total-row"><span>Dërgesa në <span class="cart-city-name">Pejë</span></span><strong id="cartDelivery">2.00 €</strong></div>
+  <div class="total-row" id="discountRow" style="display:none;"><span>Zbritja:</span><strong id="cartDiscount" style="color:#4ade80;">-0.00 €</strong></div>
+  <div class="total-row grand"><span>Gjithsej për pagesë:</span><strong id="cartGrandTotal" class="gold">23.90 €</strong></div>
+  </div>
   <button class="btn btn-gold full premium-checkout" id="checkoutBtn"><span>Vazhdo te Procedura e Porosisë</span><span>→</span></button>
-  <div class="secure-badges"><span>🔒 Pagesë e sigurt</span><span>🚚 Dërgesë 08:00-22:00</span><span>📞 +383 48 588 886</span></div>
+  <div class="secure-badges"><span>Pagesa në dorë</span><span data-tpl="Dorëzim {minutes} min">Dorëzim 30 min</span></div>
  </div>
  </aside>
 
@@ -221,43 +208,61 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
  </div>
  </div>
 
- <!-- CHECKOUT MODAL - ENHANCED 100K -->
+<!-- CHECKOUT -->
  <div class="modal-backdrop" id="checkoutBackdrop"></div>
- <div class="modal checkout-modal" id="checkoutModal">
- <div class="modal-head"><h3>🛒 Finalizo Porosinë</h3><button class="icon-btn" id="closeCheckout" aria-label="Mbyll">✕</button></div>
+ <div class="modal checkout-modal" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="coTitle">
+ <div class="modal-head"><h3 id="coTitle">Finalizo porosinë</h3><button class="icon-btn" id="closeCheckout" aria-label="Mbyll">✕</button></div>
  <div class="modal-body">
-  <div class="checkout-steps"><div class="step active"><span>1</span> Shporta</div><div class="step-line"></div><div class="step active"><span>2</span> Të dhënat</div><div class="step-line"></div><div class="step"><span>3</span> Konfirmimi</div></div>
-  
-  <div class="checkout-form">
-  <div class="checkout-notice" style="background:rgba(232,198,122,0.1);border:1px solid rgba(232,198,122,0.2);border-radius:12px;padding:12px;margin-bottom:16px;">
-    <strong>⚡ Checkout i shpejtë:</strong> Mund të vazhdoni si vizitor pa llogari
-    <div style="margin-top:8px;display:flex;gap:8px;">
-      <button class="btn btn-sm btn-outline" id="guestCheckoutBtn">Vazhdo si vizitor →</button>
-      <button class="btn btn-sm btn-gold" id="useSavedAddressBtn" style="display:none;">📍 Përdor adresën e ruajtur</button>
+  <div class="checkout-form co-form">
+   <div class="co-eta"><span class="co-eta-ic">⚡</span><div><strong data-tpl="Dorëzim brenda {minutes} minutash">Dorëzim brenda 30 minutash</strong><small data-tpl="Në {city} · pagesa në dorë">Në Pejë · pagesa në dorë</small></div></div>
+
+   <fieldset class="co-block">
+    <legend>Kontakti</legend>
+    <div class="form-group"><label for="coName">Emri dhe mbiemri</label><input id="coName" class="input" placeholder="Filan Fisteku" required autocomplete="name"></div>
+    <div class="form-row">
+     <div class="form-group"><label for="coPhone">Telefoni</label><input id="coPhone" class="input" type="tel" placeholder="+383 49 123 456" required autocomplete="tel" inputmode="tel"></div>
+     <div class="form-group"><label for="coEmail">Email</label><input id="coEmail" class="input" type="email" placeholder="emri@email.com" required autocomplete="email"></div>
     </div>
-  </div>
+   </fieldset>
 
-  <div class="form-row"><div class="form-group"><label>Emri dhe Mbiemri *</label><input id="coName" class="input" placeholder="Filan Fisteku" required autocomplete="name"></div><div class="form-group"><label>Telefoni * (obligativ)</label><input id="coPhone" class="input" type="tel" placeholder="+383 49 123 456" required autocomplete="tel"></div></div>
-  <div class="form-row"><div class="form-group"><label>Email * (korrekt)</label><input id="coEmail" class="input" type="email" placeholder="emri@email.com" required autocomplete="email"></div><div class="form-group"><label>Qyteti</label><select id="coCity" class="input"><option value="peje">Pejë</option><option value="prishtine" disabled>Prishtinë - Coming Soon</option></select></div></div>
-  <div class="form-group"><label>Adresa e plotë * (obligative)</label><input id="coAddress" class="input" placeholder="Rruga, numri, lagjja, qyteti" required autocomplete="street-address"><small class="muted">Shkruaj adresën e saktë për dërgesë</small></div>
-  <div class="form-group" style="display:flex;gap:12px;align-items:center;"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="saveAddressCheck"> <span>💾 Ruaj adresën për herën tjetër</span></label></div>
-  <div class="form-group"><label>Shënime (opsionale)</label><textarea id="coNotes" class="input" style="height:70px" placeholder="P.sh. Kati 2, dera majtas, telefononi para se të vini..."></textarea></div>
-  <div class="form-group"><label>🎁 Mesazh dhurate (opsionale)</label><textarea id="coGiftMsg" class="input" style="height:60px" placeholder="Shkruaj mesazhin për dhuratë..." maxlength="200"></textarea><div id="giftMsgPreview" style="margin-top:8px;"></div></div>
-  
-  <div class="checkout-summary" id="checkoutSummary"></div>
-  
-  <div class="checkout-notice">
-   <strong>📞 Procesi:</strong> Pas porosisë, ne ju telefonojmë për konfirmim. Porosia ka ID unike për tracking.
-   <br><span class="muted small">Pagesa bëhet me para në dorë ose online • Dërgesë e shpejtë • Tracking real-time</span>
-  </div>
+   <fieldset class="co-block">
+    <legend>Dorëzimi</legend>
+    <div class="form-group"><label for="coCity">Qyteti</label><select id="coCity" class="input"></select></div>
+    <div class="co-geo" id="coGeo">
+     <button type="button" class="co-geo-btn" id="coLocBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg><span>Përdor lokacionin tim</span></button>
+     <div class="co-geo-status" id="coGeoStatus" role="status">Lejo lokacionin që korrieri ta gjejë më shpejt adresën tënde.</div>
+    </div>
+    <div class="form-group"><label for="coAddress">Adresa</label><input id="coAddress" class="input" placeholder="Rruga, numri, lagjja" required autocomplete="street-address"></div>
+    <div class="form-group"><label for="coNotes">Shënim për korrierin <span class="muted">(opsionale)</span></label><textarea id="coNotes" class="input" style="height:64px" placeholder="P.sh. kati 2, dera majtas"></textarea></div>
+    <label class="co-check"><input type="checkbox" id="saveAddressCheck"> <span>Ruaj adresën për herën tjetër</span></label>
+   </fieldset>
 
-  <button class="btn btn-gold full" id="placeOrderBtn" style="height:52px;font-size:15px">Konfirmo Porosinë • Paguaj →</button>
-  <p class="muted small" style="text-align:center;margin-top:8px">Duke porositur, pranon kushtet e dërgesës • <a href="/privacy.html">Privatësia</a> • <a href="/terms.html">Kushtet</a></p>
+   <div class="checkout-summary" id="checkoutSummary"></div>
+
+   <button class="btn btn-gold full co-submit" id="placeOrderBtn">Konfirmo porosinë</button>
+   <p class="co-legal">Pagesa bëhet në dorë kur e merr porosinë. Duke porositur pranon <a href="/terms.html">kushtet</a> dhe <a href="/privacy.html">privatësinë</a>.</p>
+
+   <div hidden>
+    <button type="button" id="guestCheckoutBtn"></button><button type="button" id="useSavedAddressBtn"></button>
+    <textarea id="coGiftMsg"></textarea><div id="giftMsgPreview"></div>
+   </div>
   </div>
  </div>
  </div>
 
- <!-- ORDER TRACKING MODAL - ENHANCED 100K -->
+ <!-- SUKSES -->
+ <div class="modal-backdrop" id="successBackdrop"></div>
+ <div class="modal success-modal" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+  <div class="modal-body success-body">
+   <svg class="success-check" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M14 27l8 8 16-17"/></svg>
+   <h3 id="successTitle">Porosia u pranua!</h3>
+   <p id="successMsg"></p>
+   <div class="success-id" id="successId"></div>
+   <div class="success-actions"><button type="button" class="btn btn-gold full" id="successTrack">Gjurmo porosinë</button><button type="button" class="btn btn-outline full" id="successClose">Vazhdo blerjen</button></div>
+  </div>
+ </div>
+
+  <!-- ORDER TRACKING MODAL - ENHANCED 100K -->
  <div class="modal-backdrop" id="trackingBackdrop"></div>
  <div class="modal tracking-modal" id="trackingModal">
  <div class="modal-head"><h3>📦 Gjurmo Porosinë</h3><button class="icon-btn" id="closeTracking" aria-label="Mbyll">✕</button></div>
@@ -335,6 +340,14 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
    </div>
  </div>
 
+ <div class="mini-cart" id="miniCart" hidden>
+  <button type="button" id="miniCartBtn" aria-label="Hap shportën">
+   <span class="mc-left"><span class="mc-count" id="mcCount">0</span><span class="mc-label">Shporta</span></span>
+   <span class="mc-total" id="mcTotal">0.00€</span>
+   <span class="mc-cta">Shiko →</span>
+  </button>
+ </div>
+
  <div class="toast-stack" id="toastStack"></div>
 
 </div>
@@ -342,12 +355,14 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
 <script src="js/features-100k.js?v=11-super-huge"></script>
 <script src="js/pwa.js?v=11-super-huge"></script>
 <script src="js/home-defaults.js?v=1"></script>
-<script src="js/site-render.js?v=1"></script>
+<script src="js/cities.js?v=1"></script>
+<script src="js/site-render.js?v=2"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=13"></script>
+<script type="module" src="js/app.js?v=14"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/auto-bg.js?v=1"></script>
 <script src="js/home.js?v=3"></script>
+<script src="js/shop-ux.js?v=2"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>

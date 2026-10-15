@@ -21,12 +21,12 @@ TEL = '+38348588886'
 
 # slug, id i kategorisë, titulli, përshkrimi, foto
 CATS = [
-    ('alkoholi', 'alkool', 'Alkool Premium', "Grey Goose, Jack Daniel's dhe marka të tjera botërore. Dorëzim brenda 30 minutash në Pejë.", 'images/hero-alcohol-variety-1200w.webp'),
-    ('cigare', 'cigare', 'Cigare & Duhan', 'Puro, Golden Eagle, OCB dhe marka të njohura. Dorëzim brenda 30 minutash në Pejë.', 'images/hero-puro-tobacco-1200w.webp'),
-    ('buldak', 'bulldak', 'Buldak & Ice Cups', 'Noodles pikante koreane Buldak dhe akullore Ice Cups. Dorëzim brenda 30 minutash në Pejë.', 'images/hero-buldak-ice-1200w.webp'),
-    ('pije', 'pije-tonike', 'Pije & Energjike', 'Red Bull dhe pije të tjera të njohura. Dorëzim brenda 30 minutash në Pejë.', 'images/products/redbull-250ml.webp'),
-    ('embelsira', 'cokollata-embelsira', 'Çokollata & Ëmbëlsira', 'Lindt, Ferrero, Kinder dhe më shumë. Dorëzim brenda 30 minutash në Pejë.', 'images/products/lindt-lindor-dark-200g.webp'),
-    ('ushqime', 'ushqime-pije', 'Ushqime & Snacks', 'Snacks dhe ushqime të importuara. Dorëzim brenda 30 minutash në Pejë.', 'images/hero-premium-bag-1200w.webp'),
+    ('alkoholi', 'alkool', 'Alkool Premium', "Grey Goose, Jack Daniel's dhe marka të tjera botërore. Dorëzim brenda {minutes} minutash në {city}.", 'images/hero-alcohol-variety-1200w.webp'),
+    ('cigare', 'cigare', 'Cigare & Duhan', 'Puro, Golden Eagle, OCB dhe marka të njohura. Dorëzim brenda {minutes} minutash në {city}.', 'images/hero-puro-tobacco-1200w.webp'),
+    ('buldak', 'bulldak', 'Buldak & Ice Cups', 'Noodles pikante koreane Buldak dhe akullore Ice Cups. Dorëzim brenda {minutes} minutash në {city}.', 'images/hero-buldak-ice-1200w.webp'),
+    ('pije', 'pije-tonike', 'Pije & Energjike', 'Red Bull dhe pije të tjera të njohura. Dorëzim brenda {minutes} minutash në {city}.', 'images/products/redbull-250ml.webp'),
+    ('embelsira', 'cokollata-embelsira', 'Çokollata & Ëmbëlsira', 'Lindt, Ferrero, Kinder dhe më shumë. Dorëzim brenda {minutes} minutash në {city}.', 'images/products/lindt-lindor-dark-200g.webp'),
+    ('ushqime', 'ushqime-pije', 'Ushqime & Snacks', 'Snacks dhe ushqime të importuara. Dorëzim brenda {minutes} minutash në {city}.', 'images/hero-premium-bag-1200w.webp'),
 ]
 
 
@@ -94,6 +94,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
+<link rel="stylesheet" href="css/shop.css?v=2">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -176,12 +177,14 @@ SCRIPTS = '''
 <script src="js/features-100k.js?v=11-super-huge"></script>
 <script src="js/pwa.js?v=11-super-huge"></script>
 <script src="js/home-defaults.js?v=1"></script>
-<script src="js/site-render.js?v=1"></script>
+<script src="js/cities.js?v=1"></script>
+<script src="js/site-render.js?v=2"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=13"></script>
+<script type="module" src="js/app.js?v=14"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/auto-bg.js?v=1"></script>
 <script src="js/home.js?v=3"></script>
+<script src="js/shop-ux.js?v=2"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>
@@ -226,7 +229,8 @@ def listing(slug, cat_id, title, desc, image):
     path = '/market' if is_market else f'/{slug}'
     page_title = 'Të gjitha produktet' if is_market else title
     seo_title = f'{page_title} në Pejë | Hana Free Shop'
-    seo_desc = 'Të gjitha produktet e Hana Free Shop në Pejë. Dorëzim brenda 30 minutash.' if is_market else desc
+    desc_f = (desc or '').replace('{minutes}', '30').replace('{city}', 'Pejë')
+    seo_desc = 'Të gjitha produktet e Hana Free Shop në Pejë. Dorëzim brenda 30 minutash.' if is_market else desc_f
     ld = json.dumps({
         "@context": "https://schema.org", "@type": "BreadcrumbList",
         "itemListElement": [
@@ -240,14 +244,16 @@ def listing(slug, cat_id, title, desc, image):
     chips = ['<a class="s-chip%s" href="/market">Të gjitha</a>' % (' active' if is_market else '')]
     for s_, _, t_, _, _ in CATS:
         chips.append('<a class="s-chip%s" href="/%s">%s</a>' % (' active' if s_ == slug else '', s_, t_))
-    intro = 'Zgjidh nga e gjithë gama e Hana Free Shop. Dorëzim brenda 30 minutash në Pejë.' if is_market else desc
+    intro = 'Zgjidh nga e gjithë gama e Hana Free Shop. Dorëzim brenda {minutes} minutash në {city}.' if is_market else desc
+    intro_tpl = intro
+    intro = intro.replace('{minutes}', '30').replace('{city}', 'Pejë')
     main = f''' {attrs}>
 {header('market' if is_market else 'c_' + slug)}
  <main class="s-main s-main-list">
   <section class="s-page-head">
    <nav class="s-crumbs" aria-label="Breadcrumb"><a href="/">Ballina</a><span>/</span><span>{page_title}</span></nav>
    <h1>{page_title}</h1>
-   <p>{intro}</p>
+   <p data-tpl="{intro_tpl}">{intro}</p>
   </section>
   <div class="s-chips" role="navigation" aria-label="Kategoritë">{''.join(chips)}</div>
   <div class="s-count" id="resultCount"></div>

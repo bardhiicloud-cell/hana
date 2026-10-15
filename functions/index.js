@@ -17,7 +17,7 @@ const RATE_LIMITS = {
   order: { max: 8, windowMs: 10 * 60 * 1000 },   // 8 porosi / 10 min / IP
   track: { max: 60, windowMs: 10 * 60 * 1000 },  // 60 kërkime / 10 min / IP
 };
-const ALLOWED_CITIES = ['peje'];
+const DEFAULT_CITIES = ['peje', 'prishtine'];
 const TIME_SLOT_FEES = { morning: 0, afternoon: 0, evening: 0, express: 2.99 };
 
 // Kuponat e njohur (si në storefront). Kuponat aktivë nga koleksioni `coupons` e mbishkruajnë këtë listë.
@@ -105,7 +105,12 @@ function validateInput(data) {
   if (!/^\+?[\d\s\-()]{8,20}$/.test(customer.phone)) throw new HttpsError('invalid-argument', 'Telefon i pavlefshëm.');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) throw new HttpsError('invalid-argument', 'Email i pavlefshëm.');
   if (customer.address.length < 8) throw new HttpsError('invalid-argument', 'Adresa është e detyrueshme.');
-  if (!ALLOWED_CITIES.includes(customer.city)) throw new HttpsError('invalid-argument', 'Dërgojmë vetëm në Pejë për momentin.');
+  if (!/^[a-z0-9-]{2,30}$/.test(customer.city)) throw new HttpsError('invalid-argument', 'Qytet i pavlefshëm.');
+  const lat = Number(c.location && c.location.lat), lng = Number(c.location && c.location.lng);
+  if (c.location && Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180) {
+    customer.location = { lat: +lat.toFixed(6), lng: +lng.toFixed(6), accuracy: Math.max(0, Math.round(Number(c.location.accuracy) || 0)) };
+    customer.mapsLink = `https://www.google.com/maps?q=${customer.location.lat},${customer.location.lng}`;
+  }
   return {
     merged,
     customer,
@@ -127,11 +132,16 @@ exports.placeOrder = onCall({ cors: true, timeoutSeconds: 30 }, async req => {
     db.collection('storeSettings').doc('main').get(),
   ]);
   const offers = offersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-  const dc = settingsSnap.exists ? settingsSnap.data().deliveryConfig || {} : {};
-  const flatFee = Number(dc.flatFee ?? 2);
-  const freeThreshold = Number(dc.freeThreshold ?? 25);
-  const minOrder = Number(dc.minOrder ?? 0);
-  const maxOrder = Number(dc.maxOrder ?? MAX_ORDER_TOTAL);
+  const settings = settingsSnap.exists ? settingsSnap.data() : {};
+  const dc = settings.deliveryConfig || {};
+  const cityList = Array.isArray(settings.cities) && settings.cities.length ? settings.cities : DEFAULT_CITIES.map(id => ({ id }));
+  const cityCfg = cityList.find(c => c.id === input.customer.city);
+  if (!cityCfg || cityCfg.active === false) throw new HttpsError('invalid-argument', 'Nuk dërgojmë ende në këtë qytet.');
+  const num = (a, b, d) => Number(a != null && a !== '' ? a : (b != null && b !== '' ? b : d));
+  const flatFee = num(cityCfg.flatFee, dc.flatFee, 2);
+  const freeThreshold = num(cityCfg.freeThreshold, dc.freeThreshold, 25);
+  const minOrder = num(cityCfg.minOrder, dc.minOrder, 0);
+  const maxOrder = num(dc.maxOrder, null, MAX_ORDER_TOTAL);
 
   // Kuponi: koleksioni `coupons` ka përparësi mbi listën e brendshme
   let coupon = null;

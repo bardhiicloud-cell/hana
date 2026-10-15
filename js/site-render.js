@@ -11,6 +11,11 @@
     const v = String(h == null ? '' : h).trim();
     return /^(\/|#|https?:\/\/|tel:|mailto:)/i.test(v) ? esc(v) : '#';
   };
+  // {city} {minutes} {hours} {freeThreshold} {phone} → vlerat e qytetit të zgjedhur
+  const fill = (s, ctx) => (typeof s === 'string' ? s.replace(/\{(\w+)\}/g, (m, k) => (ctx && ctx[k] != null ? String(ctx[k]) : m)) : s);
+  const deepFill = (o, ctx) => Array.isArray(o) ? o.map(x => deepFill(x, ctx))
+    : (o && typeof o === 'object') ? Object.fromEntries(Object.entries(o).map(([k, v]) => [k, deepFill(v, ctx)]))
+    : fill(o, ctx);
   const num = (v, d) => (Number.isFinite(Number(v)) ? Number(v) : d);
 
   const ICONS = {
@@ -35,7 +40,7 @@
   }
   const buildConfig = (defaults, settings) => merge(defaults, (settings && settings.homepage) || {});
 
-  function contactFrom(defaults, settings) {
+  function contactFrom(defaults, settings, city) {
     const d = (defaults && defaults.contact) || {};
     const s = settings || {};
     const ci = s.contactInfo || {};
@@ -47,8 +52,8 @@
       phone,
       tel: String(phone).replace(/[^\d+]/g, ''),
       whatsapp: wa,
-      address: ci.address || s.address || d.address || '',
-      hours,
+      address: city ? (city.address || (city.primary ? (ci.address || s.address || d.address || '') : '')) : (ci.address || s.address || d.address || ''),
+      hours: city && city.hours ? 'Çdo ditë ' + city.hours : hours,
       delivery: d.delivery || '',
       social: Object.assign({}, d.social || {}, s.socialLinks || {}, s.socialMedia && (s.socialMedia.facebook || s.socialMedia.instagram || s.socialMedia.tiktok) ? s.socialMedia : {})
     };
@@ -172,12 +177,15 @@
     if (typeof document === 'undefined') return;
     const defaults = root.HANA_HOME_DEFAULTS || {};
     const settings = data.settings || {};
-    const cfg = buildConfig(defaults, settings);
-    const contact = contactFrom(defaults, settings);
+    const HC = root.HanaCities;
+    const city = HC ? HC.current() : null;
+    const ctx = HC ? HC.ctx() : {};
+    const cfg = deepFill(buildConfig(defaults, settings), ctx);
+    const contact = deepFill(contactFrom(defaults, settings, city), ctx);
     root.HANA_HOMECFG = cfg;
 
     // hero: nga koleksioni `hero` (admin → Hero & Banners); nëse bosh, përdor default
-    const heroList = activeHero(data.hero && data.hero.length ? data.hero : defaults.hero);
+    const heroList = deepFill(activeHero(data.hero && data.hero.length ? data.hero : defaults.hero), ctx);
     const slidesEl = document.getElementById('heroSlides');
     if (slidesEl && heroList.length) {
       const h = F.hero(heroList);
@@ -209,6 +217,6 @@
     if (root.HanaHome) root.HanaHome.refresh();
   }
 
-  root.HanaSite = { F, ICONS, esc, href, merge, buildConfig, contactFrom, activeHero, apply };
+  root.HanaSite = { F, ICONS, esc, href, merge, fill, deepFill, buildConfig, contactFrom, activeHero, apply };
   if (typeof module !== 'undefined' && module.exports) module.exports = root.HanaSite;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,0 +1,144 @@
+/* HANA — përvoja e blerjes: shporta, checkout, suksesi, mini-shporta, zgjedhja e qytetit, lëvizje të këndshme */
+
+@keyframes s-up2{from{opacity:0;translate:0 14px}to{opacity:1;translate:0 0}}
+
+/* ---------- Parallax i lehtë në hero ---------- */
+.s-slide img{top:-6%;bottom:auto;height:112%;translate:0 var(--py,0px);will-change:translate}
+
+/* ---------- Karta: ngritje e lehtë dhe foto që zmadhohet ---------- */
+.product-card{transition:translate .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s}
+@media(hover:hover){
+  .product-card:hover{translate:0 -5px;box-shadow:0 18px 40px rgba(0,0,0,.5),0 0 0 1px rgba(232,198,122,.2)}
+  .product-card:hover .product-media img.main-image{scale:1.05}
+}
+.product-card .product-media img.main-image{transition:scale .6s cubic-bezier(.22,1,.36,1),opacity .5s}
+@keyframes s-heart{0%{scale:1}35%{scale:1.4}70%{scale:.92}100%{scale:1}}
+.wish-btn.active svg{animation:s-heart .45s ease}
+.wish-btn{transition:background .2s,color .2s,scale .15s}
+.wish-btn:active{scale:.9}
+
+/* ---------- Fluturimi në shportë ---------- */
+.cart-fly{position:fixed;z-index:200;width:64px;height:64px;border-radius:50%;overflow:hidden;pointer-events:none;opacity:0;
+  background:#16161c;border:2px solid var(--gold-300);box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.cart-fly.flying{opacity:1}
+.cart-fly img{width:100%;height:100%;object-fit:cover}
+#cartBtn,.bn-item[data-nav="shporta"]{transition:scale .2s}
+
+/* ---------- Shporta (drawer) ---------- */
+.drawer{transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.cart-drawer .drawer-head{padding:18px 18px 14px}
+.cart-drawer .cart-item{animation:s-up2 .45s cubic-bezier(.22,1,.36,1) both}
+.cart-drawer.open .cart-item:nth-child(1){animation-delay:.06s}
+.cart-drawer.open .cart-item:nth-child(2){animation-delay:.12s}
+.cart-drawer.open .cart-item:nth-child(3){animation-delay:.18s}
+.cart-drawer.open .cart-item:nth-child(n+4){animation-delay:.24s}
+.cart-contact{display:none}
+.premium-foot{gap:12px;padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(14,14,18,.6),#0c0c10)}
+.premium-foot .cart-totals-premium{display:grid;gap:7px;padding:0}
+.premium-foot .total-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-3)}
+.premium-foot .total-row strong{color:var(--text-1);font-weight:700}
+.premium-foot .total-row.grand{margin-top:4px;padding-top:10px;border-top:1px solid var(--border);font-size:17px;color:#fff}
+.premium-foot .total-row.grand strong{color:var(--gold-300);font-size:20px}
+.premium-checkout{height:54px;border-radius:16px;font-size:15px;font-weight:800;display:flex;justify-content:space-between;align-items:center;padding:0 22px}
+.secure-badges{display:flex;justify-content:center;gap:16px;font-size:11.5px;color:var(--text-4)}
+.delivery-30{margin:6px 0}
+
+/* ---------- Checkout & suksesi: sheet në celular ---------- */
+.checkout-modal{width:min(560px,94vw);max-height:92vh;display:flex;flex-direction:column}
+.checkout-modal .modal-body{overflow:auto;padding:16px 18px 24px}
+.success-modal{width:min(440px,94vw)}
+@media(max-width:700px){
+  .checkout-modal,.success-modal{left:0!important;right:0!important;top:auto!important;bottom:0!important;width:100%!important;max-width:none!important;border-radius:26px 26px 0 0;
+    translate:0 0;transform:translateY(105%)!important;opacity:1;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+  .checkout-modal.open,.success-modal.open{transform:translateY(0)!important}
+  .checkout-modal{max-height:94vh}
+}
+.co-form label{display:block;font-size:12px;font-weight:600;color:var(--text-3);margin-bottom:6px}
+.co-form .form-row{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:560px){.co-form .form-row{grid-template-columns:1fr 1fr}}
+.co-form .input{height:48px;border-radius:12px}
+.co-form textarea.input{height:auto;padding-top:12px}
+.co-eta{display:flex;gap:12px;align-items:center;padding:12px 14px;margin-bottom:14px;border-radius:14px;background:linear-gradient(135deg,rgba(232,198,122,.16),rgba(232,198,122,.04));border:1px solid rgba(232,198,122,.3)}
+.co-eta-ic{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#F6E3A8,#D4AF37);color:#1A1200;flex:none}
+.co-eta strong{display:block;font-size:14px}
+.co-eta small{display:block;font-size:12px;color:var(--text-3);margin-top:2px}
+.co-block{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;margin:0 0 14px;display:grid;gap:12px;min-width:0}
+.co-block legend{padding:0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-300);font-weight:800}
+.co-geo{display:grid;gap:8px}
+.co-geo-btn{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:12px;border:1px dashed var(--border-strong);background:rgba(232,198,122,.06);color:var(--gold-300);font-weight:700;font-size:14px;cursor:pointer;transition:background .2s,border-color .2s}
+.co-geo-btn:hover{background:rgba(232,198,122,.12);border-color:var(--gold-300)}
+.co-geo-btn:disabled{opacity:.6;cursor:progress}
+.co-geo-status{font-size:12.5px;line-height:1.5;color:var(--text-3)}
+.co-geo-status a{color:var(--gold-300);text-decoration:underline}
+.co-geo.ok .co-geo-btn{border-style:solid;border-color:rgba(134,239,172,.45);color:#86efac;background:rgba(134,239,172,.06)}
+.co-geo.ok .co-geo-status{color:#86efac}
+.co-geo.err .co-geo-status{color:#fca5a5}
+.co-geo.busy .co-geo-btn{animation:s-pulse 1.2s ease-in-out infinite}
+.geo-warn{color:#fbbf24}
+@keyframes s-pulse{50%{opacity:.55}}
+.co-check{display:flex!important;align-items:center;gap:10px;font-size:13px!important;color:var(--text-2)!important;cursor:pointer;margin:0!important}
+.co-check input{width:18px;height:18px;accent-color:var(--gold-400)}
+.co-form .checkout-summary{margin:4px 0 14px;font-size:13px}
+.co-submit{height:54px;border-radius:16px;font-size:15px;font-weight:800}
+.co-legal{font-size:11.5px;line-height:1.5;color:var(--text-4);text-align:center;margin-top:12px}
+.co-legal a{color:var(--text-3);text-decoration:underline}
+
+/* ---------- Ekrani i suksesit ---------- */
+.success-body{text-align:center;padding:34px 22px 26px;display:grid;gap:12px;justify-items:center}
+.success-body h3{font-family:'Cormorant Garamond',serif;font-size:30px}
+.success-body p{font-size:14px;line-height:1.6;color:var(--text-3);max-width:34ch}
+.success-check{width:88px;height:88px}
+.success-check circle{fill:none;stroke:var(--gold-300);stroke-width:2.5;stroke-dasharray:151;stroke-dashoffset:151}
+.success-check path{fill:none;stroke:var(--gold-300);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50}
+.success-check.draw circle{animation:s-draw .7s ease forwards}
+.success-check.draw path{animation:s-draw .45s .55s ease forwards}
+@keyframes s-draw{to{stroke-dashoffset:0}}
+.success-id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;letter-spacing:.08em;padding:9px 16px;border-radius:10px;background:var(--bg-2);border:1px solid var(--border)}
+.success-actions{display:grid;gap:10px;width:100%;margin-top:8px}
+
+/* ---------- Mini shporta ---------- */
+.mini-cart{position:fixed;left:12px;right:12px;bottom:calc(var(--bottom-nav-h) + 10px + env(safe-area-inset-bottom));z-index:60;display:flex;justify-content:center;pointer-events:none}
+.mini-cart[hidden]{display:none!important}
+.mini-cart button{pointer-events:auto;width:min(560px,100%);display:flex;align-items:center;justify-content:space-between;gap:12px;height:58px;padding:0 9px 0 10px;border-radius:18px;
+  border:1px solid rgba(232,198,122,.6);background:linear-gradient(135deg,#F6E3A8,#D4AF37 60%,#B8962E);color:#1A1200;font-weight:800;font-size:14px;cursor:pointer;
+  box-shadow:0 16px 36px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.12) inset;animation:s-slideup .5s cubic-bezier(.22,1,.36,1)}
+.mc-left{display:flex;align-items:center;gap:10px}
+.mc-count{display:grid;place-items:center;min-width:36px;height:36px;border-radius:50%;background:#1A1200;color:var(--gold-300);font-size:14px}
+.mc-total{font-size:17px}
+.mc-cta{background:#1A1200;color:var(--gold-300);padding:0 18px;height:42px;display:flex;align-items:center;border-radius:13px;font-size:13px}
+.mini-cart.bump button{animation:s-bump .38s ease}
+@keyframes s-slideup{from{translate:0 34px;opacity:0}to{translate:0 0;opacity:1}}
+@keyframes s-bump{0%{scale:1}40%{scale:1.035}100%{scale:1}}
+@media(min-width:1000px){.mini-cart{left:auto;right:28px;bottom:28px;justify-content:flex-end}.mini-cart button{width:350px}}
+body:has(.drawer.open) .mini-cart,body:has(.modal.open) .mini-cart,body:has(.search-overlay.open) .mini-cart,body:has(.location-modal.open) .mini-cart{display:none}
+body:has(.mini-cart:not([hidden])) .toast-stack{bottom:calc(var(--bottom-nav-h) + 84px + env(safe-area-inset-bottom))}
+@media(min-width:1000px){body:has(.mini-cart:not([hidden])) .toast-stack{bottom:96px}}
+
+/* ---------- Zgjedhja e qytetit ---------- */
+.loc-option{min-height:78px;text-align:left}
+.loc-option .loc-opt-text span{white-space:normal}
+.loc-gps{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:50px;border-radius:14px;border:1px dashed var(--border-strong);background:rgba(232,198,122,.06);color:var(--gold-300);font-weight:700;font-size:14px;cursor:pointer;transition:background .2s,border-color .2s}
+.loc-gps:hover{background:rgba(232,198,122,.12);border-color:var(--gold-300)}
+.loc-note{min-height:18px;font-size:12px;line-height:1.5;color:var(--text-3);text-align:center}
+.location-modal.open .loc-option{animation:s-up2 .5s cubic-bezier(.22,1,.36,1) both}
+.location-modal.open .loc-option:nth-child(2){animation-delay:.08s}
+.location-modal.open .loc-option:nth-child(3){animation-delay:.16s}
+
+/* ---------- Ripple ---------- */
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.32);transform:scale(0);animation:s-rip .6s ease-out forwards;pointer-events:none}
+@keyframes s-rip{to{transform:scale(1);opacity:0}}
+
+@media(prefers-reduced-motion:reduce){
+  .cart-drawer .cart-item,.location-modal.open .loc-option,.mini-cart button,.wish-btn.active svg,.co-geo.busy .co-geo-btn{animation:none!important}
+  .s-slide img{translate:none}
+}
+
+/* ---------- Cookie banner kompakt (nuk mbulon shportën) ---------- */
+#cookieBanner{left:12px!important;right:12px!important;bottom:calc(var(--bottom-nav-h) + 8px + env(safe-area-inset-bottom))!important;
+  border:1px solid var(--border-strong)!important;border-radius:16px!important;padding:12px 14px!important;z-index:61!important;gap:10px!important;
+  box-shadow:0 14px 40px rgba(0,0,0,.55);backdrop-filter:blur(14px);background:rgba(18,18,24,.94)!important}
+#cookieBanner>div:first-child{font-size:12px!important;line-height:1.45}
+@media(min-width:1000px){#cookieBanner{right:auto!important;left:20px!important;bottom:20px!important;max-width:460px}}
+.mini-cart{bottom:calc(var(--bottom-nav-h) + 10px + var(--ck,0px) + env(safe-area-inset-bottom))}
+@media(min-width:1000px){.mini-cart{bottom:28px}}
+body:has(.mini-cart:not([hidden])) .toast-stack{bottom:calc(var(--bottom-nav-h) + 84px + var(--ck,0px) + env(safe-area-inset-bottom))}

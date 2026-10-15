@@ -54,59 +54,104 @@ function toast(msg, type='default'){
 }
 
 // LOCATION SELECTOR - SUPER PROFESSIONAL ENTRY
+const cityName = (id=currentCity) => (window.HanaCities ? window.HanaCities.name(id) : id);
+const PIN_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>';
+
+function populateCitySelect(){
+ const sel = $('#coCity');
+ if(!sel || !window.HanaCities) return;
+ sel.innerHTML = window.HanaCities.list().map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+ sel.value = currentCity;
+ if(!sel.dataset.bound){
+  sel.dataset.bound = '1';
+  sel.addEventListener('change', ()=>setCity(sel.value, {silent:true}));
+ }
+}
+
+function refreshCityUI(){
+ const n = cityName();
+ if($('#currentCity')) $('#currentCity').textContent = n;
+ if($('#cartCity')) $('#cartCity').textContent = n;
+ $$('.cart-city-name').forEach(el=>el.textContent = n);
+ if(window.HanaCities) window.HanaCities.fillDom();
+ populateCitySelect();
+ if(typeof applyHomeContent==='function'){
+  applyHomeContent();
+  renderCategories(); renderProducts(); renderPopularGrid();
+ }
+ renderCartDrawer();
+ updateTotalsUI();
+}
+
+function setCity(id, opts={}){
+ if(!window.HanaCities || !window.HanaCities.get(id)) return;
+ currentCity = id;
+ window.HanaCities.set(id);
+ try{ localStorage.setItem(LS_LOCATION_CITY, id); }catch{}
+ refreshCityUI();
+}
+
 function initLocation(){
  const modal = $('#locationModal');
  const backdrop = $('#locationBackdrop');
- const cityDisplay = $('#currentCity');
- const hasSelected = localStorage.getItem(LS_LOCATION);
+ const optsEl = $('#locOptions');
+ const note = $('#locNote');
+ if(!modal || !optsEl || !window.HanaCities) return;
+ let required = false;
 
- function openLocation(){
- modal?.classList.add('open');
- backdrop?.classList.add('open');
- modal?.setAttribute('aria-hidden','false');
- document.body.style.overflow='hidden';
- }
- function closeLocation(){
- modal?.classList.remove('open');
- backdrop?.classList.remove('open');
- modal?.setAttribute('aria-hidden','true');
- document.body.style.overflow='';
- localStorage.setItem(LS_LOCATION,'true');
- }
+ const render = ()=>{
+  optsEl.innerHTML = window.HanaCities.list().map(c=>`<button type="button" class="loc-option ${c.id===currentCity?'active':''}" data-city="${c.id}">
+   <div class="loc-opt-icon">${PIN_SVG}</div>
+   <div class="loc-opt-text"><strong>${c.name}</strong><span>${[c.address || (c.primary ? (STORE_SETTINGS?.contactInfo?.address || STORE_SETTINGS?.address || 'General Wesley Clark, Pejë') : ''), `Dorëzim ~${c.minutes} min`].filter(Boolean).join(' • ')}</span></div>
+   <div class="loc-opt-check">✓</div></button>`).join('');
+ };
+ const open = req=>{
+  required = !!req;
+  render();
+  if(note) note.textContent = '';
+  modal.classList.add('open'); backdrop?.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  optsEl.querySelector('.loc-option')?.focus();
+ };
+ const close = ()=>{
+  modal.classList.remove('open'); backdrop?.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+  try{ localStorage.setItem(LS_LOCATION,'true'); }catch{}
+ };
 
- // Show once on entry if not selected - for testing ?fresh forces open
- const urlParams = new URLSearchParams(location.search);
- const forceFresh = urlParams.has('fresh') || urlParams.has('test');
- if(forceFresh){
-  localStorage.removeItem(LS_LOCATION);
-  setTimeout(openLocation, 600);
- } else if(!hasSelected){
-  localStorage.setItem(LS_LOCATION,'true');
- }
-
- // City options
- $$('.loc-option').forEach(opt=>{
- opt.addEventListener('click', ()=>{
- if(opt.classList.contains('disabled')){
- toast('Prishtinë - Coming Soon! Vetëm Pejë është aktive', 'default');
- return;
- }
- $$('.loc-option').forEach(o=>o.classList.remove('active'));
- opt.classList.add('active');
- const city = opt.dataset.city;
- currentCity = city;
- localStorage.setItem(LS_LOCATION_CITY, city);
- if(cityDisplay) cityDisplay.textContent = city.charAt(0).toUpperCase()+city.slice(1);
- $('#locContinue').textContent = `Vazhdo me ${city.charAt(0).toUpperCase()+city.slice(1)} →`;
+ optsEl.addEventListener('click', e=>{
+  const b = e.target.closest('[data-city]');
+  if(!b) return;
+  setCity(b.dataset.city);
+  close();
+  toast(`Dërgesa në ${cityName()}`, 'gold');
  });
+ backdrop?.addEventListener('click', ()=>{ if(!required) close(); });
+ document.addEventListener('keydown', e=>{ if(e.key==='Escape' && modal.classList.contains('open') && !required) close(); });
+ const btn = $('#locationBtn');
+ btn?.addEventListener('click', ()=>open(false));
+ btn?.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); open(false); } });
+
+ $('#locGps')?.addEventListener('click', async()=>{
+  if(!window.HanaShopUX){ return; }
+  note.textContent = 'Duke kërkuar lokacionin…';
+  try{
+   const pos = await window.HanaShopUX.locate();
+   const near = window.HanaCities.nearest(pos.lat, pos.lng);
+   if(near && near.km <= 40){
+    setCity(near.city.id); close();
+    toast(`Zgjodhëm ${near.city.name} sipas lokacionit tënd`, 'gold');
+   } else {
+    note.textContent = 'Nuk po të gjejmë afër asnjë qyteti ku dërgojmë. Zgjidh njërin nga lista.';
+   }
+  }catch(err){ note.textContent = err.message || 'Nuk u mor lokacioni. Zgjidh qytetin nga lista.'; }
  });
 
- $('#locContinue')?.addEventListener('click', ()=>{
- closeLocation();
- toast(`Mirë se erdhe në Hana Free Shop - ${currentCity.toUpperCase()}`, 'gold');
- });
- backdrop?.addEventListener('click', closeLocation);
- $('#locationBtn')?.addEventListener('click', openLocation);
+ window.HANA_openLocation = open;
+ if(new URLSearchParams(location.search).has('fresh')) localStorage.removeItem(LS_LOCATION);
+ if(!localStorage.getItem(LS_LOCATION)) setTimeout(()=>open(true), 350);
 }
 
 // CART FLY ANIMATION - PROFESSIONAL
@@ -185,6 +230,15 @@ function toggleWishlist(id){
 const CAT_ALIAS = { alkoholi:'alkool', duhani:'cigare', buldak:'bulldak', pije:'pije-tonike', embelsira:'cokollata-embelsira', ushqime:'ushqime-pije' };
 const CAT_PATH = { 'alkool':'/alkoholi', 'cigare':'/cigare', 'bulldak':'/buldak', 'pije-tonike':'/pije', 'cokollata-embelsira':'/embelsira', 'ushqime-pije':'/ushqime' };
 const catHref = id => CAT_PATH[id] || `/market?cat=${encodeURIComponent(id)}`;
+
+function refreshCityTexts(){
+ const n = cityName();
+ if($('#currentCity')) $('#currentCity').textContent = n;
+ if($('#cartCity')) $('#cartCity').textContent = n;
+ $$('.cart-city-name').forEach(el=>el.textContent = n);
+ if(window.HanaCities) window.HanaCities.fillDom();
+ populateCitySelect();
+}
 
 function applyHomeContent(){
  try{
@@ -430,6 +484,10 @@ let discountPercent = 0;
 let discountFreeDelivery = false;
 
 function getDeliveryConfig(){
+  if(window.HanaCities && window.HanaCities.get(currentCity)){
+    const c = window.HanaCities.cfg(currentCity);
+    return { flatFee:c.flatFee, freeThreshold:c.freeThreshold, expressFee:0, minOrder:c.minOrder, maxOrder:c.maxOrder };
+  }
   // Secure: Use STORE_SETTINGS from CMS, not client-submitted total
   if(STORE_SETTINGS && STORE_SETTINGS.deliveryConfig){
     return {
@@ -458,7 +516,7 @@ function getDiscountCodes(){
   // In production, validate codes from Firestore offers collection securely
   const codes = {
     'HANA15':{percent:15,desc:'-15% zbritje'},
-    'PEJA':{freeDelivery:true,desc:'Dërgesë falas në Pejë'},
+    'PEJA':{freeDelivery:true,desc:'Dërgesë falas'},
     'HANA10':{percent:10,desc:'-10% zbritje'},
     'GOLDEN':{percent:20,desc:'-20% Golden'},
     'FREE':{freeDelivery:true,desc:'Dërgesë falas'}
@@ -543,13 +601,13 @@ function updateFreeShipping(){
  if(freeTop) freeTop.style.display='block';
  if(isFreeShipping){
  freeRemaining.textContent = '0.00 €';
- if(freeText) freeText.innerHTML = `🎉 <strong style="color:#6EE7B7">Keni dërgesë falas në Pejë!</strong>`;
+ if(freeText) freeText.innerHTML = `🎉 <strong style="color:#6EE7B7">Keni dërgesë falas në ${cityName()}!</strong>`;
  if(freePercent) freePercent.textContent = '100%';
  if(freeProgress) freeProgress.style.width = '100%';
  if(freeProgress) freeProgress.style.background = 'linear-gradient(90deg,#6EE7B7,#10B981)';
  }else{
  freeRemaining.textContent = `${remaining.toFixed(2)} €`;
- if(freeText) freeText.innerHTML = `Edhe <strong id="freeRemaining">${remaining.toFixed(2)} €</strong> për dërgesë falas në Pejë`;
+ if(freeText) freeText.innerHTML = `Edhe <strong id="freeRemaining">${remaining.toFixed(2)} €</strong> për dërgesë falas në ${cityName()}`;
  if(freePercent) freePercent.textContent = `${percent}%`;
  if(freeProgress) freeProgress.style.width = `${percent}%`;
  if(freeProgress) freeProgress.style.background = 'linear-gradient(90deg,#E8C67A,#D4AF37,#B8962E)';
@@ -620,14 +678,14 @@ function updateTotalsUI(){
  const count = cartCount();
  countEl.textContent = `${count} ${count===1?'artikull':'artikuj'}`;
  }
- cityEls.forEach(el=>el.textContent = currentCity.charAt(0).toUpperCase()+currentCity.slice(1));
+ cityEls.forEach(el=>el.textContent = cityName());
  
  const summary = $('#checkoutSummary');
  if(summary && cart.length>0){
  summary.innerHTML = `
  <div><span>Nëntotali (${cartCount()} artikuj)</span><span>${formatPrice(subtotal)}</span></div>
  ${discountAmount>0?`<div><span>Zbritja ${discountCode} (-${discountPercent}%)</span><span style="color:#6EE7B7">-${formatPrice(discountAmount)}</span></div>`:''}
- <div><span>Dërgesa në ${currentCity}</span><span>${delivery===0?'Falas':formatPrice(delivery)}</span></div>
+ <div><span>Dërgesa në ${cityName()}</span><span>${delivery===0?'Falas':formatPrice(delivery)}</span></div>
  ${gift>0?`<div><span>Paketim Dhuratë</span><span>${formatPrice(gift)}</span></div>`:''}
  <div style="font-weight:800;border-top:1px solid rgba(255,255,255,.08);padding-top:10px;margin-top:6px;font-size:14px"><span>Gjithsej</span><span style="color:var(--gold-300);font-size:16px">${formatPrice(grand)}</span></div>
  `;
@@ -721,6 +779,7 @@ function updateCartUI(){
  });
  renderCartDrawer();
  syncCardControls();
+ if(window.HanaShopUX) window.HanaShopUX.cartChanged();
 }
 function updateWishlistUI(){
  const c = wishlist.length;
@@ -757,6 +816,9 @@ function openCheckout(){
  $('#checkoutBackdrop')?.classList.add('open');
  document.body.style.overflow='hidden';
  renderCartDrawer();
+ populateCitySelect();
+ if(window.HanaCities) window.HanaCities.fillDom();
+ if(window.HanaShopUX) window.HanaShopUX.resetGeo();
 }
 function closeCheckout(){ $('#checkoutModal')?.classList.remove('open'); $('#checkoutBackdrop')?.classList.remove('open'); document.body.style.overflow=''; }
 function openTracking(){ $('#trackingModal')?.classList.add('open'); $('#trackingBackdrop')?.classList.add('open'); }
@@ -946,7 +1008,8 @@ function initCheckout(){
  if(!name || name.length<3){ toast('Emri dhe Mbiemri obligativ • min 3 shkronja'); $('#coName').focus(); return; }
  if(!phone || phone.length<8){ toast('📞 Telefoni obligativ • +383 48 588 886 • p.sh. +383 49 123 456'); $('#coPhone').focus(); return; }
  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ toast('📧 Email korrekt obligativ • emri@email.com'); $('#coEmail').focus(); return; }
- if(!address || address.length<8){ toast('📍 Adresa e plotë obligative • Rruga, numri, lagjja'); $('#coAddress').focus(); return; }
+ const geo = window.HanaShopUX ? window.HanaShopUX.getLocation() : null;
+ if(!address || address.length<(geo?3:8)){ toast('📍 Shkruaj adresën (rruga, numri, lagjja)'); $('#coAddress').focus(); return; }
 
  const btn = $('#placeOrderBtn');
  btn.textContent = 'Duke procesuar...'; btn.disabled=true;
@@ -963,8 +1026,8 @@ function initCheckout(){
  giftWrapFee: totals.gift,
  giftNote,
  total: totals.grand,
- customer: { name, phone, email, address, city, notes },
- location: currentCity,
+ customer: { name, phone, email, address, city, notes, location: geo },
+ location: city,
  payment: 'cash_on_delivery',
  contactPhone: '+383 48 588 886'
  };
@@ -974,7 +1037,7 @@ function initCheckout(){
            if(isFirebaseEnabled()){
              const srv = await placeOrderServer({
                items: cart.map(c=>({id:c.id, qty:c.qty})),
-               customer: { name, phone, email, address, city, notes },
+               customer: { name, phone, email, address, city, notes, location: geo },
                giftWrap: giftWrapEnabled,
                giftNote: (typeof Features100K!=='undefined' && Features100K.giftMessage.get()) || giftNote,
                timeSlot: slot?.id || null,
@@ -1012,12 +1075,9 @@ function initCheckout(){
              if(typeof haptic!=='undefined') haptic('success');
              if(typeof Security!=='undefined') Security.logAudit('order_created', {orderId: created.id, total: totals.grand});
            }catch{}
- toast(`✅ Porosia ${created.id} u krijua! Total ${formatPrice(totals.grand)} • Ne do ju telefonojmë në ${phone} për konfirmim.`, 'gold');
- 
- // Reset discount/gift after order
- setTimeout(()=>{
+ // Reset + ekran suksesi
  closeCheckout();
- cart=[]; 
+ cart=[];
  giftWrapEnabled=false;
  const gw = $('#giftWrap'); if(gw) gw.checked=false;
  discountCode=null; discountPercent=0; discountFreeDelivery=false;
@@ -1026,17 +1086,20 @@ function initCheckout(){
  const gn = $('#giftNoteText'); if(gn) gn.value='';
  const gni = $('#giftNoteInput'); if(gni) gni.style.display='none';
  saveCart();
- openTracking();
- $('#trackingInput').value = created.id;
- renderTrackingResult(created.id);
- }, 900);
+ const cc = window.HanaCities ? window.HanaCities.get(city) : null;
+ if(window.HanaShopUX && window.HanaShopUX.orderSuccess){
+  window.HanaShopUX.orderSuccess({ id: created.id, total: totals.grand, phone, minutes: cc ? cc.minutes : 30, city: cityName(city) });
+ } else {
+  toast(`Porosia ${created.id} u krijua`, 'gold');
+  openTracking(); $('#trackingInput').value = created.id; renderTrackingResult(created.id);
+ }
 
  }catch(e){
  console.error(e);
  const userFacing = ['functions/failed-precondition','functions/invalid-argument','functions/resource-exhausted'].includes(e?.code);
  toast(userFacing && e.message ? e.message : 'Gabim gjatë krijimit të porosisë • Thirr +383 48 588 886');
  }finally{
- btn.textContent = 'Konfirmo Porosinë • Paguaj →'; btn.disabled=false;
+ btn.textContent = 'Konfirmo porosinë'; btn.disabled=false;
  }
  });
 }
@@ -1383,8 +1446,6 @@ async function init(){
   loadState();
   updateCartUI();
   updateWishlistUI();
-  if($('#currentCity')) $('#currentCity').textContent = currentCity.charAt(0).toUpperCase()+currentCity.slice(1);
-  if($('#cartCity')) $('#cartCity').textContent = currentCity.charAt(0).toUpperCase()+currentCity.slice(1);
   await initFirebase();
  try{
  const [products, categories, promos, hero, brands, banners, offers, storeSettings, deliveryZones] = await Promise.all([
@@ -1442,8 +1503,10 @@ async function init(){
  const local = getLocalData();
  PRODUCTS = local.products; CATEGORIES = local.categories; PROMOS = local.promos; HERO_SLIDES = local.hero||[]; BRANDS = local.brands||[]; BANNERS = local.banners||[]; OFFERS = local.offers||[]; STORE_SETTINGS = local.storeSettings||null; DELIVERY_ZONES = local.deliveryZones||[];
  }
+ if(window.HanaCities){ window.HanaCities.setOverrides(STORE_SETTINGS && STORE_SETTINGS.cities, STORE_SETTINGS && STORE_SETTINGS.deliveryConfig); const cc = window.HanaCities.current(); if(cc) currentCity = cc.id; }
  setupPageContext();
  applyHomeContent();
+ refreshCityTexts();
  renderCategories();
  renderProducts();
  renderAlcoholGrid();
@@ -1488,16 +1551,16 @@ async function init(){
  });
  });
 
- // Vetëm Pejë aktive - Prishtinë Coming Soon - i u fshi nga sistemi
- $$('.loc-option[data-city="prishtine"]').forEach(opt=>{
- opt.addEventListener('click', e=>{
- e.preventDefault();
- toast('📍 Vetëm Pejë është aktive • Prishtinë - Coming Soon', 'default');
- });
- });
 
  console.log('[Hana Premium Fixed] App initialized - Super Huge Professional', {products:PRODUCTS.length, categories:CATEGORIES.length, city:currentCity, firebase:isFirebaseEnabled()});
 }
 
 document.addEventListener('DOMContentLoaded', init);
-window.HANA = { getProducts:()=>PRODUCTS, getCart:()=>cart };
+window.HANA = {
+  getProducts:()=>PRODUCTS, getCart:()=>cart,
+  getCartSummary:()=>({ count:cartCount(), subtotal:cartSubtotal(), total:(typeof calculateTotals==='function'? calculateTotals().grand : cartSubtotal()) }),
+  openCart:()=>openCart(), closeCart:()=>closeCart(),
+  openTracking:(id)=>{ openTracking(); if(id){ const i=$('#trackingInput'); if(i) i.value=id; renderTrackingResult(id); } },
+  setCity:(id)=>setCity(id)
+};
+document.addEventListener('hana:city', ()=>{ /* sinkronizim nga skeda tjetër */ });
