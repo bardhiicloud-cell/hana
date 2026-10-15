@@ -28,8 +28,8 @@
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=9">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Ballina", "item": "https://hanafreeshop.com/"}, {"@type": "ListItem", "position": 2, "name": "Buldak & Ice Cups", "item": "https://hanafreeshop.com/buldak"}]}</script>
+<link rel="stylesheet" href="css/shop.css?v=10">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Ballina", "item": "https://hanafreeshop.com/"}, {"@type": "ListItem", "position": 2, "name": "Market", "item": "https://hanafreeshop.com/market"}, {"@type": "ListItem", "position": 3, "name": "Buldak & Ice Cups", "item": "https://hanafreeshop.com/buldak"}]}</script>
 <script type="importmap">
 {"imports":{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -76,12 +76,9 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
   </div>
   <nav class="desktop-nav" aria-label="Navigimi kryesor">
   <a href="/" >Ballina</a>
-  <a href="/alkoholi" >Alkool</a>
-  <a href="/cigare" >Cigare</a>
-  <a href="/buldak" class="active">Buldak</a>
-  <a href="/pije" >Pije</a>
-  <a href="/embelsira" >Ëmbëlsira</a>
-  <a href="/market" >Të gjitha</a>
+  <a href="/market" class="active">Market</a>
+  <a href="/rreth-nesh" >Rreth nesh</a>
+  <a href="/kontakt" >Kontakt</a>
  </nav>
   <div class="header-actions">
   <button class="icon-btn" id="wishlistBtn" aria-label="Lista e dëshirave">
@@ -107,7 +104,7 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
 
  <main class="s-main s-main-list" id="main-content">
   <section class="s-page-head">
-   <nav class="s-crumbs" aria-label="Breadcrumb"><a href="/">Ballina</a><span>/</span><span>Buldak & Ice Cups</span></nav>
+   <nav class="s-crumbs" aria-label="Breadcrumb"><a href="/">Ballina</a><span>/</span><a href="/market">Market</a><span>/</span><span>Buldak & Ice Cups</span></nav>
    <h1>Buldak & Ice Cups</h1>
    <p data-tpl="Noodles pikante koreane Buldak dhe akullore Ice Cups. Dorëzim brenda {minutes} minutash në {city}.">Noodles pikante koreane Buldak dhe akullore Ice Cups. Dorëzim brenda 30 minutash në Pejë.</p>
   </section>
@@ -118,11 +115,11 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
   <div class="empty-state" id="emptyState" style="display:none"><h3>Nuk u gjet asnjë produkt</h3><p>Provo një kategori tjetër.</p><a class="s-btn s-btn-gold" href="/market">Të gjitha produktet</a></div>
  </main>
 
- <footer class="s-footer" id="siteFooter"><div class="s-footer-grid"><div><div class="s-footer-brand">HANA <span>FREE SHOP</span></div><p>General Wesley Clark, Pejë<br>Çdo ditë 08:00–22:00<br>Dorëzim brenda 30 minutash</p><p><a href="tel:+38348588886">+383 48 588 886</a> · <a href="https://wa.me/38348588886" rel="noopener" target="_blank">WhatsApp</a></p></div><div><h4>Kategoritë</h4><a href="/alkoholi">Alkool Premium</a><a href="/cigare">Cigare &amp; Duhan</a><a href="/buldak">Buldak &amp; Ice Cups</a><a href="/pije">Pije &amp; Energjike</a><a href="/embelsira">Çokollata &amp; Ëmbëlsira</a><a href="/ushqime">Ushqime &amp; Snacks</a></div><div><h4>Informacion</h4><a href="/shipping.html">Dërgesa</a><a href="/returns.html">Kthimet</a><a href="/terms.html">Kushtet</a><a href="/privacy.html">Privatësia</a></div></div><div class="s-footer-bottom">© 2026 Hana Free Shop. Të gjitha të drejtat e rezervuara.</div></footer>
+ <footer class="s-footer" id="siteFooter"><div class="s-footer-grid"><div><div class="s-footer-brand">HANA <span>FREE SHOP</span></div><p>General Wesley Clark, Pejë<br>Çdo ditë 08:00–22:00<br>Dorëzim brenda 30 minutash</p><p><a href="tel:+38348588886">+383 48 588 886</a> · <a href="https://wa.me/38348588886" rel="noopener" target="_blank">WhatsApp</a></p></div><div><h4>Kategoritë</h4><a href="/alkoholi">Alkool Premium</a><a href="/cigare">Cigare &amp; Duhan</a><a href="/buldak">Buldak &amp; Ice Cups</a><a href="/pije">Pije &amp; Energjike</a><a href="/embelsira">Çokollata &amp; Ëmbëlsira</a><a href="/ushqime">Ushqime &amp; Snacks</a></div><div><h4>Informacion</h4><a href="/rreth-nesh">Rreth nesh</a><a href="/kontakt">Kontakt</a><a href="/shipping.html">Dërgesa</a><a href="/returns.html">Kthimet</a><a href="/terms.html">Kushtet</a><a href="/privacy.html">Privatësia</a></div></div><div class="s-footer-bottom">© 2026 Hana Free Shop. Të gjitha të drejtat e rezervuara.</div></footer>
 
  <nav class="bottom-nav" aria-label="Navigimi mobile">
  <button class="bn-item active" data-nav="ballina" aria-label="Ballina"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11l9-8z"/></svg></span><span>Ballina</span></button>
- <button class="bn-item" data-nav="kategorite" aria-label="Kategoritë"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span>Kategoritë</span></button>
+ <button class="bn-item" data-nav="market" aria-label="Market"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span>Market</span></button>
  <button class="bn-item" data-nav="kerko" aria-label="Kërko"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg></span><span>Kërko</span></button>
  <button class="bn-item" data-nav="shporta" aria-label="Shporta"><span class="bn-icon cart-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h12l3 5v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7l3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg><span class="bn-badge" id="bnCartCount">0</span></span><span>Shporta</span></button>
  <button class="bn-item" data-nav="porosite" aria-label="Gjurmo porosinë"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><span>Porositë</span></button>
@@ -315,15 +312,15 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
 <script src="js/features-100k.js?v=11-super-huge"></script>
 <script src="js/pwa.js?v=11-super-huge"></script>
 <script src="js/home-defaults.js?v=1"></script>
-<script src="js/cities.js?v=1"></script>
-<script src="js/site-render.js?v=2"></script>
+<script src="js/cities.js?v=2"></script>
+<script src="js/site-render.js?v=3"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=19"></script>
+<script type="module" src="js/app.js?v=21"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
 <script src="js/auto-bg.js?v=2"></script>
 <script src="js/home.js?v=3"></script>
-<script src="js/shop-ux.js?v=4"></script>
+<script src="js/shop-ux.js?v=5"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>

@@ -102,7 +102,10 @@ function initLocation(){
  let required = false;
 
  const render = ()=>{
-  optsEl.innerHTML = window.HanaCities.list().map(c=>`<button type="button" class="loc-option ${c.id===currentCity?'active':''}" data-city="${c.id}">
+  optsEl.innerHTML = window.HanaCities.listAll().map(c=> c.active===false ? `<button type="button" class="loc-option disabled" data-soon="${c.id}" aria-label="${c.name} vjen së shpejti">
+   <div class="loc-opt-icon">${PIN_SVG}</div>
+   <div class="loc-opt-text"><strong>${c.name}</strong><span>Vjen së shpejti</span></div>
+   <span class="loc-badge soon">Së shpejti</span></button>` : `<button type="button" class="loc-option ${c.id===currentCity?'active':''}" data-city="${c.id}">
    <div class="loc-opt-icon">${PIN_SVG}</div>
    <div class="loc-opt-text"><strong>${c.name}</strong><span>${[c.address || (c.primary ? (STORE_SETTINGS?.contactInfo?.address || STORE_SETTINGS?.address || 'General Wesley Clark, Pejë') : ''), `Dorëzim ~${c.minutes} min`].filter(Boolean).join(' • ')}</span></div>
    <div class="loc-opt-check">✓</div></button>`).join('');
@@ -124,6 +127,8 @@ function initLocation(){
  };
 
  optsEl.addEventListener('click', e=>{
+  const soon = e.target.closest('[data-soon]');
+  if(soon){ toast(`${window.HanaCities.name(soon.dataset.soon)} vjen së shpejti. Aktualisht dërgojmë në ${cityName()}.`); return; }
   const b = e.target.closest('[data-city]');
   if(!b) return;
   setCity(b.dataset.city);
@@ -141,8 +146,10 @@ function initLocation(){
   note.textContent = 'Duke kërkuar lokacionin…';
   try{
    const pos = await window.HanaShopUX.locate();
-   const near = window.HanaCities.nearest(pos.lat, pos.lng);
-   if(near && near.km <= 40){
+   const near = window.HanaCities.nearest(pos.lat, pos.lng, true);
+   if(near && near.km <= 40 && near.city.active===false){
+    note.textContent = `${near.city.name} vjen së shpejti. Aktualisht dërgojmë vetëm në ${window.HanaCities.list().map(c=>c.name).join(', ')}.`;
+   } else if(near && near.km <= 40){
     setCity(near.city.id); close();
     toast(`Zgjodhëm ${near.city.name} sipas lokacionit tënd`, 'gold');
    } else {
@@ -1221,7 +1228,7 @@ function initNavigation(){
  btn.classList.add('active');
  const onHome = (document.body.dataset.page||'home')==='home';
  if(nav==='ballina'){ if(onHome) window.scrollTo({top:0, behavior:'smooth'}); else location.href='/'; }
- else if(nav==='kategorite'){ if(onHome) $('#kategorite')?.scrollIntoView({behavior:'smooth'}); else location.href='/#kategorite'; }
+ else if(nav==='market'){ location.href='/market'; }
  else if(nav==='kerko') openSearch();
  else if(nav==='shporta') openCart();
  else if(nav==='porosite') openTrackingPanel();

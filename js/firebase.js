@@ -97,7 +97,7 @@ export const FALLBACK_STORE_SETTINGS = {
   mapLink:'https://maps.google.com/?q=Pejë+General+Wesley+Clark',
   phone:'+383 48 588 886',
   whatsapp:'+383 48 588 886',
-  email:'info@hanafreeshop.com',
+  email:'',
   socialLinks:{facebook:'', instagram:'', tiktok:''},
   openingHours:{
     monday:{open:'08:00', close:'22:00', closed:false},
@@ -117,7 +117,7 @@ export const FALLBACK_STORE_SETTINGS = {
   logo:'images/hero-premium-bag.jpg',
   favicon:'',
   theme:{primaryColor:'#D4AF37', secondaryColor:'#08080A', fontFamily:'Manrope'},
-  contactInfo:{phone:'+383 48 588 886', email:'info@hanafreeshop.com', address:'General Wesley Clark, Pejë'},
+  contactInfo:{phone:'+383 48 588 886', email:'', address:'General Wesley Clark, Pejë'},
   deliveryConfig:{flatFee:2.00, freeThreshold:25.00, expressFee:4.00, minOrder:0, maxOrder:500, pickupAvailable:true},
   paymentMethods:[{id:'cash', name:'Pagesë me para në dorë', description:'Paguani kur merrni porosinë', enabled:true, order:1}, {id:'online', name:'Pagesë online', description:'Paguani online me kartë', enabled:false, order:2}],
   taxConfig:{enabled:false, rate:0, inclusive:true},

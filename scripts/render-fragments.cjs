@@ -31,6 +31,9 @@ const out = {
   why: S.F.why(cfg.sections.why),
   cta: S.F.cta(cfg.sections.cta, contact),
   footer: S.F.footer(contact, cats),
+  pages: cfg.pages,
+  aboutBody: S.F.about(cfg.pages.about),
+  contactBody: S.F.contact(cfg.pages.contact, contact),
   order: Object.fromEntries(Object.entries(cfg.sections).map(([k, v]) => [k, v.order])),
 };
 process.stdout.write(JSON.stringify(out));

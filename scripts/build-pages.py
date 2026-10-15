@@ -94,7 +94,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=9">
+<link rel="stylesheet" href="css/shop.css?v=10">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -117,17 +117,14 @@ window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)
 
 NAV = '''<nav class="desktop-nav" aria-label="Navigimi kryesor">
   <a href="/" {home}>Ballina</a>
-  <a href="/alkoholi" {c_alkoholi}>Alkool</a>
-  <a href="/cigare" {c_cigare}>Cigare</a>
-  <a href="/buldak" {c_buldak}>Buldak</a>
-  <a href="/pije" {c_pije}>Pije</a>
-  <a href="/embelsira" {c_embelsira}>Ëmbëlsira</a>
-  <a href="/market" {market}>Të gjitha</a>
+  <a href="/market" {market}>Market</a>
+  <a href="/rreth-nesh" {about}>Rreth nesh</a>
+  <a href="/kontakt" {contact}>Kontakt</a>
  </nav>'''
 
 
 def header(active):
-    flags = {k: '' for k in ['home', 'market'] + ['c_' + c[0] for c in CATS]}
+    flags = {k: '' for k in ['home', 'market', 'about', 'contact']}
     if active in flags:
         flags[active] = 'class="active"'
     nav = NAV.format(**flags)
@@ -178,15 +175,15 @@ SCRIPTS = '''
 <script src="js/features-100k.js?v=11-super-huge"></script>
 <script src="js/pwa.js?v=11-super-huge"></script>
 <script src="js/home-defaults.js?v=1"></script>
-<script src="js/cities.js?v=1"></script>
-<script src="js/site-render.js?v=2"></script>
+<script src="js/cities.js?v=2"></script>
+<script src="js/site-render.js?v=3"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=19"></script>
+<script type="module" src="js/app.js?v=21"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
 <script src="js/auto-bg.js?v=2"></script>
 <script src="js/home.js?v=3"></script>
-<script src="js/shop-ux.js?v=4"></script>
+<script src="js/shop-ux.js?v=5"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>
@@ -237,7 +234,8 @@ def listing(slug, cat_id, title, desc, image):
         "@context": "https://schema.org", "@type": "BreadcrumbList",
         "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "Ballina", "item": SITE + '/'},
-            {"@type": "ListItem", "position": 2, "name": page_title, "item": SITE + path},
+            *([] if is_market else [{"@type": "ListItem", "position": 2, "name": "Market", "item": SITE + '/market'}]),
+            {"@type": "ListItem", "position": 2 if is_market else 3, "name": page_title, "item": SITE + path},
         ]}, ensure_ascii=False)
     attrs = 'data-cat="%s"' % cat_id if cat_id else ''
     page = 'market' if is_market else 'category'
@@ -250,10 +248,10 @@ def listing(slug, cat_id, title, desc, image):
     intro_tpl = intro
     intro = intro.replace('{minutes}', '30').replace('{city}', 'Pejë')
     main = f''' {attrs}>
-{header('market' if is_market else 'c_' + slug)}
+{header('market')}
  <main class="s-main s-main-list" id="main-content">
   <section class="s-page-head">
-   <nav class="s-crumbs" aria-label="Breadcrumb"><a href="/">Ballina</a><span>/</span><span>{page_title}</span></nav>
+   <nav class="s-crumbs" aria-label="Breadcrumb"><a href="/">Ballina</a><span>/</span>{'' if is_market else '<a href="/market">Market</a><span>/</span>'}<span>{page_title}</span></nav>
    <h1>{page_title}</h1>
    <p data-tpl="{intro_tpl}">{intro}</p>
   </section>
@@ -269,6 +267,29 @@ def listing(slug, cat_id, title, desc, image):
     return h + main
 
 
+def info_page(slug, kind, title, desc):
+    path = '/' + slug
+    pg = FRAG['pages'][kind]
+    intro_tpl = pg['intro']
+    intro = intro_tpl.replace('{city}', 'Pejë').replace('{minutes}', '30').replace('{hours}', '08:00–22:00')
+    body = FRAG['aboutBody'] if kind == 'about' else FRAG['contactBody']
+    h = head(f'{title} | Hana Free Shop', desc, path, 'images/hero-premium-bag-800w.webp', 'info')
+    main = f''' data-kind="{kind}">
+{header(kind)}
+ <main class="s-main s-main-list s-info" id="main-content">
+  <section class="s-page-head">
+   <nav class="s-crumbs" aria-label="Breadcrumb"><a href="/">Ballina</a><span>/</span><span>{title}</span></nav>
+   <h1 id="pageTitle">{pg['title']}</h1>
+   <p id="pageIntro">{intro}</p>
+  </section>
+  <div id="pageBody" data-kind="{kind}">{body}</div>
+ </main>
+{FOOTER}
+{OVERLAYS}
+{SCRIPTS}'''
+    return h + main
+
+
 if __name__ == '__main__':
     defaults = json.loads(read('src/home-defaults.json'))
     write('js/home-defaults.js', '// Gjeneruar nga scripts/build-pages.py nga src/home-defaults.json — mos e ndrysho me dorë\nwindow.HANA_HOME_DEFAULTS = ' + json.dumps(defaults, ensure_ascii=False) + ';\n')
@@ -277,7 +298,10 @@ if __name__ == '__main__':
     for slug, cid, title, desc, img in CATS:
         write(f'{slug}/index.html', listing(slug, cid, title, desc, img))
 
-    urls = [('/', '1.0', 'daily'), ('/market', '0.9', 'daily')] + [(f'/{c[0]}', '0.8', 'daily') for c in CATS]
+    write('rreth-nesh/index.html', info_page('rreth-nesh', 'about', 'Rreth nesh', 'Rreth Hana Free Shop: marka botërore në Pejë me dorëzim brenda 30 minutash, çdo ditë 08:00–22:00.'))
+    write('kontakt/index.html', info_page('kontakt', 'contact', 'Kontakt', 'Kontakti i Hana Free Shop në Pejë: telefon, WhatsApp, adresa dhe orari.'))
+
+    urls = [('/', '1.0', 'daily'), ('/market', '0.9', 'daily'), ('/rreth-nesh', '0.5', 'monthly'), ('/kontakt', '0.5', 'monthly')] + [(f'/{c[0]}', '0.8', 'daily') for c in CATS]
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for loc, pr, cf in urls:
         xml += f'  <url><loc>{SITE}{loc}</loc><changefreq>{cf}</changefreq><priority>{pr}</priority></url>\n'

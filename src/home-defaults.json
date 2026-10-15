@@ -217,13 +217,30 @@
     {
       "id": "prishtine",
       "name": "Prishtinë",
-      "active": true,
+      "active": false,
       "order": 2,
       "minutes": 30,
       "hours": "08:00–22:00",
       "address": "",
       "lat": 42.6629,
-      "lng": 21.1655
+      "lng": 21.1655,
+      "comingSoon": true
     }
-  ]
+  ],
+  "pages": {
+    "about": {
+      "title": "Rreth nesh",
+      "intro": "Hana Free Shop është dyqani yt me marka botërore në {city}, me dorëzim të shpejtë në derë.",
+      "body": [
+        "Hana Free Shop sjell në {city} markat që i njeh nga e gjithë bota: pije energjike, çokollata dhe ëmbëlsira, snacks, noodles koreane, alkool dhe cigare nga prodhues të njohur.",
+        "Ideja jonë është e thjeshtë: zgjedh produktet që të duhen, bën porosinë në disa sekonda dhe e merr brenda rreth {minutes} minutash. Paguan në dorë kur e merr porosinë, pa llogari dhe pa komplikime.",
+        "Çdo porosi konfirmohet me telefon dhe merr një ID unike, me të cilën mund ta ndjekësh në çdo kohë nga butoni \"Porositë\".",
+        "Jemi hapur çdo ditë {hours}. Për çdo pyetje na telefono ose na shkruaj në WhatsApp."
+      ]
+    },
+    "contact": {
+      "title": "Kontakt",
+      "intro": "Na gjen çdo ditë {hours}. Telefono, shkruaj në WhatsApp ose na vizito në dyqan."
+    }
+  }
 }

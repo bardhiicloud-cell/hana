@@ -14,6 +14,8 @@
     return merged.sort((a, b) => (a.order || 0) - (b.order || 0));
   }
   const list = () => all().filter(c => c.active !== false);
+  // aktivët + ata që shfaqen si 'Së shpejti'
+  const listAll = () => all().filter(c => c.active !== false || c.comingSoon);
   const get = id => all().find(c => c.id === id) || null;
   const name = id => (get(id) || {}).name || (id ? id.charAt(0).toUpperCase() + id.slice(1) : '');
 
@@ -51,9 +53,9 @@
     return 2 * R * Math.asin(Math.sqrt(a));
   }
   // qyteti aktiv më i afërt + distanca në km
-  function nearest(lat, lng) {
+  function nearest(lat, lng, includeSoon) {
     let best = null;
-    list().forEach(c => {
+    (includeSoon ? listAll() : list()).forEach(c => {
       if (typeof c.lat !== 'number' || typeof c.lng !== 'number') return;
       const d = distKm(lat, lng, c.lat, c.lng);
       if (!best || d < best.km) best = { city: c, km: d };
@@ -70,7 +72,7 @@
   }
 
   root.HanaCities = {
-    all, list, get, name, current, set, ctx, cfg, nearest, distKm, fillDom,
+    all, list, listAll, get, name, current, set, ctx, cfg, nearest, distKm, fillDom,
     setOverrides(arr, dc) { overrides = Array.isArray(arr) ? arr : null; deliveryCfg = dc || {}; }
   };
 })(window);

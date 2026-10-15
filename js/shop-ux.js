@@ -45,9 +45,10 @@
 
   function showGeo(l) {
     const HC = window.HanaCities;
-    const near = HC ? HC.nearest(l.lat, l.lng) : null;
+    const near = HC ? HC.nearest(l.lat, l.lng, true) : null;
     let extra = '';
-    if (near && near.km > 40) extra = ' <span class="geo-warn">Duket larg zonave tona (' + esc(near.city.name) + ' ~' + Math.round(near.km) + ' km).</span>';
+    if (near && near.km <= 40 && near.city.active === false) extra = ' <span class="geo-warn">' + esc(near.city.name) + ' vjen së shpejti; aktualisht dërgojmë vetëm në ' + esc(HC.list().map(c => c.name).join(', ')) + '.</span>';
+    else if (near && near.km > 40) extra = ' <span class="geo-warn">Duket larg zonave tona (' + esc(near.city.name) + ' ~' + Math.round(near.km) + ' km).</span>';
     setGeoStatus('Lokacioni u ruajt' + (l.accuracy ? ' (±' + l.accuracy + ' m)' : '') + '. <a href="' + mapsUrl(l) + '" target="_blank" rel="noopener">Shiko në hartë</a>.' + extra, 'ok');
     const btn = $('#coLocBtn span');
     if (btn) btn.textContent = 'Përditëso lokacionin';
@@ -171,7 +172,7 @@
 
   initParallax();
   const pg = document.body.dataset.page || 'home';
-  document.querySelectorAll('.bn-item').forEach(b => b.classList.toggle('active', b.dataset.nav === (pg === 'home' ? 'ballina' : 'kategorite')));
+  document.querySelectorAll('.bn-item').forEach(b => b.classList.toggle('active', b.dataset.nav === (pg === 'home' ? 'ballina' : (pg === 'market' || pg === 'category') ? 'market' : '-')));
   // mini shporta pas ngarkimit të shportës
   window.addEventListener('load', () => setTimeout(cartChanged, 600));
 })();

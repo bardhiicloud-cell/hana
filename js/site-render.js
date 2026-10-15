@@ -52,6 +52,8 @@
       phone,
       tel: String(phone).replace(/[^\d+]/g, ''),
       whatsapp: wa,
+      mapLink: s.mapLink || '',
+      email: s.email || (ci && ci.email) || '',
       address: city ? (city.address || (city.primary ? (ci.address || s.address || d.address || '') : '')) : (ci.address || s.address || d.address || ''),
       hours: city && city.hours ? 'Çdo ditë ' + city.hours : hours,
       delivery: d.delivery || '',
@@ -150,6 +152,23 @@
         (c.whatsapp ? '<a class="s-btn s-btn-ghost" href="https://wa.me/' + esc(c.whatsapp) + '" target="_blank" rel="noopener">WhatsApp</a>' : '') +
         '</div>';
     },
+    about(pg) {
+      return '<div class="s-prose">' + (pg.body || []).map(t => '<p>' + esc(t) + '</p>').join('') + '</div>';
+    },
+    contact(pg, c) {
+      const map = c.mapLink || (c.address ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(c.address + ', Kosovë') : '');
+      const card = (title, body) => '<div class="s-ccard"><h3>' + title + '</h3>' + body + '</div>';
+      const social = Object.entries(c.social || {}).filter(([, v]) => v && /^https?:\/\//.test(v))
+        .map(([k, v]) => '<a href="' + esc(v) + '" target="_blank" rel="noopener">' + esc(k.charAt(0).toUpperCase() + k.slice(1)) + '</a>').join(' · ');
+      return '<div class="s-contact-grid">' +
+        (c.phone ? card('Telefon', '<p><a class="s-clink" href="tel:' + esc(c.tel) + '">' + esc(c.phone) + '</a></p><small>Thirr për porosi ose pyetje</small>') : '') +
+        (c.whatsapp ? card('WhatsApp', '<p><a class="s-clink" href="https://wa.me/' + esc(c.whatsapp) + '" target="_blank" rel="noopener">Shkruaj në WhatsApp</a></p><small>Përgjigjemi shpejt</small>') : '') +
+        (c.address ? card('Adresa', '<p>' + esc(c.address) + '</p>' + (map ? '<small><a href="' + esc(map) + '" target="_blank" rel="noopener">Hap në hartë</a></small>' : '')) : '') +
+        (c.hours ? card('Orari', '<p>' + esc(c.hours) + '</p><small>' + esc(c.delivery || '') + '</small>') : '') +
+        (c.email ? card('Email', '<p><a class="s-clink" href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a></p>') : '') +
+        (social ? card('Rrjetet sociale', '<p>' + social + '</p>') : '') +
+        '</div>';
+    },
     footer(c, cats) {
       const social = Object.entries(c.social || {}).filter(([, v]) => v && /^https?:\/\//.test(v))
         .map(([k, v]) => '<a href="' + esc(v) + '" target="_blank" rel="noopener">' + esc(k.charAt(0).toUpperCase() + k.slice(1)) + '</a>').join('');
@@ -159,7 +178,7 @@
         '<p>' + (c.phone ? '<a href="tel:' + esc(c.tel) + '">' + esc(c.phone) + '</a>' : '') +
         (c.whatsapp ? ' · <a href="https://wa.me/' + esc(c.whatsapp) + '" rel="noopener" target="_blank">WhatsApp</a>' : '') + '</p></div>' +
         '<div><h4>Kategoritë</h4>' + (cats || []).map(k => '<a href="' + href(k.href) + '">' + esc(k.name) + '</a>').join('') + '</div>' +
-        '<div><h4>Informacion</h4><a href="/shipping.html">Dërgesa</a><a href="/returns.html">Kthimet</a><a href="/terms.html">Kushtet</a><a href="/privacy.html">Privatësia</a>' + social + '</div>' +
+        '<div><h4>Informacion</h4><a href="/rreth-nesh">Rreth nesh</a><a href="/kontakt">Kontakt</a><a href="/shipping.html">Dërgesa</a><a href="/returns.html">Kthimet</a><a href="/terms.html">Kushtet</a><a href="/privacy.html">Privatësia</a>' + social + '</div>' +
         '</div><div class="s-footer-bottom">© ' + new Date().getFullYear() + ' Hana Free Shop. Të gjitha të drejtat e rezervuara.</div>';
     }
   };
@@ -210,6 +229,14 @@
     setSection('si-funksionon', S.steps, F.steps(S.steps));
     setSection('hm-why', S.why, F.why(S.why));
     setSection('hm-cta', S.cta, F.cta(S.cta, contact));
+
+    const pb = document.getElementById('pageBody');
+    if (pb) {
+      const pg = (cfg.pages || {})[pb.dataset.kind] || {};
+      const t = document.getElementById('pageTitle'); if (t && pg.title) t.textContent = pg.title;
+      const i = document.getElementById('pageIntro'); if (i && pg.intro) i.textContent = pg.intro;
+      pb.innerHTML = pb.dataset.kind === 'about' ? F.about(pg) : F.contact(pg, contact);
+    }
 
     const footer = document.getElementById('siteFooter');
     if (footer) footer.innerHTML = F.footer(contact, data.categories || []);

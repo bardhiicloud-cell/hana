@@ -1871,6 +1871,15 @@ function renderHomepageEditor(){
     hpSectionCard('💎 Seksioni: Pse ne', 'Arsyet pse të zgjedhin Hana.',
       secBasics('why', false) + hpListEditor('sections.why.items', S.why.items, itemFields)),
 
+    hpSectionCard('📄 Faqja "Rreth nesh"', 'Tekstet e faqes /rreth-nesh. Një paragraf për rresht. Mund të përdorësh {city}, {minutes}, {hours}.',
+      hpField('pages.about.title', 'Titulli', c.pages.about.title) +
+      hpField('pages.about.intro', 'Hyrja (nën titull)', c.pages.about.intro, { type: 'textarea', rows: 2 }) +
+      `<div class="form-group"><label>Paragrafët (një për rresht)</label><textarea class="input" rows="8" data-hp="pages.about.body" data-hp-type="lines">${hpEsc((c.pages.about.body || []).join('\n'))}</textarea></div>`),
+
+    hpSectionCard('☎️ Faqja "Kontakt"', 'Telefoni, WhatsApp, adresa, orari dhe rrjetet merren nga "Cilësimet" dhe "Lokacionet".',
+      hpField('pages.contact.title', 'Titulli', c.pages.contact.title) +
+      hpField('pages.contact.intro', 'Hyrja (nën titull)', c.pages.contact.intro, { type: 'textarea', rows: 2 })),
+
     hpSectionCard('📞 Banneri i fundit (thirrje për veprim)', 'Telefoni dhe WhatsApp merren nga "Cilësimet".',
       `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end">${hpField('sections.cta.visible', 'E dukshme', S.cta.visible, { type: 'check' })}${hpField('sections.cta.order', 'Renditja', S.cta.order, { type: 'number' })}</div>` +
       hpField('sections.cta.title', 'Titulli', S.cta.title) +
@@ -1953,7 +1962,10 @@ function renderCitiesEditor(){
     <div class="card city-row" data-city-id="${hpEsc(c.id)}" style="padding:16px;display:grid;gap:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <strong style="font-size:15px">${hpEsc(c.name || c.id)} <span style="font-size:11px;color:var(--text-4)">(${hpEsc(c.id)})</span></strong>
-        <label class="check" style="margin:0"><input type="checkbox" data-cf="active" ${c.active !== false ? 'checked' : ''}> Aktiv (klientët mund ta zgjedhin)</label>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <label class="check" style="margin:0"><input type="checkbox" data-cf="active" ${c.active !== false ? 'checked' : ''}> Aktiv (klientët mund ta zgjedhin)</label>
+          <label class="check" style="margin:0"><input type="checkbox" data-cf="comingSoon" ${c.comingSoon ? 'checked' : ''}> Shfaq si "Së shpejti" kur është joaktiv</label>
+        </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px">
         <div class="form-group"><label>Emri</label><input class="input" data-cf="name" value="${hpEsc(c.name)}"></div>
@@ -1982,7 +1994,7 @@ function renderCitiesEditor(){
     const id = name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ë/g, 'e').replace(/ç/g, 'c').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     if(!id || HC.get(id)){ toast('Ky qytet ekziston ose emri është i pavlefshëm'); return; }
     const list = collectCities();
-    list.push({ id, name: name.trim(), active: false, order: list.length + 1, minutes: 30, hours: '08:00–22:00' });
+    list.push({ id, name: name.trim(), active: false, comingSoon: false, order: list.length + 1, minutes: 30, hours: '08:00–22:00' });
     STORE_SETTINGS.cities = list;
     renderCitiesEditor();
     toast('Qyteti u shtua (joaktiv). Plotëso të dhënat dhe ruaj.');
@@ -2004,6 +2016,7 @@ function collectCities(){
       id: row.dataset.cityId,
       order: i + 1,
       active: g('active').checked,
+      comingSoon: g('comingSoon').checked,
       name: g('name').value.trim() || row.dataset.cityId,
       minutes: Number(g('minutes').value) || 30,
       hours: g('hours').value.trim(),

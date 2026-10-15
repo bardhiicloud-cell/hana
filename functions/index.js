@@ -17,7 +17,7 @@ const RATE_LIMITS = {
   order: { max: 8, windowMs: 10 * 60 * 1000 },   // 8 porosi / 10 min / IP
   track: { max: 60, windowMs: 10 * 60 * 1000 },  // 60 kërkime / 10 min / IP
 };
-const DEFAULT_CITIES = ['peje', 'prishtine'];
+const DEFAULT_CITIES = ['peje'];
 const TIME_SLOT_FEES = { morning: 0, afternoon: 0, evening: 0, express: 2.99 };
 
 // Kuponat e njohur (si në storefront). Kuponat aktivë nga koleksioni `coupons` e mbishkruajnë këtë listë.
