@@ -57,3 +57,6 @@
 /* background automatik */
 img.abg-dark{mix-blend-mode:lighten}
 img.abg{filter:drop-shadow(0 14px 16px rgba(0,0,0,.55))}
+
+/* banneri i cookies nuk mbulon shportën/modalet */
+body:has(.drawer.open) #cookieBanner,body:has(.modal.open) #cookieBanner{display:none!important}

@@ -570,12 +570,18 @@ export async function updateOrderStatus(orderId, newStatus, note='', user='admin
 }
 
 // Auth
+const localAuthListeners = [];
+function notifyLocalAuth(){
+  let u=null; try{ u=JSON.parse(localStorage.getItem('hana_user')||'null'); }catch{}
+  localAuthListeners.forEach(f=>{ try{ f(u); }catch(e){ console.warn(e); } });
+}
 export function onAuthState(cb){
   if(firebaseEnabled && auth){
     import('firebase/auth').then(({onAuthStateChanged})=>{
       onAuthStateChanged(auth, cb);
     });
   } else {
+    localAuthListeners.push(cb);
     try{
       const user = JSON.parse(localStorage.getItem('hana_user')||'null');
       cb(user);
@@ -608,6 +614,7 @@ export async function signInLocal(email, pass){
     const user = { email, uid:'local-'+btoa(email).slice(0,8), displayName: email.split('@')[0], role, provider:'password' };
     localStorage.setItem('hana_user', JSON.stringify(user));
     localStorage.setItem('hana_user_id', user.uid);
+    notifyLocalAuth();
     // Update last login
     if(adminUser){
       adminUser.lastLogin = new Date().toISOString();
@@ -628,6 +635,7 @@ export async function signUpLocal(email, pass){
     const user = { email, uid:'local-'+btoa(email).slice(0,8), displayName: email.split('@')[0], role, provider:'password' };
     localStorage.setItem('hana_user', JSON.stringify(user));
     localStorage.setItem('hana_user_id', user.uid);
+    notifyLocalAuth();
     // Also add to admin users
     let adminUsers = loadLS(LS_KEYS.ADMIN_USERS, []);
     if(!adminUsers.find(u=>u.email===email)){
@@ -760,6 +768,7 @@ export async function signOutLocal(){
     localStorage.removeItem('hana_user');
     localStorage.removeItem('hana_user_id');
     localStorage.removeItem('hana_google_user');
+    notifyLocalAuth();
   }
 }
 

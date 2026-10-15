@@ -137,3 +137,24 @@ Matches provided mobile reference (IMG_0313.png) and desktop (IMG_0314.png) with
 - Premium HANA bag hero visual
 
 Built as actual working application, not screenshot.
+
+---
+
+## 🚀 Fillim i shpejtë (localhost)
+
+```bash
+python -m http.server 3002 --bind 127.0.0.1
+# faqja:  http://127.0.0.1:3002/
+# admini: http://127.0.0.1:3002/admin/   (TEST: admin@hana.com / admin123 — vetëm localhost)
+```
+
+## 📦 Publikim (Firebase)
+
+1. Krijo projekt Firebase (plan **Blaze**), aktivizo Firestore, Auth (Google), Storage.
+2. Vendos çelësat e Web App në `js/config.js` (+ `gaId` / `fbPixelId` nëse i ke).
+3. `firebase deploy` (hosting + firestore rules + storage rules + functions).
+4. Hyr me Google si `bardhiicloud@gmail.com` (owner, email i verifikuar).
+5. Fshi llogarinë e testimit `TEST_ADMIN` nga `js/firebase.js`.
+
+Porositë krijohen vetëm nga Cloud Function `placeOrder` (çmime, stok, dërgesë verifikohen në server).
+Dorëzimi: brenda 30 minutash në Pejë qytet.
