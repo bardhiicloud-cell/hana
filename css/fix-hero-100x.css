@@ -1,0 +1,352 @@
+/* HANA FREE SHOP — HERO FIX 100X — Super Premium Vibrant Not Tired — Complete Photo Visible */
+
+/* Hero must be super luxury premium WITHOUT Nutella WITH Red Bull Grey Goose Jack Daniel's etc */
+.hero {
+  min-height: 760px !important;
+  display: block !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: #050508 !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+}
+
+@media(min-width:768px){ .hero { min-height: 820px !important; } }
+@media(min-width:1200px){ .hero { min-height: 880px !important; } }
+
+.hero-slides {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 760px;
+}
+
+.hero-slide {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 760px !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(.22,.61,.36,1) !important;
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+.hero-slide.active {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  position: relative !important;
+}
+
+.hero-inner.clean-hero {
+  display: grid !important;
+  grid-template-columns: 1.1fr 0.9fr !important;
+  align-items: center !important;
+  gap: 40px !important;
+  padding: 64px 32px 80px !important;
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  width: 100% !important;
+  min-height: 760px !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+@media(max-width:899px){
+  .hero-inner.clean-hero {
+    grid-template-columns: 1fr !important;
+    padding: 32px 20px 40px !important;
+    gap: 24px !important;
+    min-height: 760px !important;
+  }
+}
+
+.hero-content {
+  max-width: 560px !important;
+  z-index: 3 !important;
+  position: relative !important;
+}
+
+/* SUPER HUGE VIBRANT PHOTO — COMPLETE VISIBLE — NOT CROPPED — EXTRA PROFESSIONAL LOGICAL */
+.hero-visual.clean-visual {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 560px !important;
+  width: 100% !important;
+  pointer-events: auto !important;
+  z-index: 2 !important;
+  perspective: 1000px !important;
+}
+
+@media(max-width:899px){
+  .hero-visual.clean-visual {
+    min-height: 420px !important;
+    margin-top: 12px !important;
+    justify-content: center !important;
+  }
+}
+
+.hero-main-img {
+  width: 100% !important;
+  max-width: 560px !important;
+  height: 560px !important;
+  object-fit: contain !important; /* COMPLETE PHOTO VISIBLE — NOT CROPPED */
+  object-position: center center !important;
+  filter: brightness(1.08) contrast(1.08) saturate(1.15) !important; /* VIBRANT NOT TIRED DARK */
+  transform: scale(1.02) !important;
+  border-radius: 24px !important;
+  box-shadow: 
+    0 20px 60px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(232,198,122,0.15),
+    0 0 80px rgba(212,175,55,0.15) !important;
+  transition: transform 0.6s cubic-bezier(.22,.61,.36,1), filter 0.6s ease !important;
+  background: radial-gradient(80% 80% at 50% 20%, rgba(232,198,122,0.08), transparent 60%) !important;
+}
+
+@media(max-width:899px){
+  .hero-main-img {
+    height: 420px !important;
+    max-width: 100% !important;
+  }
+}
+
+.hero-main-img:hover {
+  transform: scale(1.04) rotateX(2deg) rotateY(-2deg) !important;
+  filter: brightness(1.12) contrast(1.12) saturate(1.2) !important;
+}
+
+/* Image wrapper for LQIP */
+.hero-visual .image-wrapper {
+  width: 100% !important;
+  max-width: 560px !important;
+  height: 560px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 24px !important;
+  background: var(--bg-1) !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+@media(max-width:899px){
+  .hero-visual .image-wrapper {
+    height: 420px !important;
+  }
+}
+
+.hero-visual .image-wrapper .lqip {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  filter: blur(20px) brightness(1.1) !important;
+  transform: scale(1.1) !important;
+  transition: opacity 0.4s ease !important;
+}
+
+.hero-visual .image-wrapper .main-image.loaded + .lqip,
+.hero-visual .image-wrapper .lqip.hidden {
+  opacity: 0 !important;
+}
+
+/* Hero gradient — LESS DARK — MORE VIBRANT */
+.hero-gradient.clean {
+  background:
+    radial-gradient(90% 130% at 15% 25%, rgba(232,198,122,.14), transparent 55%),
+    radial-gradient(60% 80% at 85% 70%, rgba(0,0,0,.25), transparent 60%),
+    linear-gradient(92deg, rgba(5,5,8,.92) 0%, rgba(5,5,8,.82) 22%, rgba(5,5,8,.48) 42%, rgba(5,5,8,.12) 68%, rgba(5,5,8,.04) 100%),
+    linear-gradient(0deg, rgba(5,5,8,.75) 0%, rgba(5,5,8,.12) 38%, transparent 70%) !important;
+}
+
+/* Hero controls — bigger, more visible */
+.hero-controls {
+  position: absolute !important;
+  bottom: 24px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 20px !important;
+  z-index: 10 !important;
+  background: rgba(0,0,0,0.4) !important;
+  backdrop-filter: blur(20px) !important;
+  padding: 10px 18px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+.hero-dots .dot {
+  width: 32px !important;
+  height: 4px !important;
+  border-radius: 4px !important;
+}
+
+.hero-dots .dot.active {
+  width: 48px !important;
+}
+
+.hero-arrow {
+  width: 44px !important;
+  height: 44px !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+/* Super huge sections — fix tired look */
+.super-huge {
+  padding: 48px 20px !important;
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+}
+
+.super-card, .step-card, .testi-card {
+  background: linear-gradient(135deg, rgba(21,21,26,0.9), rgba(14,14,17,0.95)) !important;
+  border: 1px solid rgba(232,198,122,0.12) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.04) inset !important;
+  backdrop-filter: blur(20px) !important;
+  transition: all 0.4s cubic-bezier(.22,.61,.36,1) !important;
+}
+
+.super-card:hover, .step-card:hover, .testi-card:hover {
+  transform: translateY(-4px) scale(1.01) !important;
+  border-color: rgba(232,198,122,0.24) !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 40px rgba(212,175,55,0.12) !important;
+}
+
+/* Product cards — bigger photos, complete visible */
+.product-card .product-media {
+  height: 200px !important;
+  overflow: hidden !important;
+  background: var(--bg-2) !important;
+  border-radius: 16px 16px 0 0 !important;
+  position: relative !important;
+}
+
+.product-card .product-media img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important; /* Complete photo visible */
+  object-position: center !important;
+  background: radial-gradient(80% 80% at 50% 20%, rgba(232,198,122,0.06), transparent) !important;
+  filter: brightness(1.05) saturate(1.1) !important;
+  transition: transform 0.5s cubic-bezier(.22,.61,.36,1), filter 0.3s ease !important;
+}
+
+.product-card:hover .product-media img {
+  transform: scale(1.08) !important;
+  filter: brightness(1.1) saturate(1.15) !important;
+}
+
+/* Categories — bigger, vibrant */
+.cat-item .cat-thumb {
+  width: 88px !important;
+  height: 88px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  border: 2px solid rgba(232,198,122,0.15) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.06) inset !important;
+  transition: all 0.4s cubic-bezier(.22,.61,.36,1) !important;
+}
+
+.cat-item:hover .cat-thumb {
+  transform: scale(1.08) !important;
+  border-color: rgba(232,198,122,0.4) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.2) !important;
+}
+
+.cat-item .cat-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  filter: brightness(1.05) saturate(1.1) !important;
+}
+
+/* Fix all illogical texts — ensure professional */
+.hero-title, .section-head h2, .super-head h2 {
+  text-wrap: balance !important;
+  line-height: 0.95 !important;
+}
+
+/* Loading screen — fix tired */
+.loading-screen {
+  background: radial-gradient(80% 80% at 50% 0%, rgba(232,198,122,0.08), transparent 60%), var(--bg-0) !important;
+}
+
+.loading-logo {
+  box-shadow: 0 0 40px rgba(212,175,55,0.4), 0 0 80px rgba(212,175,55,0.15) !important;
+  animation: loadingPulse 1.5s infinite, cleanFloat 3s ease-in-out infinite !important;
+}
+
+/* Page not tired — vibrant */
+body {
+  background:
+    radial-gradient(120% 80% at 10% 0%, rgba(232,198,122,.10), transparent 60%),
+    radial-gradient(100% 60% at 90% 20%, rgba(232,198,122,.06), transparent 60%),
+    var(--bg-0) !important;
+}
+
+/* Ensure super huge best animation most logic */
+.reveal {
+  will-change: transform, opacity !important;
+}
+
+.reveal.visible {
+  animation: staggerIn 0.6s cubic-bezier(.22,.61,.36,1) forwards !important;
+}
+
+/* Fix foto brenda fotos ska logjik — ensure single photo per card */
+.featured-card .featured-bg {
+  object-fit: cover !important;
+  object-position: center !important;
+  filter: brightness(0.9) contrast(1.1) saturate(1.1) !important;
+}
+
+/* Shiko te gjitha -> /market me rrumbullaka kategori */
+.cat-track {
+  display: flex !important;
+  gap: 16px !important;
+  overflow-x: auto !important;
+  padding: 8px 0 16px !important;
+  scrollbar-width: none !important;
+}
+
+.cat-track::-webkit-scrollbar { display: none !important; }
+
+/* Filter sistem i lehtë profesional funksional */
+.product-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+  gap: 14px !important;
+}
+
+@media(min-width:768px){
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+    gap: 18px !important;
+  }
+}
+
+@media(min-width:1024px){
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    gap: 20px !important;
+  }
+}
+
+/* Alkohol cigare ocb — heki +18 mos kerko id — logical */
+.badge-discount {
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Ensure no +18 text duplication */
+.product-card .product-brand {
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: var(--gold-300) !important;
+}

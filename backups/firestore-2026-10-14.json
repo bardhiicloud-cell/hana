@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-10-14T03:01:40.359Z",
+  "collections": {
+    "products": {
+      "count": 150,
+      "size": "2.3MB"
+    },
+    "categories": {
+      "count": 12,
+      "size": "50KB"
+    },
+    "orders": {
+      "count": 5000,
+      "size": "15MB"
+    },
+    "customers": {
+      "count": 3000,
+      "size": "5MB"
+    },
+    "offers": {
+      "count": 20,
+      "size": "100KB"
+    },
+    "hero": {
+      "count": 4,
+      "size": "20KB"
+    }
+  },
+  "totalSize": "22.5MB",
+  "location": "gs://hana-free-shop-backups/2026-10-14/"
+}

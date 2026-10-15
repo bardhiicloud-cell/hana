@@ -1,0 +1,35 @@
+{
+  "name": "hana-free-shop-100k",
+  "version": "9.0.0-100k",
+  "description": "Hana Free Shop - Pejë | Marka Botërore Premium - Optimized for 100k daily services",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "lint": "eslint js/",
+    "format": "prettier --write .",
+    "deploy": "firebase deploy --only hosting",
+    "deploy:rules": "firebase deploy --only firestore:rules,storage:rules",
+    "backup": "node scripts/backup.js",
+    "sitemap": "node scripts/generate-sitemap.js"
+  },
+  "dependencies": {
+    "firebase": "^10.12.2",
+    "dompurify": "^3.1.6"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0",
+    "terser": "^5.31.0",
+    "@playwright/test": "^1.44.0",
+    "vitest": "^1.6.0",
+    "k6": "0.0.0",
+    "lighthouse": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08080A">
+<meta name="description" content="Hana Free Shop - Pejë | Marka botërore origjinale - Red Bull, Lindt, Ferrero, Grey Goose, Jack Daniel's, Puro, Golden Eagle, OCB, Bulldak, Ice Cups. Dërgesë e shpejtë +383 48 588 886">
+<title>HANA FREE SHOP — Pejë | Marka Botërore Premium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=9-extra-premium-not-tired-fix">
+<script type="importmap">
+{
+ "imports": {
+ "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+ "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+ "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
+ }
+}
+</script>
+</head>
+<body>
+<!-- LOADING SCREEN - H LOGO ANIMATION -->
+<div class="loading-screen" id="loadingScreen"><div><div class="loading-logo">H</div><div class="loading-text">HANA FREE SHOP • PEJË</div></div></div>
+
+<div class="app">
+
+ <!-- LOCATION SELECTOR - SUPER PROFESSIONAL ENTRY -->
+ <div class="location-modal-backdrop" id="locationBackdrop"></div>
+ <div class="location-modal" id="locationModal" aria-hidden="true">
+ <div class="location-modal-bg"></div>
+ <div class="location-modal-content">
+  <div class="loc-brand"><div class="loc-mark">H</div><div class="loc-brand-text"><strong>HANA</strong><span>FREE SHOP</span></div></div>
+  <h2 class="loc-title">Zgjidh pikën tënde</h2>
+  <p class="loc-sub">Zgjidh qytetin për të parë produktet dhe ofertat e disponueshme në zonën tënde</p>
+  
+  <div class="loc-options">
+  <button class="loc-option active" data-city="peje">
+   <div class="loc-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg></div>
+   <div class="loc-opt-text"><strong>Pejë</strong><span>Hapur • 08:00-22:00 • General Wesley Clark</span></div>
+   <div class="loc-opt-check">✓</div>
+  </button>
+  <button class="loc-option disabled" data-city="prishtine">
+   <div class="loc-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B6B76" stroke-width="1.8"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg></div>
+   <div class="loc-opt-text"><strong>Prishtinë</strong><span>Coming Soon • Së shpejti</span></div>
+   <span class="loc-badge soon">Soon</span>
+  </button>
+  </div>
+
+  <button class="btn btn-gold full loc-continue" id="locContinue">Vazhdo me Pejë →</button>
+  <p class="loc-foot">Produkte premium me cilësi të lartë • Dërgesë e shpejtë</p>
+ </div>
+ </div>
+
+ <!-- TOP INFO BAR - desktop only -->
+ <div class="top-info">
+ <span>🌍 Marka të njohura botërore • Origjinale 100% • Red Bull • Lindt • Grey Goose • Jack</span>
+ <span class="top-info-center">Koleksioni premium — vetëm në Hana Free Shop Pejë!</span>
+ <span class="top-info-right">📍 Pejë, Kosovë • Hapur 08:00-22:00 • <strong style="color:var(--gold-300)">+383 48 588 886</strong></span>
+ </div>
+
+ <!-- HEADER -->
+ <header class="header" id="header">
+ <div class="header-main">
+  <a href="#" class="logo" aria-label="Hana Free Shop Ballina">
+  <div class="logo-mark">H</div>
+  <div class="logo-text"><strong>HANA</strong><span>FREE SHOP</span></div>
+  </a>
+  <div class="location" id="locationBtn" role="button" tabindex="0">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>
+  <span id="currentCity">Pejë</span>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <nav class="desktop-nav">
+  <a href="#" class="active">Ballina</a>
+  <a href="#kategorite">Kategoritë</a>
+  <a href="#ofertat">Ofertat</a>
+  <a href="#produktet">Të Reja</a>
+  <a href="#">Alkoholi</a>
+  <a href="#">Duhani</a>
+  </nav>
+  <div class="header-actions">
+  <button class="icon-btn" id="wishlistBtn" aria-label="Wishlist">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-1.3 1.3-1.3-1.3c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l8 8 8-8c1.5-1.5 1.5-4 0-5.5z"/></svg>
+   <span class="badge" id="wishlistCount" style="display:none">0</span>
+  </button>
+  <button class="icon-btn cart-btn" id="cartBtn" aria-label="Shporta">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 8h-3l-4 9h18l-4-9h-3"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><circle cx="9" cy="20" r="1.5" fill="currentColor"/><circle cx="18" cy="20" r="1.5" fill="currentColor"/></svg>
+   <span class="badge gold" id="cartCount">0</span>
+  </button>
+  <button class="icon-btn profile-btn" id="accountBtn" aria-label="Llogaria">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  </button>
+  </div>
+ </div>
+ <div class="search-wrap">
+  <div class="search-field">
+  <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input id="searchInput" type="search" placeholder="Kërko marka botërore, produkte premium... (Grey Goose, Red Bull, Lindt, Bulldak)" autocomplete="off">
+  <button class="search-scan" aria-label="Skano"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></button>
+  </div>
+ </div>
+ </header>
+
+ <!-- HERO - EXTRA PROFESSIONAL - COMPLETE PHOTO VISIBLE - BIGGER DIMENSIONS - LOGICAL TEXTS -->
+ <section class="hero" id="ballina">
+ <div class="hero-slides" id="heroSlides">
+  <!-- Slide 1: Main Premium -->
+  <div class="hero-slide active" data-slide="0">
+  <div class="hero-bg"><div class="hero-gradient clean"></div></div>
+  <div class="hero-inner clean-hero">
+   <div class="hero-content">
+   <span class="eyebrow">HANA EXCLUSIVE • PEJË</span>
+   <h1 class="hero-title">Marka botërore,<br>në Pejë</h1>
+   <p class="hero-sub">Koleksioni premium i importuar — <strong>Red Bull, Lindt, Ferrero, Kinder Bueno, Lay's</strong> dhe marka të tjera botërore, vetëm në Hana Free Shop. Cilësi e garantuar, dërgesë e shpejtë.</p>
+   <div class="hero-ctas">
+    <button class="btn btn-gold" data-scroll="#ofertat">Eksploro koleksionin <span>→</span></button>
+    <button class="btn btn-outline" onclick="location.href='/market'">Të gjitha kategoritë</button>
+   </div>
+   </div>
+   <div class="hero-visual clean-visual">
+   <img src="images/hero-premium-bag.jpg" alt="Hana Free Shop - Koleksioni Premium i Importuar - Red Bull Lindt Ferrero" class="hero-main-img">
+   </div>
+  </div>
+  </div>
+  <!-- Slide 2: Duhani - Marka të njohura -->
+  <div class="hero-slide" data-slide="1">
+  <div class="hero-bg"><div class="hero-gradient clean"></div></div>
+  <div class="hero-inner clean-hero">
+   <div class="hero-content">
+   <span class="eyebrow">MARKA TË NJOHURA • ORIGJINALE</span>
+   <h1 class="hero-title">Duhani<br>Premium</h1>
+   <p class="hero-sub">Koleksioni më i kompletuar në Pejë — <strong>Puro origjinal, Golden Eagle, OCB, cigare premium</strong>. Marka të njohura botërore, cilësi e garantuar, stok i plotë çdo ditë.</p>
+   <div class="hero-ctas">
+    <button class="btn btn-gold" onclick="location.href='/market?cat=cigare'">Shiko koleksionin →</button>
+    <button class="btn btn-outline" onclick="location.href='/market?cat=cigare'">Markat →</button>
+   </div>
+   </div>
+   <div class="hero-visual clean-visual">
+   <img src="images/hero-puro-tobacco.jpg" alt="Duhani Premium - Puro Golden Eagle OCB - Marka te njohura origjinale" class="hero-main-img">
+   </div>
+  </div>
+  </div>
+  <!-- Slide 3: Bulldak Viral -->
+  <div class="hero-slide" data-slide="2">
+  <div class="hero-bg"><div class="hero-gradient clean"></div></div>
+  <div class="hero-inner clean-hero">
+   <div class="hero-content">
+   <span class="eyebrow">TRENDI VIRAL • TIKTOK FAMOUS</span>
+   <h1 class="hero-title">Bulldak &<br>Ice Cups</h1>
+   <p class="hero-sub">Trendi viral i momentit — <strong>Noodles koreane Bulldak pikante dhe akullore Ice Cups</strong>. Më të kërkuarat në TikTok, tani në Pejë me çmime super dhe dërgesë të shpejtë.</p>
+   <div class="hero-ctas">
+    <button class="btn btn-gold" onclick="location.href='/market?cat=ushqime'">Zbulo trendin →</button>
+    <button class="btn btn-outline" onclick="location.href='/market?cat=bulldak'">Shiko viral →</button>
+   </div>
+   </div>
+   <div class="hero-visual clean-visual">
+   <img src="images/hero-buldak-ice.jpg" alt="Bulldak Noodles & Ice Cups - Trendi viral TikTok - Peje" class="hero-main-img">
+   </div>
+  </div>
+  </div>
+  <!-- Slide 4: Alkool Premium -->
+  <div class="hero-slide" data-slide="3">
+  <div class="hero-bg"><div class="hero-gradient clean"></div></div>
+  <div class="hero-inner clean-hero">
+   <div class="hero-content">
+   <span class="eyebrow">KOLEKSIONI PREMIUM • BOTËROR</span>
+   <h1 class="hero-title">Grey Goose &<br>Jack Daniel's</h1>
+   <p class="hero-sub">Për momente speciale — <strong>Grey Goose Vodka, Jack Daniel's Whiskey, Hennessy</strong> dhe marka të tjera premium botërore. Origjinale 100%, paketim luksoz Hana Bag.</p>
+   <div class="hero-ctas">
+    <button class="btn btn-gold" onclick="location.href='/market?cat=alkool'">Shiko alkoolin →</button>
+    <button class="btn btn-outline" onclick="location.href='/market?cat=alkool'">Koleksioni premium →</button>
+   </div>
+   </div>
+   <div class="hero-visual clean-visual">
+   <img src="images/hero-alcohol-variety.jpg" alt="Alkool Premium - Grey Goose Jack Daniels Hennessy - Koleksioni boteror Peje" class="hero-main-img">
+   </div>
+  </div>
+  </div>
+ </div>
+ <div class="hero-controls">
+  <div class="hero-dots" id="heroDots">
+  <button class="dot active" data-dot="0"></button>
+  <button class="dot" data-dot="1"></button>
+  <button class="dot" data-dot="2"></button>
+  <button class="dot" data-dot="3"></button>
+  </div>
+  <div class="hero-arrows">
+  <button class="hero-arrow left" id="heroPrev">‹</button>
+  <button class="hero-arrow right" id="heroNext">›</button>
+  </div>
+ </div>
+ </section>
+
+ <!-- PROMO BAR - GOLD GLOW -->
+
+ <!-- PROMO BAR - GOLD GLOW -->
+ <section class="promo-section">
+ <div class="promo-bar" id="promoBar">
+  <div class="promo-glow"></div>
+  <div class="promo-inner">
+  <a href="#ofertat" class="promo-item" data-promo="week">
+   <span class="promo-icon">🏷️</span><span class="promo-label">Ofertat e javës</span><span class="promo-arrow">→</span>
+  </a>
+  <div class="promo-divider"></div>
+  <a href="#produktet" class="promo-item" data-promo="popular">
+   <span class="promo-icon">✨</span><span class="promo-label">Produktet më të kërkuara</span><span class="promo-arrow">→</span>
+  </a>
+  </div>
+ </div>
+ </section>
+
+ <!-- CATEGORIES - CIRCULAR PREMIUM - LOGICAL PROFESSIONAL -->
+ <section class="categories" id="kategorite">
+ <div class="section-head">
+  <h2>Kategoritë premium</h2>
+  <a href="#" class="link-more" id="viewAllCats">Eksploro të gjitha <span>→</span></a>
+ </div>
+ <div class="cat-track" id="catTrack"></div>
+ </section>
+
+ <!-- SPECIAL OFFERS - HORIZONTAL SCROLL PREMIUM - LOGICAL -->
+ <section class="offers" id="ofertat">
+ <div class="section-head">
+  <h2><span class="fire">🔥</span> Oferta ekskluzive të javës</h2>
+  <a href="#" class="link-more" id="viewAllOffers">Shiko të gjitha ofertat <span>→</span></a>
+ </div>
+ <div class="product-grid" id="productGrid"></div>
+ <div class="empty-state" id="emptyState" style="display:none">
+  <div class="empty-icon">🔍</div>
+  <h3>Nuk u gjet asnjë produkt</h3>
+  <p>Provo një kërkim tjetër ose pastro filtrat.</p>
+  <button class="btn btn-outline" id="clearFilters">Pastro filtrat</button>
+ </div>
+ </section>
+
+ <!-- ALKOHOLI PREMIUM - MARKA BOTERORE - LOGICAL -->
+ <section class="offers premium-section" id="alkoholi">
+ <div class="section-head">
+  <h2>🥃 Alkool Premium • Marka botërore</h2>
+  <a href="#" class="link-more" data-filter-section="pije-tonike">Koleksioni i plotë <span>→</span></a>
+ </div>
+ <div class="product-grid" id="alcoholGrid"></div>
+ </section>
+
+ <!-- DUHANI - MARKA TE NJOHURA - LOGICAL PROFESSIONAL -->
+ <section class="offers premium-section" id="duhani">
+ <div class="section-head">
+  <h2>🚬 Duhani Premium • Marka të njohura</h2>
+  <a href="#" class="link-more" data-filter-section="pije-tonike">Markat e njohura <span>→</span></a>
+ </div>
+ <div class="product-grid" id="tobaccoGrid"></div>
+ </section>
+
+ <!-- BULLDAK & ICE CUPS - TRENDI VIRAL - LOGICAL -->
+ <section class="offers premium-section" id="bulldak">
+ <div class="section-head">
+  <h2>🌶️ Trendi Viral • Bulldak & Ice Cups</h2>
+  <a href="#" class="link-more" data-filter-section="ushqime-pije">Zbulo trendin <span>→</span></a>
+ </div>
+ <div class="product-grid" id="bulldakGrid"></div>
+ </section>
+
+ <!-- PRODUKTET ME TE KERKUARA - BEST SELLER - LOGICAL -->
+  <section class="offers premium-section" id="produktet-kerkuara">
+    <div class="section-head">
+      <h2>✨ Më të kërkuarat • Best Seller</h2>
+      <a href="/market" class="link-more">Best seller <span>→</span></a>
+    </div>
+    <div class="product-grid" id="popularGrid"></div>
+  </section>
+
+  <!-- SUPER HUGE - PSE HANA FREE SHOP - BEST LOGIC TO BRING CUSTOMERS -->
+  <section class="super-huge reveal">
+    <div class="super-head">
+      <h2>Pse Hana Free Shop?</h2>
+      <p>Ne sjellim cilësi, shije dhe më shumë — me produkte premium të importuara dhe shërbim super profesional</p>
+    </div>
+    <div class="super-grid">
+      <div class="super-card reveal delay-1"><div class="super-card-icon">🌍</div><h3>Importe Premium</h3><p>Produkte nga e gjithë bota — Grey Goose, Jack Daniel's, Lindt, Ferrero, Bulldak</p></div>
+      <div class="super-card reveal delay-2"><div class="super-card-icon">⚡</div><h3>Dërgesë e Shpejtë</h3><p>Falas mbi 25€ në Pejë • 08:00-22:00 çdo ditë • +383 48 588 886</p></div>
+      <div class="super-card reveal delay-3"><div class="super-card-icon">🎁</div><h3>Paketim Luksoz</h3><p>Hana Bag premium për dhurata • Shënim personalizuar • Paketimi perfekt</p></div>
+      <div class="super-card reveal delay-4"><div class="super-card-icon">💛</div><h3>Besimi i Klientëve</h3><p>Mbi 5000 klientë të kënaqur • Vlerësimi 4.9/5 • Cilësi e garantuar</p></div>
+      <div class="super-card reveal delay-1"><div class="super-card-icon">🚬</div><h3>Duhani Premium</h3><p>Puro, Golden Eagle, OCB — llojshmëri e gjerë për çdo shije</p></div>
+      <div class="super-card reveal delay-2"><div class="super-card-icon">🌶️</div><h3>Bulldak Viral</h3><p>Noodles pikante koreane — më të kërkuarat në TikTok • Ice Cups</p></div>
+      <div class="super-card reveal delay-3"><div class="super-card-icon">🥃</div><h3>Alkool Premium</h3><p>Grey Goose, Jack Daniel's, Hennessy — koleksioni më i mirë në Pejë</p></div>
+      <div class="super-card reveal delay-4"><div class="super-card-icon">🔒</div><h3>Pagesë e Sigurt</h3><p>Cash në dorë ose online • Konfirmim me telefon • Tracking me ID</p></div>
+    </div>
+  </section>
+
+  <!-- OFERTA EKSKLUZIVE ME COUNTDOWN - URGENCY -->
+  <section class="super-huge reveal" style="padding-top:0">
+    <div class="urgency-bar"><span>🔥</span><span>Ofertë ekskluzive përfundon së shpejti!</span><div class="countdown" id="countdown"><span id="cdH">12</span>:<span id="cdM">34</span>:<span id="cdS">56</span></div><span style="margin-left:auto">Vetëm sot -20%</span></div>
+  </section>
+
+  <!-- SI FUNKSIONON POROSIA - 3 STEPS -->
+  <section class="super-huge reveal">
+    <div class="super-head"><h2>Si funksionon porosia?</h2><p>3 hapa super të lehtë — nga klikimi te dera juaj</p></div>
+    <div class="steps-grid">
+      <div class="step-card reveal delay-1"><div class="step-number">1</div><div class="step-line"></div><h3>🛒 Shto në shportë</h3><p>Zgjidh produktet premium, shto në shportë me 1 klik. Sugjerime si KFC/McD.</p></div>
+      <div class="step-card reveal delay-2"><div class="step-number">2</div><div class="step-line"></div><h3>📝 Plotëso të dhënat</h3><p>Adresa e plotë, telefoni obligativ, email korrekt. Pa ID. Pa komplikime.</p></div>
+      <div class="step-card reveal delay-3"><div class="step-number">3</div><h3>📞 Konfirmim & Dërgesë</h3><p>Ne ju telefonojmë në +383 48 588 886, konfirmojmë dhe dërgojmë. Tracking me ID.</p></div>
+    </div>
+  </section>
+
+  <!-- DESHMI NGA KLIENTET - SOCIAL PROOF -->
+  <section class="super-huge reveal">
+    <div class="super-head"><h2>Klientët tanë thonë</h2><p>Mbi 5000 klientë të kënaqur në Pejë — ja çfarë thonë për Hana Free Shop</p></div>
+    <div class="testimonials">
+      <div class="testi-card reveal delay-1"><div class="testi-top"><div class="testi-avatar">A</div><div><div class="testi-name">Arben K.</div><div class="testi-city">Pejë • 2 ditë më parë</div></div></div><div class="testi-text">“Super profesional! Porosita Grey Goose dhe Jack Daniel's, erdhi për 30 minuta me paketim luksoz. Hana Bag është top!”</div><div class="testi-stars">★★★★★</div></div>
+      <div class="testi-card reveal delay-2"><div class="testi-top"><div class="testi-avatar">E</div><div><div class="testi-name">Era M.</div><div class="testi-city">Pejë • 5 ditë më parë</div></div></div><div class="testi-text">“Bulldak noodles dhe Ice Cups janë fantastike! Fëmijët i duan. Dërgesa falas mbi 25€ është super.”</div><div class="testi-stars">★★★★★</div></div>
+      <div class="testi-card reveal delay-3"><div class="testi-top"><div class="testi-avatar">L</div><div><div class="testi-name">Liridon S.</div><div class="testi-city">Pejë • 1 javë më parë</div></div></div><div class="testi-text">“Puro dhe Golden Eagle gjithmonë në stok. Çmimet më të mira në Pejë. +383 48 588 886 gjithmonë përgjigjen.”</div><div class="testi-stars">★★★★★</div></div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER - GOLD INPUT -->
+  <section class="super-huge reveal">
+    <div class="newsletter gold-shimmer">
+      <h3>Merr ofertat ekskluzive</h3>
+      <p>Abonohu dhe merr -15% zbritje në porosinë e parë + oferta javore • +383 48 588 886</p>
+      <div class="newsletter-form"><input id="newsletterEmail" class="input" placeholder="Email-i yt (korrekt)"><button class="btn btn-gold" id="newsletterBtn">Abonohu →</button></div>
+      <p class="small" style="margin-top:10px;opacity:.6">Pa spam • Vetëm oferta premium • Mund të ç'abonohesh kurdo</p>
+    </div>
+  </section>
+
+  <!-- FEATURED BANNERS - EXTRA PROFESSIONAL LOGICAL -->
+ <section class="featured-section">
+ <div class="featured-grid">
+  <div class="featured-card large">
+  <img class="featured-bg" src="images/hero-puro-tobacco.jpg" alt="Marka te njohura duhani">
+  <div class="featured-overlay"></div>
+  <div class="featured-content">
+   <span class="featured-eyebrow">MARKA TË NJOHURA • ORIGJINALE</span>
+   <h3>Duhani<br>Premium</h3>
+   <p>Marka të njohura botërore — origjinale 100%, stok i plotë</p>
+   <button class="btn btn-sm btn-ghost">Koleksioni premium →</button>
+  </div>
+  <span class="discount-badge">TOP</span>
+  </div>
+  <div class="featured-card tall" id="produktet">
+  <img class="featured-bg" src="images/hero-buldak-ice.jpg" alt="Trendi viral">
+  <div class="featured-overlay"></div>
+  <div class="featured-content">
+   <span class="featured-eyebrow">TRENDI VIRAL • TIKTOK</span>
+   <h3>Bulldak &<br>Ice Cups</h3>
+   <p>Më të kërkuarat në TikTok — tani në Pejë</p>
+   <button class="btn btn-sm btn-ghost">Zbulo trendin →</button>
+  </div>
+  <div class="bag-mini">H<br><small>HANA</small></div>
+  </div>
+ </div>
+ <div class="features-row">
+  <div class="feature-item"><div class="f-icon">🥃</div><span>Alkool Premium<br>Grey Goose • Jack</span></div>
+  <div class="feature-item"><div class="f-icon">🚬</div><span>Marka të njohura<br>Origjinale 100%</span></div>
+  <div class="feature-item"><div class="f-icon">🌶️</div><span>Bulldak Viral<br>TikTok Famous</span></div>
+  <div class="feature-item"><div class="f-icon">🍦</div><span>Ice Cups<br>Akullore Premium</span></div>
+  <div class="feature-item highlight">
+  <div class="highlight-content"><strong>Hana Free Shop</strong><span>Marka botërore • Pejë • 08:00-22:00</span><button class="btn btn-xs btn-gold">Bli tani →</button></div>
+  <img src="images/hero-premium-bag.jpg" alt="Hana Premium">
+  </div>
+ </div>
+ </section>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-loc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg><div><strong>Lokacioni ynë</strong><span>General Wesley Clark, Pejë • Vetëm Pejë aktive</span></div></div>
+      <div class="footer-loc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><strong>Orari</strong><span>Çdo ditë 08:00-22:00 • +383 48 588 886</span></div></div>
+      <div class="footer-loc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><div><strong>Telefoni</strong><span>+383 48 588 886 • Hana Free Shop</span></div></div>
+      <div class="footer-social"><strong>Na ndiqni</strong><div class="socials"><a href="#">FB</a><a href="#">IG</a><a href="#">TT</a></div></div>
+      <div class="footer-script">Hana Free Shop ♡ • Pejë • Super Premium</div>
+    </div>
+  </footer>
+
+  <button class="fab" id="fab" aria-label="Shporta"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 8h-3l-4 9h18l-4-9h-3"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></button>
+ </div>
+ </footer>
+
+ <nav class="bottom-nav">
+ <button class="bn-item active" data-nav="ballina"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11l9-8z"/></svg></span><span>Ballina</span></button>
+ <button class="bn-item" data-nav="kategorite"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span>Kategoritë</span></button>
+ <button class="bn-item" data-nav="kerko"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg></span><span>Kërko</span></button>
+ <button class="bn-item" data-nav="shporta"><span class="bn-icon cart-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 8h-3l-4 9h18l-4-9h-3"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="bn-badge" id="bnCartCount">0</span></span><span>Shporta</span></button>
+ <button class="bn-item" data-nav="llogaria"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Llogaria</span></button>
+ </nav>
+
+ <!-- CART FLY ANIMATION ELEMENT -->
+ <div class="cart-fly" id="cartFly"></div>
+
+ <!-- CART DRAWER - SUPER PREMIUM LIKE REFERENCE PHOTO -->
+ <div class="drawer-backdrop" id="drawerBackdrop"></div>
+ <aside class="drawer cart-drawer premium-cart" id="cartDrawer">
+ <div class="drawer-head premium-head">
+  <div class="head-left"><div class="head-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8C67A" stroke-width="1.8"><path d="M6 2h12l4 6v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8l4-6z"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div><div><h3>Shporta e Blerjeve</h3><span class="head-sub"><span id="cartDrawerCount">0 artikuj</span> • <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg> Dërgesa në <span id="cartCity">Pejë</span></span></div></div>
+  <button class="icon-btn close-drawer" aria-label="Mbyll">✕</button>
+ </div>
+
+ <div class="drawer-body" id="cartBody">
+  <!-- Free Shipping Progress - Truck + 88% -->
+  <div class="free-shipping" id="freeShipping">
+  <div class="free-top"><span class="free-icon">🚚</span><span class="free-text">Edhe <strong id="freeRemaining">3.10 €</strong> për dërgesë falas në Pejë</span><span class="free-percent" id="freePercent">88%</span></div>
+  <div class="free-bar"><div class="free-progress" id="freeProgress" style="width:88%"></div></div>
+  </div>
+
+  <div id="cartItems"></div>
+
+  <!-- Suggest Add-ons like KFC/McD - Professional -->
+  <div class="cart-suggest" id="cartSuggest">
+  <div class="suggest-head"><span>✨ Shto të preferuarat me 1 klik:</span><span class="muted small">Sugjerime</span></div>
+  <div class="suggest-track" id="suggestTrack"></div>
+  </div>
+
+  <!-- Gift Wrap -->
+  <div class="cart-gift">
+  <label class="gift-option"><div class="gift-icon">🎁</div><span>Paketim Dhuratë Luksoze (Hana Bag)</span><input type="checkbox" id="giftWrap"><span class="gift-check"></span></label>
+  </div>
+  <button class="gift-note-btn" id="giftNoteBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg> Shto porosi ose shënim për paketimin</button>
+  <div class="gift-note-input" id="giftNoteInput" style="display:none"><textarea id="giftNoteText" class="input" placeholder="Shkruaj shënimin për paketimin ose porosinë..."></textarea></div>
+
+  <!-- Discount Code -->
+  <div class="discount-row">
+  <div class="discount-field"><span class="disc-icon">🏷️</span><input id="discountInput" type="text" placeholder="Kodi i zbritjes (p.sh. HANA15, PEJA)"><button class="btn btn-gold btn-sm" id="discountApply">Apliko</button></div>
+  <div class="discount-msg" id="discountMsg" style="display:none"></div>
+  </div>
+
+  <!-- Totals -->
+  <div class="cart-totals-premium" id="cartTotalsPremium">
+  <div class="total-row"><span>Nëntotali i artikujve:</span><strong id="cartSubtotal">21.90 €</strong></div>
+  <div class="total-row"><span>Dërgesa në <span class="cart-city-name">Pejë</span>:</span><strong id="cartDelivery">2.00 €</strong></div>
+  <div class="total-row grand"><span>Gjithsej për pagesë:</span><strong id="cartGrandTotal" class="gold">23.90 €</strong></div>
+  </div>
+
+  <div class="cart-contact"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> <span>Pyetje? Thirr <strong>+383 48 588 886</strong> • Hana Free Shop</span></div>
+ </div>
+
+ <div class="drawer-foot premium-foot">
+  <button class="btn btn-gold full premium-checkout" id="checkoutBtn"><span>Vazhdo te Procedura e Porosisë</span><span>→</span></button>
+  <div class="secure-badges"><span>🔒 Pagesë e sigurt</span><span>🚚 Dërgesë 08:00-22:00</span><span>📞 +383 48 588 886</span></div>
+ </div>
+ </aside>
+
+ <aside class="drawer wishlist-drawer" id="wishlistDrawer">
+ <div class="drawer-head"><h3>Wishlist <span id="wishlistDrawerCount">(0)</span></h3><button class="icon-btn close-drawer" data-close="wishlist">✕</button></div>
+ <div class="drawer-body" id="wishlistItems"></div>
+ </aside>
+
+ <!-- SEARCH OVERLAY -->
+ <div class="search-overlay" id="searchOverlay">
+ <div class="search-overlay-head">
+  <div class="search-field large">
+  <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input id="searchOverlayInput" type="search" placeholder="Kërko puro, Golden Eagle, OCB, Bulldak, Ice...">
+  <button class="icon-btn" id="closeSearch">✕</button>
+  </div>
+ </div>
+ <div class="search-overlay-body">
+  <div class="search-suggestions" id="searchSuggestions">
+  <h4>Kërkime popullore</h4>
+  <div class="suggestion-chips">
+   <button class="chip">Grey Goose</button><button class="chip">Jack Daniel's</button><button class="chip">Puro</button><button class="chip">Golden Eagle</button><button class="chip">OCB</button><button class="chip">Buldak</button><button class="chip">Ice Cups</button><button class="chip">Red Bull</button>
+  </div>
+  </div>
+  <div class="search-results" id="searchResults"></div>
+ </div>
+ </div>
+
+ <!-- CHECKOUT MODAL - PROFESSIONAL WITH MANDATORY FIELDS -->
+ <div class="modal-backdrop" id="checkoutBackdrop"></div>
+ <div class="modal checkout-modal" id="checkoutModal">
+ <div class="modal-head"><h3>🛒 Finalizo Porosinë</h3><button class="icon-btn" id="closeCheckout">✕</button></div>
+ <div class="modal-body">
+  <div class="checkout-steps"><div class="step active"><span>1</span> Shporta</div><div class="step-line"></div><div class="step active"><span>2</span> Të dhënat</div><div class="step-line"></div><div class="step"><span>3</span> Konfirmimi</div></div>
+  
+  <div class="checkout-form">
+  <div class="form-row"><div class="form-group"><label>Emri dhe Mbiemri *</label><input id="coName" class="input" placeholder="Filan Fisteku" required></div><div class="form-group"><label>Telefoni * (obligativ)</label><input id="coPhone" class="input" type="tel" placeholder="+383 49 123 456" required></div></div>
+  <div class="form-row"><div class="form-group"><label>Email * (korrekt)</label><input id="coEmail" class="input" type="email" placeholder="emri@email.com" required></div><div class="form-group"><label>Qyteti</label><select id="coCity" class="input"><option value="peje">Pejë</option><option value="prishtine" disabled>Prishtinë - Coming Soon</option></select></div></div>
+  <div class="form-group"><label>Adresa e plotë * (obligative)</label><input id="coAddress" class="input" placeholder="Rruga, numri, lagjja, qyteti" required><small class="muted">Shkruaj adresën e saktë për dërgesë</small></div>
+  <div class="form-group"><label>Shënime (opsionale)</label><textarea id="coNotes" class="input" style="height:70px" placeholder="P.sh. Kati 2, dera majtas, telefononi para se të vini..."></textarea></div>
+  
+  <div class="checkout-summary" id="checkoutSummary"></div>
+  
+  <div class="checkout-notice">
+   <strong>📞 Procesi:</strong> Pas porosisë, ne ju telefonojmë për konfirmim. Porosia ka ID unike për tracking.
+   <br><span class="muted small">Pagesa bëhet me para në dorë ose online • Dërgesë e shpejtë</span>
+  </div>
+
+  <button class="btn btn-gold full" id="placeOrderBtn" style="height:52px;font-size:15px">Konfirmo Porosinë • Paguaj →</button>
+  <p class="muted small" style="text-align:center;margin-top:8px">Duke porositur, pranon kushtet e dërgesës</p>
+  </div>
+ </div>
+ </div>
+
+ <!-- ORDER TRACKING MODAL -->
+ <div class="modal-backdrop" id="trackingBackdrop"></div>
+ <div class="modal tracking-modal" id="trackingModal">
+ <div class="modal-head"><h3>📦 Gjurmo Porosinë</h3><button class="icon-btn" id="closeTracking">✕</button></div>
+ <div class="modal-body">
+  <div class="tracking-search"><input id="trackingInput" class="input" placeholder="Shkruaj ID e porosisë (p.sh. ORD-ABC123)"><button class="btn btn-gold" id="trackingSearchBtn">Kërko</button></div>
+  <div id="trackingResult" style="margin-top:16px"></div>
+  <div class="tracking-info" style="margin-top:20px">
+  <h4 style="font-size:14px;margin-bottom:8px">Si funksionon?</h4>
+  <div class="tracking-steps">
+   <div class="t-step"><span class="t-dot pending"></span><div><strong>Pending</strong><small>Porosia u pranua</small></div></div>
+   <div class="t-step"><span class="t-dot confirmed"></span><div><strong>Konfirmuar</strong><small>Ne ju thirrëm, u konfirmua</small></div></div>
+   <div class="t-step"><span class="t-dot on_the_way"></span><div><strong>Në rrugë</strong><small>Korrieri është nisur</small></div></div>
+   <div class="t-step"><span class="t-dot delivered"></span><div><strong>Dërguar</strong><small>Porosia u dorëzua</small></div></div>
+  </div>
+  </div>
+ </div>
+ </div>
+
+ <!-- ACCOUNT MODAL - NO ID NEEDED -->
+ <div class="modal-backdrop" id="accountBackdrop"></div>
+ <div class="modal account-modal" id="accountModal">
+ <div class="modal-head"><h3>Llogaria Ime</h3><button class="icon-btn" id="closeAccount">✕</button></div>
+ <div class="modal-body">
+  <div id="authState">
+  <div class="auth-icon">H</div>
+  <h4>Mirë se erdhe në Hana Free Shop</h4>
+  <p>Pa nevojë për ID. Vetëm email dhe fjalëkalim.</p>
+  <div class="auth-form">
+   <input id="authEmail" type="email" placeholder="Email (korrekt)" class="input">
+   <input id="authPass" type="password" placeholder="Fjalëkalimi" class="input">
+   <button class="btn btn-gold full" id="loginBtn">Hyr</button>
+   <button class="btn btn-outline full" id="registerBtn">Regjistrohu (pa ID)</button>
+   <button class="btn btn-outline full" id="trackingOpenBtn">📦 Gjurmo Porosinë me ID</button>
+  </div>
+  </div>
+  <div id="userState" style="display:none">
+  <div class="user-info"><strong id="userEmail"></strong><span id="userMeta"></span></div>
+  <div class="account-actions">
+   <button class="btn btn-outline full" id="myOrdersBtn">📦 Porositë e mia & Tracking</button>
+   <button class="btn btn-outline full">📍 Adresat e mia</button>
+   <button class="btn btn-gold full" id="logoutBtn">Dil</button>
+  </div>
+  </div>
+ </div>
+ </div>
+
+ <div class="toast-stack" id="toastStack"></div>
+</div>
+
+<script type="module" src="js/firebase.js?v=9"></script>
+<script type="module" src="js/app.js?v=9"></script>
+</body>
+</html>

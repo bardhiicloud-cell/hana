@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?*fresh*
+Disallow: /*?*test*
+
+# Sitemap
+Sitemap: https://hanafreeshop.com/sitemap.xml
+
+# Crawl-delay for 100k protection
+Crawl-delay: 1
+
+# Host
+Host: https://hanafreeshop.com

@@ -1,0 +1,156 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Owner = email i verifikuar (pa email_verified dikush mund të regjistrojë këtë email me fjalëkalim dhe të bëhet owner)
+    function isOwnerEmail() {
+      return request.auth != null
+        && request.auth.token.email == 'bardhiicloud@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+    function adminDoc() {
+      return get(/databases/$(database)/documents/adminUsers/$(request.auth.uid)).data;
+    }
+    function isOwner() {
+      return isOwnerEmail() || (request.auth != null
+        && exists(/databases/$(database)/documents/adminUsers/$(request.auth.uid))
+        && adminDoc().role == 'owner');
+    }
+    function isAdmin() {
+      return isOwner();
+    }
+    function isStaff() {
+      return isOwnerEmail() || (request.auth != null
+        && exists(/databases/$(database)/documents/adminUsers/$(request.auth.uid)));
+    }
+    function isValidEmail(email) {
+      return email.matches('.*@.*\\..*');
+    }
+
+    // PUBLIC READ collections — for storefront (100k optimization)
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+      // Prevent negative stock — backend validation
+      allow update: if isStaff() && request.resource.data.stock >= 0 && request.resource.data.price >= 0;
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /hero/{heroId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /brands/{brandId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /offers/{offerId} {
+      allow read: if resource == null || resource.data.status == 'active' || isStaff();
+      allow write: if isAdmin();
+    }
+
+    match /storeSettings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /deliverySettings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /seoSettings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /promoBar/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ORDERS — krijohen VETËM nga Cloud Function `placeOrder` (Admin SDK anashkalon rregullat).
+    // Klienti nuk shkruan/lexon porosi direkt: çmimet, stoku dhe totali verifikohen në server.
+    // Tracking publik kalon nga Cloud Function `trackOrder` (pa të dhëna personale).
+    match /orders/{orderId} {
+      allow read: if isStaff();
+      allow create: if false;
+      allow update: if isStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Customers — private
+    match /customers/{customerId} {
+      allow read: if isStaff() || (request.auth != null && request.auth.uid == customerId);
+      allow write: if isStaff() || (request.auth != null && request.auth.uid == customerId);
+    }
+
+    // Admin users — only admins
+    match /adminUsers/{userId} {
+      allow read: if isStaff();
+      allow write: if isAdmin();
+    }
+
+    // Audit logs — immutable append-only
+    match /auditLogs/{logId} {
+      allow read: if isStaff();
+      allow create: if isStaff();
+      allow update, delete: if false;
+    }
+
+    // Inventory logs — immutable
+    match /inventoryLogs/{logId} {
+      allow read: if isStaff();
+      allow create: if isStaff();
+      allow update, delete: if false;
+    }
+
+    // Wishlist — user specific
+    match /wishlists/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      match /items/{itemId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Recently viewed
+    match /recentlyViewed/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Reviews — public read, authenticated write
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.rating >= 1 && request.resource.data.rating <= 5;
+      allow update, delete: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+    }
+
+    // Coupons — public read active, admin write
+    match /coupons/{couponId} {
+      allow read: if resource.data.status == 'active' || isStaff();
+      allow write: if isAdmin();
+    }
+
+    // Reports cache — admin only
+    match /reports/{reportId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Rate limiting collection
+    match /rateLimits/{ip} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // Deny all else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

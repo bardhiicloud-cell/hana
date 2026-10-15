@@ -1,0 +1,16 @@
+{
+  "name": "hana-functions",
+  "private": true,
+  "description": "Hana Free Shop - Cloud Functions (porosi, tracking)",
+  "main": "index.js",
+  "engines": { "node": "20" },
+  "scripts": {
+    "serve": "firebase emulators:start --only functions,firestore",
+    "deploy": "firebase deploy --only functions",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.1"
+  }
+}
