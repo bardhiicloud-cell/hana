@@ -94,7 +94,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=12">
+<link rel="stylesheet" href="css/shop.css?v=13">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -176,14 +176,15 @@ SCRIPTS = '''
 <script src="js/pwa.js?v=11-super-huge"></script>
 <script src="js/home-defaults.js?v=1"></script>
 <script src="js/cities.js?v=2"></script>
-<script src="js/site-render.js?v=4"></script>
+<script src="js/site-render.js?v=5"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=21"></script>
+<script type="module" src="js/app.js?v=22"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
 <script src="js/auto-bg.js?v=2"></script>
-<script src="js/home.js?v=3"></script>
-<script src="js/shop-ux.js?v=5"></script>
+<script src="js/text-fx.js?v=2"></script>
+<script src="js/home.js?v=4"></script>
+<script src="js/shop-ux.js?v=6"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>
@@ -215,7 +216,7 @@ def home():
   </section>
   <section class="s-strip s-reveal" id="hm-strip" style="order:5" aria-label="Si porosit">{FRAG['strip']}</section>
   <div class="s-marquee s-reveal" id="hm-marquee" style="order:6" aria-label="Markat tona"><div class="mq-track">{FRAG['marquee']}</div></div>
-{sec('kategorite', 'categories', 'categories')}{sec('ofertat', 'offers', 'offers')}{sec('best', 'best', 'best')}{sec('si-funksionon', 'steps', 'steps')}{sec('hm-why', 'why', 'why', 's-section s-reveal s-why')}{sec('hm-cta', 'cta', 'cta', 's-cta-band s-reveal')}
+{sec('kategorite', 'categories', 'categories')}{sec('ofertat', 'offers', 'offers')}{sec('hm-brands', 'brands', 'brands')}{sec('best', 'best', 'best')}{sec('si-funksionon', 'steps', 'steps')}{sec('hm-why', 'why', 'why', 's-section s-reveal s-why')}{sec('hm-cta', 'cta', 'cta', 's-cta-band s-reveal')}
  </main>
 {FOOTER}
 {OVERLAYS}
@@ -256,6 +257,7 @@ def listing(slug, cat_id, title, desc, image):
    <p data-tpl="{intro_tpl}">{intro}</p>
   </section>
   <div class="s-chips" role="navigation" aria-label="Kategoritë">{''.join(chips)}</div>
+  <div class="s-chips s-brands" id="brandChips" role="group" aria-label="Markat"></div>
   <div class="s-toolbar"><div class="s-count" id="resultCount"></div>
    <label class="s-sort"><span>Rendit</span><select id="sortSelect" aria-label="Rendit produktet"><option value="default">Të rekomanduara</option><option value="price-asc">Çmimi: ulët → lartë</option><option value="price-desc">Çmimi: lartë → ulët</option><option value="discount">Zbritjet më të mëdha</option><option value="name">Emri A–Z</option></select></label></div>
   <div class="product-grid" id="productGrid"></div>

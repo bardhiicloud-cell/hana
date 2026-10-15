@@ -165,7 +165,7 @@
       ]
     },
     "why": {
-      "visible": true,
+      "visible": false,
       "order": 50,
       "kicker": "Pse ne",
       "title": "Pse Hana",
@@ -191,6 +191,15 @@
       "text": "Telefono ose shkruaj në WhatsApp. Jemi hapur çdo ditë {hours}.",
       "primaryText": "Shiko produktet",
       "primaryHref": "/market"
+    },
+    "brands": {
+      "visible": true,
+      "order": 25,
+      "kicker": "Sipas markës",
+      "title": "Oferta nga markat",
+      "limit": 8,
+      "linkText": "Të gjitha markat →",
+      "linkHref": "/market"
     }
   },
   "contact": {

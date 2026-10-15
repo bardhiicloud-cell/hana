@@ -21,6 +21,7 @@ let DELIVERY_ZONES = [];
 let cart = [];
 let wishlist = [];
 let activeCategory = null;
+let activeBrand = null;
 let activePromo = null;
 let searchQuery = '';
 let heroIndex = 0;
@@ -79,7 +80,7 @@ function refreshCityUI(){
  populateCitySelect();
  if(typeof applyHomeContent==='function'){
   applyHomeContent();
-  renderCategories(); renderProducts(); renderPopularGrid();
+  renderCategories(); renderBrands(); renderProducts(); renderPopularGrid();
  }
  renderCartDrawer();
  updateTotalsUI();
@@ -261,12 +262,65 @@ const homeLimit = (key, d) => Number(window.HANA_HOMECFG?.sections?.[key]?.limit
 
 function setupPageContext(){
  const page = document.body.dataset.page || 'home';
- if(page==='category') activeCategory = document.body.dataset.cat || null;
+ if(page==='category'){ activeCategory = document.body.dataset.cat || null; const bq0 = new URLSearchParams(location.search).get('brand'); if(bq0) activeBrand = bq0; }
  else if(page==='market'){
   const c = new URLSearchParams(location.search).get('cat');
   if(c) activeCategory = CAT_ALIAS[c] || c;
+  const bq = new URLSearchParams(location.search).get('brand');
+  if(bq) activeBrand = bq;
   const q = new URLSearchParams(location.search).get('q');
   if(q){ searchQuery = q; const si=$('#searchInput'); if(si) si.value=q; }
+ }
+}
+
+
+// ---------- MARKAT ----------
+function brandStats(){
+ const m = new Map();
+ PRODUCTS.filter(p=>p.status!=='archived' && p.brand).forEach(p=>{
+  const pr = getProductFinalPrice(p);
+  const disc = pr.originalPrice && pr.originalPrice>pr.finalPrice ? Math.round((1-pr.finalPrice/pr.originalPrice)*100) : 0;
+  const e = m.get(p.brand) || { brand:p.brand, count:0, max:0, imgs:[] };
+  e.count++; e.max = Math.max(e.max, disc);
+  const img = p.mainImage || p.image;
+  if(img && e.imgs.length<3 && !e.imgs.includes(img)) e.imgs.push(img);
+  m.set(p.brand, e);
+ });
+ return [...m.values()].sort((a,b)=>b.max-a.max || b.count-a.count);
+}
+
+function renderBrands(){
+ const g = $('#brandGrid');
+ if(!g) return;
+ const list = brandStats().slice(0, homeLimit('brands', 8));
+ g.innerHTML = list.map(b=>`<a class="brand-card" href="/market?brand=${encodeURIComponent(b.brand)}" aria-label="${b.brand}: ${b.count} produkte">
+  <span class="bc-top">${b.max>0?`<span class="bc-off">deri -${b.max}%</span>`:'<span></span>'}<span class="bc-arrow" aria-hidden="true">→</span></span>
+  <span class="bc-name">${b.brand}</span>
+  <span class="bc-bottom"><span class="bc-count">${b.count} ${b.count===1?'produkt':'produkte'}</span>
+   <span class="bc-imgs">${b.imgs.map(src=>`<span class="bc-img"><img src="${src}" alt="" loading="lazy"></span>`).join('')}</span></span>
+ </a>`).join('');
+ if(window.HanaAutoBg) window.HanaAutoBg.scan(g);
+}
+
+function renderBrandChips(){
+ const wrap = $('#brandChips');
+ if(!wrap) return;
+ const base = PRODUCTS.filter(p=>p.status!=='archived' && (!activeCategory || p.category===activeCategory));
+ const brands = [...new Set(base.map(p=>p.brand).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'sq'));
+ if(brands.length<2){ wrap.innerHTML=''; wrap.hidden = true; return; }
+ wrap.hidden = false;
+ const isOn = b => activeBrand && activeBrand.toLowerCase()===b.toLowerCase();
+ wrap.innerHTML = `<button type="button" class="s-chip sm${activeBrand?'':' active'}" data-brand="">Të gjitha markat</button>` +
+  brands.map(b=>`<button type="button" class="s-chip sm${isOn(b)?' active':''}" data-brand="${b.replace(/"/g,'&quot;')}">${b}</button>`).join('');
+ if(!wrap.dataset.bound){
+  wrap.dataset.bound = '1';
+  wrap.addEventListener('click', e=>{
+   const b = e.target.closest('[data-brand]');
+   if(!b) return;
+   activeBrand = b.dataset.brand || null;
+   try{ const u = new URL(location.href); if(activeBrand) u.searchParams.set('brand', activeBrand); else u.searchParams.delete('brand'); history.replaceState(null,'',u); }catch{}
+   renderBrandChips(); renderProducts();
+  });
  }
 }
 
@@ -289,6 +343,7 @@ function renderCategories(){
 function getFilteredProducts(){
  let list = [...PRODUCTS];
  if(activeCategory) list = list.filter(p=>p.category===activeCategory);
+ if(activeBrand) list = list.filter(p=>String(p.brand).toLowerCase()===activeBrand.toLowerCase());
  if(activePromo==='week') list = list.filter(p=>p.weeklyOffer);
  else if(activePromo==='popular') list = list.filter(p=>p.popular);
  if(searchQuery){
@@ -1572,6 +1627,8 @@ async function init(){
  applyHomeContent();
  refreshCityTexts();
  renderCategories();
+ renderBrands();
+ renderBrandChips();
  renderProducts();
  renderAlcoholGrid();
  renderTobaccoGrid();

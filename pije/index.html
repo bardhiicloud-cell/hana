@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=12">
+<link rel="stylesheet" href="css/shop.css?v=13">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Ballina", "item": "https://hanafreeshop.com/"}, {"@type": "ListItem", "position": 2, "name": "Market", "item": "https://hanafreeshop.com/market"}, {"@type": "ListItem", "position": 3, "name": "Pije & Energjike", "item": "https://hanafreeshop.com/pije"}]}</script>
 <script type="importmap">
 {"imports":{
@@ -109,6 +109,7 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
    <p data-tpl="Red Bull dhe pije të tjera të njohura. Dorëzim brenda {minutes} minutash në {city}.">Red Bull dhe pije të tjera të njohura. Dorëzim brenda 30 minutash në Pejë.</p>
   </section>
   <div class="s-chips" role="navigation" aria-label="Kategoritë"><a class="s-chip" href="/market">Të gjitha</a><a class="s-chip" href="/alkoholi">Alkool Premium</a><a class="s-chip" href="/cigare">Cigare & Duhan</a><a class="s-chip" href="/buldak">Buldak & Ice Cups</a><a class="s-chip active" href="/pije">Pije & Energjike</a><a class="s-chip" href="/embelsira">Çokollata & Ëmbëlsira</a><a class="s-chip" href="/ushqime">Ushqime & Snacks</a></div>
+  <div class="s-chips s-brands" id="brandChips" role="group" aria-label="Markat"></div>
   <div class="s-toolbar"><div class="s-count" id="resultCount"></div>
    <label class="s-sort"><span>Rendit</span><select id="sortSelect" aria-label="Rendit produktet"><option value="default">Të rekomanduara</option><option value="price-asc">Çmimi: ulët → lartë</option><option value="price-desc">Çmimi: lartë → ulët</option><option value="discount">Zbritjet më të mëdha</option><option value="name">Emri A–Z</option></select></label></div>
   <div class="product-grid" id="productGrid"></div>
@@ -303,6 +304,7 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
    <span class="mc-total" id="mcTotal">0.00€</span>
    <span class="mc-cta">Shiko →</span>
   </button>
+  <div class="mc-ship" id="mcShip" hidden><span class="mc-ship-text" id="mcShipText"></span><span class="mc-ship-bar"><i id="mcShipBar"></i></span></div>
  </div>
 
  <div class="toast-stack" id="toastStack"></div>
@@ -313,14 +315,15 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
 <script src="js/pwa.js?v=11-super-huge"></script>
 <script src="js/home-defaults.js?v=1"></script>
 <script src="js/cities.js?v=2"></script>
-<script src="js/site-render.js?v=4"></script>
+<script src="js/site-render.js?v=5"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=21"></script>
+<script type="module" src="js/app.js?v=22"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
 <script src="js/auto-bg.js?v=2"></script>
-<script src="js/home.js?v=3"></script>
-<script src="js/shop-ux.js?v=5"></script>
+<script src="js/text-fx.js?v=2"></script>
+<script src="js/home.js?v=4"></script>
+<script src="js/shop-ux.js?v=6"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>

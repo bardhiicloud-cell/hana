@@ -138,6 +138,7 @@
       return F.head(sec, 'productGrid') + '<div class="product-grid s-rail" id="productGrid"></div>' +
         '<div class="empty-state" id="emptyState" style="display:none"><h3>Nuk ka oferta për momentin</h3><p>Shiko të gjitha produktet.</p><a class="s-btn s-btn-gold" href="/market">Produktet</a></div>';
     },
+    brands(sec) { return F.head(sec) + '<div class="brand-grid" id="brandGrid"></div>'; },
     best(sec) { return F.head(sec, 'popularGrid') + '<div class="product-grid s-rail" id="popularGrid"></div>'; },
     steps(sec) {
       return F.head(sec) + '<ol class="s-steps">' + (sec.items || []).map((it, i) =>
@@ -228,6 +229,7 @@
     const S = cfg.sections;
     setSection('kategorite', S.categories, F.categories(S.categories));
     setSection('ofertat', S.offers, F.offers(S.offers));
+    setSection('hm-brands', S.brands, F.brands(S.brands));
     setSection('best', S.best, F.best(S.best));
     setSection('si-funksionon', S.steps, F.steps(S.steps));
     setSection('hm-why', S.why, F.why(S.why));

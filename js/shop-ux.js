@@ -94,6 +94,20 @@
       bar.classList.remove('bump'); void bar.offsetWidth; bar.classList.add('bump');
     }
     lastCount = s.count;
+    // sa mungon për dërgesë falas
+    const ship = $('#mcShip');
+    const HC = window.HanaCities;
+    if (ship && HC) {
+      const cur = HC.current();
+      const thr = HC.cfg(cur && cur.id).freeThreshold;
+      if (thr > 0) {
+        const left = Math.max(0, thr - s.subtotal);
+        $('#mcShipBar').style.width = Math.min(100, (s.subtotal / thr) * 100) + '%';
+        $('#mcShipText').textContent = left > 0 ? 'Edhe ' + fmt(left) + ' për dërgesë falas' : 'Dërgesa falas e aktivizuar';
+        ship.classList.toggle('done', left <= 0);
+        ship.hidden = false;
+      } else ship.hidden = true;
+    }
   }
 
   // ================= EKRANI I SUKSESIT =================

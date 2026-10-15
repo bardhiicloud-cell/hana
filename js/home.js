@@ -97,8 +97,8 @@
   }
 
   window.HanaHome = {
-    heroRefresh: initHero,
-    refresh: observeReveal
+    heroRefresh: () => { initHero(); if (window.HanaFx) window.HanaFx.scan(); },
+    refresh: () => { observeReveal(); if (window.HanaFx) window.HanaFx.scan(); }
   };
 
   initHero();

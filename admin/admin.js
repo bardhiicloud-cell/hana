@@ -1862,6 +1862,9 @@ function renderHomepageEditor(){
     hpSectionCard('🔥 Seksioni: Ofertat', 'Shfaq produktet me zbritje. Zbritjet vendosen te produkti ose te "Oferta & Zbritje".',
       secBasics('offers', true)),
 
+    hpSectionCard('🏷️ Seksioni: Oferta nga markat', 'Kartela për çdo markë me zbritjen më të madhe. Markat merren nga produktet.',
+      secBasics('brands', true)),
+
     hpSectionCard('✨ Seksioni: Më të kërkuarat', 'Shfaq produktet e shënuara si "popular" te produkti.',
       secBasics('best', true)),
 

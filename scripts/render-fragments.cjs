@@ -26,6 +26,7 @@ const out = {
   marquee: S.F.marquee(cfg),
   categories: S.F.categories(cfg.sections.categories),
   offers: S.F.offers(cfg.sections.offers),
+  brands: S.F.brands(cfg.sections.brands),
   best: S.F.best(cfg.sections.best),
   steps: S.F.steps(cfg.sections.steps),
   why: S.F.why(cfg.sections.why),
