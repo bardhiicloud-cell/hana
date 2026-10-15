@@ -66,7 +66,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
-<link rel="stylesheet" href="css/site.css?v=5">
+<link rel="stylesheet" href="css/site.css?v=6">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -170,7 +170,7 @@ SCRIPTS = '''
 <script type="module" src="js/app.js?v=12"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/auto-bg.js?v=1"></script>
-<script src="js/home.js?v=1"></script>
+<script src="js/home.js?v=2"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>

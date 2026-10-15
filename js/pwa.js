@@ -16,6 +16,15 @@ const PWA = {
 
   // Service Worker registration
   async registerSW() {
+    const isLocal = ['localhost','127.0.0.1','0.0.0.0'].includes(location.hostname);
+    if(isLocal && 'serviceWorker' in navigator){
+      // Zhvillim: pa cache — hiq çdo service worker dhe cache të vjetër
+      try{
+        (await navigator.serviceWorker.getRegistrations()).forEach(r=>r.unregister());
+        if(window.caches) (await caches.keys()).forEach(k=>caches.delete(k));
+      }catch{}
+      return;
+    }
     if('serviceWorker' in navigator) {
       try {
         const reg = await navigator.serviceWorker.register('/sw.js', {scope: '/'});

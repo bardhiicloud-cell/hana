@@ -4,7 +4,7 @@ html{scroll-behavior:auto}
 body{background:var(--bg-0)}
 
 /* Pa animacione dekorative: vetëm tranzicione të shkurtra hover/focus */
-.reveal,.stagger-container>*,.product-card,.cat-item,.s-main *{animation:none!important}
+.reveal,.stagger-container>*,.product-card,.cat-item{animation:none!important}
 .reveal{opacity:1!important;transform:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
@@ -160,3 +160,67 @@ html.js .s-reveal.in{opacity:1;transform:none}
 #catTrack.cat-grid-huge .cat-huge:last-child:nth-child(odd){grid-column:span 2;aspect-ratio:16/9}
 @media(min-width:720px){#catTrack.cat-grid-huge .cat-huge:last-child:nth-child(odd){grid-column:auto;aspect-ratio:16/11}#catTrack.cat-grid-huge .cat-huge:last-child:nth-child(3n+2){grid-column:span 2;aspect-ratio:auto}}
 @media(min-width:1000px){#catTrack.cat-grid-huge .cat-huge:last-child:nth-child(n){grid-column:auto!important;aspect-ratio:4/5!important}}
+
+/* ================= LËVIZJE PROFESIONALE (e kontrolluar) ================= */
+:root{--ease-out:cubic-bezier(.22,.61,.36,1)}
+
+/* ---- Hero: zoom i ngadaltë + tekst që hyn me radhë ---- */
+html.js .s-slide .s-hero-body>*{opacity:0;translate:0 18px}
+html.js .s-slide.is-active .s-hero-body>*{animation:s-up .8s var(--ease-out) both!important;animation-delay:calc(var(--i,0)*110ms + 150ms)!important}
+html.js .s-slide.is-active img{animation:s-zoom 9s ease-out both!important}
+.s-slide .s-hero-body>:nth-child(1){--i:0}.s-slide .s-hero-body>:nth-child(2){--i:1}.s-slide .s-hero-body>:nth-child(3){--i:2}.s-slide .s-hero-body>:nth-child(4){--i:3}
+@keyframes s-up{from{opacity:0;translate:0 18px}to{opacity:1;translate:0 0}}
+@keyframes s-zoom{from{scale:1}to{scale:1.07}}
+
+/* ---- Pikat e hero me progres ---- */
+.s-dot{position:relative;overflow:hidden;background:rgba(255,255,255,.28)}
+.s-dot.active{background:rgba(255,255,255,.28)}
+.s-dot.active::after{content:"";position:absolute;inset:0;background:var(--gold-300);transform-origin:left;animation:s-fill 6.5s linear both!important}
+.s-hero.is-paused .s-dot.active::after{animation-play-state:paused!important}
+@keyframes s-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ---- Hyrje me radhë e kartave dhe kategorive ---- */
+html.js .s-reveal .product-card,html.js .s-reveal .cat-huge,html.js .s-reveal .s-steps li,html.js .s-reveal .s-why-grid>div,html.js .s-strip.s-reveal>div{opacity:0;translate:0 22px;transition:opacity .6s var(--ease-out),translate .6s var(--ease-out)}
+html.js .s-reveal.in .product-card,html.js .s-reveal.in .cat-huge,html.js .s-reveal.in .s-steps li,html.js .s-reveal.in .s-why-grid>div,html.js .s-strip.s-reveal.in>div{opacity:1;translate:0 0}
+.s-reveal .product-card:nth-child(1),.s-reveal .cat-huge:nth-child(1),.s-reveal li:nth-child(1),.s-reveal .s-why-grid>div:nth-child(1),.s-strip>div:nth-child(1){transition-delay:0ms}
+.s-reveal .product-card:nth-child(2),.s-reveal .cat-huge:nth-child(2),.s-reveal li:nth-child(2),.s-reveal .s-why-grid>div:nth-child(2),.s-strip>div:nth-child(2){transition-delay:80ms}
+.s-reveal .product-card:nth-child(3),.s-reveal .cat-huge:nth-child(3),.s-reveal li:nth-child(3),.s-reveal .s-why-grid>div:nth-child(3),.s-strip>div:nth-child(3){transition-delay:160ms}
+.s-reveal .product-card:nth-child(4),.s-reveal .cat-huge:nth-child(4){transition-delay:240ms}
+.s-reveal .product-card:nth-child(5),.s-reveal .cat-huge:nth-child(5){transition-delay:320ms}
+.s-reveal .product-card:nth-child(n+6),.s-reveal .cat-huge:nth-child(n+6){transition-delay:400ms}
+html.js .s-reveal .s-head h2{opacity:0;translate:0 12px;transition:opacity .6s var(--ease-out),translate .6s var(--ease-out)}
+html.js .s-reveal.in .s-head h2{opacity:1;translate:0 0}
+
+/* ---- Titujt kanë një vijë ari që zgjatet ---- */
+.s-head h2{position:relative;padding-bottom:10px}
+.s-head h2::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--gold-300);transition:width .8s var(--ease-out) .25s}
+.s-reveal.in .s-head h2::after{width:44px}
+
+/* ---- Kategoritë: foto zmadhohet, shigjeta lëviz ---- */
+.cat-huge .cat-thumb img{transition:scale .9s var(--ease-out)}
+.cat-huge:hover .cat-thumb img{scale:1.06;transform:none!important}
+.cat-huge .cat-count{transition:translate .3s var(--ease-out)}
+.cat-huge:hover .cat-count{translate:6px 0}
+
+/* ---- Butonat ---- */
+.s-btn{position:relative;overflow:hidden}
+.s-btn-gold::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);translate:-120% 0;transition:translate .7s var(--ease-out)}
+.s-btn-gold:hover::after{translate:120% 0}
+.s-link{transition:color .2s,translate .2s}
+.s-link:hover{translate:3px 0}
+
+/* ---- Karta: shfaqje e foto-s kur ngarkohet ---- */
+.product-card .product-media img.main-image{transition:opacity .5s ease,filter .3s}
+
+/* ---- Header kur bën scroll ---- */
+.header{transition:box-shadow .3s ease,background .3s ease}
+.header.scrolled{box-shadow:0 8px 28px rgba(0,0,0,.5)}
+
+/* ---- Badge i shportës ---- */
+@keyframes s-pop{0%{scale:1}40%{scale:1.35}100%{scale:1}}
+.badge.pop{animation:s-pop .35s var(--ease-out)!important}
+
+@media(prefers-reduced-motion:reduce){
+  html.js .s-slide .s-hero-body>*,html.js .s-reveal .product-card,html.js .s-reveal .cat-huge,html.js .s-reveal .s-steps li,html.js .s-reveal .s-why-grid>div,html.js .s-strip.s-reveal>div,html.js .s-reveal .s-head h2{opacity:1!important;translate:none!important;animation:none!important;transition:none!important}
+  .s-slide.is-active img,.s-dot.active::after{animation:none!important}
+}

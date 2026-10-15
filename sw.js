@@ -2,7 +2,7 @@
 // Cache strategy: CacheFirst for images/CSS/JS, NetworkFirst for API/Firestore
 // Versioned for cache busting
 
-const CACHE_VERSION = 'hana-v10-2026-10-15';
+const CACHE_VERSION = 'hana-v11-2026-10-15';
 const CACHE_STATIC = `${CACHE_VERSION}-static`;
 const CACHE_IMAGES = `${CACHE_VERSION}-images`;
 const CACHE_API = `${CACHE_VERSION}-api`;
@@ -97,19 +97,16 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // CSS/JS — CacheFirst with network fallback
+  // CSS/JS — NetworkFirst (kurrë version i vjetër), cache vetëm për offline
   if(request.destination === 'style' || request.destination === 'script' || url.pathname.match(/\.(css|js)$/)){
     event.respondWith(
-      caches.match(request).then(cached => {
-        const networkFetch = fetch(request).then(response => {
-          if(response.ok){
-            const clone = response.clone();
-            caches.open(CACHE_STATIC).then(cache => cache.put(request, clone));
-          }
-          return response;
-        }).catch(() => cached);
-        return cached || networkFetch;
-      })
+      fetch(request).then(response => {
+        if(response.ok){
+          const clone = response.clone();
+          caches.open(CACHE_STATIC).then(cache => cache.put(request, clone));
+        }
+        return response;
+      }).catch(() => caches.match(request))
     );
     return;
   }
