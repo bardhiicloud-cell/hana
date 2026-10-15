@@ -94,7 +94,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=10">
+<link rel="stylesheet" href="css/shop.css?v=12">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -176,7 +176,7 @@ SCRIPTS = '''
 <script src="js/pwa.js?v=11-super-huge"></script>
 <script src="js/home-defaults.js?v=1"></script>
 <script src="js/cities.js?v=2"></script>
-<script src="js/site-render.js?v=3"></script>
+<script src="js/site-render.js?v=4"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
 <script type="module" src="js/app.js?v=21"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
@@ -214,7 +214,7 @@ def home():
    <div class="s-dots" id="heroDots">{FRAG['heroDots']}</div>
   </section>
   <section class="s-strip s-reveal" id="hm-strip" style="order:5" aria-label="Si porosit">{FRAG['strip']}</section>
-  <div class="s-marquee s-reveal" id="hm-marquee" style="order:6" aria-label="Markat tona"><div class="s-marquee-track">{FRAG['marquee']}</div></div>
+  <div class="s-marquee s-reveal" id="hm-marquee" style="order:6" aria-label="Markat tona"><div class="mq-track">{FRAG['marquee']}</div></div>
 {sec('kategorite', 'categories', 'categories')}{sec('ofertat', 'offers', 'offers')}{sec('best', 'best', 'best')}{sec('si-funksionon', 'steps', 'steps')}{sec('hm-why', 'why', 'why', 's-section s-reveal s-why')}{sec('hm-cta', 'cta', 'cta', 's-cta-band s-reveal')}
  </main>
 {FOOTER}

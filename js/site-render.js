@@ -120,8 +120,11 @@
         '<div><span class="s-strip-ic">' + (ICONS[it.icon] || ICONS.star) + '</span><strong>' + esc(it.value) + '</strong><span>' + esc(it.label) + '</span></div>').join('');
     },
     marquee(cfg) {
-      const items = (cfg.brands.items || []).map(b => '<span>' + esc(b) + '</span>').join('');
-      return items + items;
+      const items = (cfg.brands.items || []).filter(Boolean);
+      if (!items.length) return '';
+      const reps = Math.max(1, Math.ceil(14 / items.length));   // grupi duhet të mbushë ekranin
+      const group = Array.from({ length: reps }, () => items.map(b => '<span class="mq-item">' + esc(b) + '</span>').join('')).join('');
+      return '<div class="mq-set">' + group + '</div><div class="mq-set" aria-hidden="true">' + group + '</div>';
     },
     head(sec, arrowsFor) {
       const arrows = arrowsFor ? '<div class="s-arrows"><button type="button" class="s-arrow" data-rail="' + arrowsFor + '" data-dir="-1" aria-label="Mbrapa">‹</button><button type="button" class="s-arrow" data-rail="' + arrowsFor + '" data-dir="1" aria-label="Para">›</button></div>' : '';
@@ -220,7 +223,7 @@
     const strip = document.getElementById('hm-strip');
     if (strip) { strip.hidden = cfg.strip.visible === false; strip.innerHTML = F.strip(cfg); }
     const mq = document.getElementById('hm-marquee');
-    if (mq) { mq.hidden = cfg.brands.visible === false; const tr = mq.querySelector('.s-marquee-track'); if (tr) tr.innerHTML = F.marquee(cfg); }
+    if (mq) { mq.hidden = cfg.brands.visible === false; const tr = mq.querySelector('.mq-track'); if (tr) tr.innerHTML = F.marquee(cfg); }
 
     const S = cfg.sections;
     setSection('kategorite', S.categories, F.categories(S.categories));
