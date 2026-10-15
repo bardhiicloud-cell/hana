@@ -11,7 +11,6 @@ const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/market/index.html',
-  '/admin/index.html',
   '/css/style.css',
   '/js/app.js',
   '/js/firebase.js',

@@ -1,6 +1,6 @@
 // HANA FREE SHOP — Main App Premium v2
 // Super professional: location selector, 4 hero slides, cart fly animation, checkout with mandatory fields, order tracking, smooth animations
-import { initFirebase, fetchProducts, fetchCategories, fetchPromos, fetchHero, fetchBrands, fetchBanners, fetchOffers, fetchStoreSettings, fetchDeliveryZones, createOrder, createOrderWithTransaction, fetchProductsPaginated, applyAdvancedFilters, exportLocalStorageBackup, generateReportsData, onAuthState, signInLocal, signUpLocal, signOutLocal, isFirebaseEnabled, getLocalData, calculateFinalPrice } from './firebase.js';
+import { initFirebase, fetchProducts, fetchCategories, fetchPromos, fetchHero, fetchBrands, fetchBanners, fetchOffers, fetchStoreSettings, fetchDeliveryZones, createOrder, createOrderWithTransaction, fetchProductsPaginated, applyAdvancedFilters, exportLocalStorageBackup, generateReportsData, onAuthState, signInLocal, signUpLocal, signOutLocal, isFirebaseEnabled, getLocalData, calculateFinalPrice, placeOrderServer, trackOrderServer, isLocalDemoHost } from './firebase.js';
 
 const LS_CART = 'hana_cart_v3';
 const LS_WISH = 'hana_wish_v3';
@@ -119,7 +119,7 @@ function cartFlyAnimation(productId, startEl){
  const startRect = startEl.getBoundingClientRect();
  const endRect = cartBtn.getBoundingClientRect();
 
- fly.innerHTML = `<img src="${prod.image}" alt="">`;
+ fly.innerHTML = `<img src="${prod.image||prod.mainImage}" alt="">`;
  fly.style.left = startRect.left + 'px';
  fly.style.top = startRect.top + 'px';
  fly.style.opacity = '1';
@@ -236,7 +236,7 @@ function renderProducts(){
  <button class="wish-btn ${isWish?'active':''}" data-wish="${p.id}">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="${isWish?'currentColor':'none'}" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-1.3 1.3-1.3-1.3c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l8 8 8-8c1.5-1.5 1.5-4 0-5.5z"/></svg>
  </button>
- <img src="${p.image}" alt="${p.brand} ${p.name}" loading="lazy">
+ <img src="${p.image||p.mainImage}" alt="${p.brand} ${p.name}" loading="lazy">
  </div>
  <div class="product-info">
  <span class="product-brand">${p.brand}</span>
@@ -531,7 +531,7 @@ function renderSuggestions(){
  const suggestions = notInCart.length>0 ? notInCart : PRODUCTS.slice(0,4);
  track.innerHTML = suggestions.map(p=>`
  <div class="suggest-card" data-suggest="${p.id}">
- <img src="${p.image}" alt="${p.name}">
+ <img src="${p.image||p.mainImage}" alt="${p.name}">
  <div><strong>${p.brand} ${p.name.slice(0,18)}</strong><span>${formatPrice(p.price)}</span></div>
  <button class="suggest-add">+</button>
  </div>
@@ -639,7 +639,7 @@ function renderCartDrawer(){
  const p = PRODUCTS.find(x=>x.id===c.id);
  if(!p) return '';
  return `<div class="cart-item">
- <img src="${p.image}" alt="${p.name}">
+ <img src="${p.image||p.mainImage}" alt="${p.name}">
  <div class="cart-item-info">
  <strong>${p.brand} ${p.name}</strong>
  <small>${p.brand} • ${formatPrice(p.price)} / copë • ${p.stock>0?'Në stok':''}</small>
@@ -671,7 +671,7 @@ function renderWishlistDrawer(){
  body.innerHTML = wishlist.map(id=>{
  const p = PRODUCTS.find(x=>x.id===id);
  if(!p) return '';
- return `<div class="cart-item"><img src="${p.image}" alt="${p.name}"><div class="cart-item-info"><strong>${p.brand} ${p.name}</strong><small>${formatPrice(p.price)}</small><div class="cart-item-actions"><button class="btn btn-gold btn-sm" data-wadd="${p.id}">Shto në shportë</button></div></div><button class="icon-btn" data-wrem="${p.id}" style="width:28px;height:28px">✕</button></div>`;
+ return `<div class="cart-item"><img src="${p.image||p.mainImage}" alt="${p.name}"><div class="cart-item-info"><strong>${p.brand} ${p.name}</strong><small>${formatPrice(p.price)}</small><div class="cart-item-actions"><button class="btn btn-gold btn-sm" data-wadd="${p.id}">Shto në shportë</button></div></div><button class="icon-btn" data-wrem="${p.id}" style="width:28px;height:28px">✕</button></div>`;
  }).join('');
  body.querySelectorAll('[data-wadd]').forEach(b=>b.addEventListener('click', ()=>{ const img = b.closest('.cart-item')?.querySelector('img'); addToCart(b.dataset.wadd,1,img); }));
  body.querySelectorAll('[data-wrem]').forEach(b=>b.addEventListener('click', ()=>toggleWishlist(b.dataset.wrem)));
@@ -704,7 +704,7 @@ function renderSearchResults(q){
  $('#searchSuggestions').style.display='none';
  const filtered = PRODUCTS.filter(p=> p.name.toLowerCase().includes(q.toLowerCase()) || p.brand.toLowerCase().includes(q.toLowerCase()) ).slice(0,12);
  if(filtered.length===0){ container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><h3>Asnjë rezultat për "${q}"</h3></div>`; return; }
- container.innerHTML = filtered.map(p=>`<article class="product-card" data-id="${p.id}"><div class="product-media"><img src="${p.image}" alt="${p.name}"></div><div class="product-info"><span class="product-brand">${p.brand}</span><h3 class="product-name">${p.name}</h3><div class="product-prices"><span class="price-new gold">${formatPrice(p.price)}</span></div></div></article>`).join('');
+ container.innerHTML = filtered.map(p=>`<article class="product-card" data-id="${p.id}"><div class="product-media"><img src="${p.image||p.mainImage}" alt="${p.name}"></div><div class="product-info"><span class="product-brand">${p.brand}</span><h3 class="product-name">${p.name}</h3><div class="product-prices"><span class="price-new gold">${formatPrice(p.price)}</span></div></div></article>`).join('');
  container.querySelectorAll('.product-card').forEach(card=>{ card.addEventListener('click', ()=>{ closeSearch(); activeCategory = PRODUCTS.find(x=>x.id===card.dataset.id)?.category || null; renderCategories(); renderProducts(); $('#ofertat')?.scrollIntoView({behavior:'smooth'}); }); });
 }
 
@@ -937,21 +937,33 @@ function initCheckout(){
  };
  // 100K: Use transaction for stock to prevent race condition + save address + gift message + time slot + express + coupon
            let created;
-           try{
-             if(typeof createOrderWithTransaction!=='undefined'){
-               // Add 100K fields
-               order.timeSlot = (typeof Features100K!=='undefined') ? Features100K.timeSlots.getSelected() : null;
-               order.express = (typeof Features100K!=='undefined') ? Features100K.expressDelivery.isEnabled() : false;
-               order.coupon = (typeof window._appliedCoupon!=='undefined') ? window._appliedCoupon : null;
-               order.giftMessage = (typeof Features100K!=='undefined') ? Features100K.giftMessage.get() : giftNote;
-               order.isGuest = (typeof Features100K!=='undefined') ? Features100K.guestCheckout.isGuest : false;
-               created = await createOrderWithTransaction(order);
-             } else {
-               created = await createOrder(order);
-             }
-           }catch(txError){
-             console.warn('[100K] Transaction failed, fallback to createOrder', txError);
-             created = await createOrder(order);
+           const slot = (typeof Features100K!=='undefined') ? Features100K.timeSlots.getSelected() : null;
+           if(isFirebaseEnabled()){
+             const srv = await placeOrderServer({
+               items: cart.map(c=>({id:c.id, qty:c.qty})),
+               customer: { name, phone, email, address, city, notes },
+               giftWrap: giftWrapEnabled,
+               giftNote: (typeof Features100K!=='undefined' && Features100K.giftMessage.get()) || giftNote,
+               timeSlot: slot?.id || null,
+               express: (typeof Features100K!=='undefined') ? Features100K.expressDelivery.isEnabled() : false,
+               couponCode: (window._appliedCoupon && window._appliedCoupon.code) || discountCode || ''
+             });
+             created = { id: srv.trackingId, total: srv.total, status: srv.status, createdAt: srv.createdAt };
+             try{
+               const mine = JSON.parse(localStorage.getItem('hana_my_orders')||'[]');
+               mine.unshift({ id: srv.trackingId, total: srv.total, createdAt: srv.createdAt, status: srv.status });
+               localStorage.setItem('hana_my_orders', JSON.stringify(mine.slice(0,30)));
+             }catch{}
+             totals.grand = srv.total;
+           } else if(isLocalDemoHost()){
+             order.timeSlot = slot;
+             order.express = (typeof Features100K!=='undefined') ? Features100K.expressDelivery.isEnabled() : false;
+             order.coupon = (typeof window._appliedCoupon!=='undefined') ? window._appliedCoupon : null;
+             order.giftMessage = (typeof Features100K!=='undefined') ? Features100K.giftMessage.get() : giftNote;
+             created = await createOrderWithTransaction(order);
+           } else {
+             toast('Porosia online është përkohësisht e pa disponueshme. Thirr: '+(window.HANA_CONFIG?.phone||'+383 48 588 886'));
+             return;
            }
            
            // 100K: Save address if checked
@@ -988,56 +1000,53 @@ function initCheckout(){
 
  }catch(e){
  console.error(e);
- toast('Gabim gjatë krijimit të porosisë • Thirr +383 48 588 886');
+ const userFacing = ['functions/failed-precondition','functions/invalid-argument','functions/resource-exhausted'].includes(e?.code);
+ toast(userFacing && e.message ? e.message : 'Gabim gjatë krijimit të porosisë • Thirr +383 48 588 886');
  }finally{
  btn.textContent = 'Konfirmo Porosinë • Paguaj →'; btn.disabled=false;
  }
  });
 }
 
-function renderTrackingResult(orderId){
+async function renderTrackingResult(orderId){
  const result = $('#trackingResult');
  if(!result) return;
- let orders=[]; try{ orders=JSON.parse(localStorage.getItem('hana_orders')||'[]'); }catch{}
- const order = orders.find(o=>o.id===orderId);
- if(!order){
- result.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><h3>Nuk u gjet porosia ${orderId}</h3><p>Kontrollo -në ose kontakto +383 48 588 886 • Hana Free Shop</p></div>`;
- return;
+ const safeId = String(orderId).replace(/[^A-Za-z0-9-]/g,'').slice(0,40);
+ const phoneTxt = window.HANA_CONFIG?.phone||'+383 48 588 886';
+ const notFound = ()=>{ result.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><h3>Nuk u gjet porosia ${safeId}</h3><p>Kontrollo ID-në ose kontakto ${phoneTxt} • Hana Free Shop</p></div>`; };
+ let order = null;
+ if(isFirebaseEnabled()){
+  result.innerHTML = '<div class="empty-state"><p>Duke kërkuar…</p></div>';
+  try{ const t = await trackOrderServer(safeId); order = { id:t.trackingId, status:t.status, total:t.total, createdAt:t.createdAt, itemCount:t.itemCount }; }
+  catch(e){ if(e?.code==='functions/resource-exhausted'){ result.innerHTML='<div class="empty-state"><p>Shumë kërkime. Provo pas pak.</p></div>'; return; } return notFound(); }
+ } else {
+  let orders=[]; try{ orders=JSON.parse(localStorage.getItem('hana_orders')||'[]'); }catch{}
+  order = orders.find(o=>o.id===safeId);
  }
+ if(!order) return notFound();
  const statusMap = {
  pending:{label:'Pending • Pranuar',desc:'Porosia u pranua, presim konfirmimin',color:'pending'},
  confirmed:{label:'Konfirmuar • Telefonuar',desc:'Ne ju thirrëm dhe u konfirmua',color:'confirmed'},
  on_the_way:{label:'Në rrugë • Korrieri u nis',desc:'Porosia është nisur drejt adresës suaj',color:'on_the_way'},
  delivered:{label:'Dërguar • Dorëzuar',desc:'Porosia u dorëzua me sukses',color:'delivered'}
  };
- const currentStatus = order.status || 'pending';
+ const currentStatus = order.status==='new' ? 'pending' : (order.status || 'pending');
  const steps = ['pending','confirmed','on_the_way','delivered'];
+ const cancelled = currentStatus==='cancelled';
  const currentIdx = steps.indexOf(currentStatus);
- 
- result.innerHTML = `
- <div class="card" style="padding:16px">
- <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
- <strong style="font-size:16px">${order.id}</strong>
- <span class="badge gold">${formatPrice(order.total)}</span>
- </div>
- <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">${new Date(order.createdAt).toLocaleString('sq-AL')} • ${order.customer?.name||''} • ${order.customer?.phone||''}</div>
- <div class="tracking-steps">
- ${steps.map((s,i)=>{
+ const esc = v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const pii = order.customer ? `<div style="margin-top:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:10px;font-size:11px;color:var(--text-3)">📍 ${esc(order.customer.address)} • 📞 ${esc(order.customer.phone)}</div>` : '';
+ const stepsHtml = steps.map((s,i)=>{
   const info = statusMap[s];
   const isActive = i<=currentIdx;
   const isCurrent = i===currentIdx;
-  return `<div class="t-step ${isActive?'active':''}" style="${isCurrent?'border-color:var(--border-gold);background:rgba(232,198,122,.08)':''}">
-  <span class="t-dot ${info.color}"></span>
-  <div><strong>${info.label} ${isCurrent?'• Tani':''}</strong><small>${info.desc}</small></div>
-  ${isActive?'<span style="margin-left:auto;color:var(--gold-300)">✓</span>':''}
-  </div>`;
- }).join('')}
- </div>
- <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:10px;font-size:11px;color:var(--text-3)">
- 📍 ${order.customer?.address||''} • 📞 ${order.customer?.phone||''} • 📧 ${order.customer?.email||''}
- </div>
- </div>
- `;
+  return `<div class="t-step ${isActive?'active':''}" style="${isCurrent?'border-color:var(--border-gold);background:rgba(232,198,122,.08)':''}"><span class="t-dot ${info.color}"></span><div><strong>${info.label} ${isCurrent?'• Tani':''}</strong><small>${info.desc}</small></div>${isActive?'<span style="margin-left:auto;color:var(--gold-300)">✓</span>':''}</div>`;
+ }).join('');
+ result.innerHTML = `<div class="card" style="padding:16px">
+ <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><strong style="font-size:16px">${esc(order.id)}</strong><span class="badge gold">${formatPrice(order.total)}</span></div>
+ <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">${new Date(order.createdAt).toLocaleString('sq-AL')}${order.itemCount?` • ${order.itemCount} artikuj`:''}</div>
+ ${cancelled ? `<div class="empty-state"><p>Kjo porosi është anuluar. Thirr ${esc(phoneTxt)} për detaje.</p></div>` : `<div class="tracking-steps">${stepsHtml}</div>`}
+ ${pii}</div>`;
 }
 
 function initTracking(){
@@ -1051,7 +1060,7 @@ function initTracking(){
 
 function renderMyOrders(){
  const result = $('#trackingResult');
- let orders=[]; try{ orders=JSON.parse(localStorage.getItem('hana_orders')||'[]'); }catch{}
+ let orders=[]; try{ orders=JSON.parse(localStorage.getItem(isFirebaseEnabled()?'hana_my_orders':'hana_orders')||'[]'); }catch{}
  if(orders.length===0){
  result.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><h3>Asnjë porosi</h3><p>Porositë tuaja do shfaqen këtu me për tracking</p></div>`;
  return;
