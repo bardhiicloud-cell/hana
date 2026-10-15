@@ -2,7 +2,7 @@
 // Cache strategy: CacheFirst for images/CSS/JS, NetworkFirst for API/Firestore
 // Versioned for cache busting
 
-const CACHE_VERSION = 'hana-v9-100k-2026-10-14';
+const CACHE_VERSION = 'hana-v10-2026-10-15';
 const CACHE_STATIC = `${CACHE_VERSION}-static`;
 const CACHE_IMAGES = `${CACHE_VERSION}-images`;
 const CACHE_API = `${CACHE_VERSION}-api`;
@@ -12,6 +12,9 @@ const STATIC_ASSETS = [
   '/index.html',
   '/market/index.html',
   '/css/style.css',
+  '/css/hana-final.css',
+  '/css/site.css',
+  '/js/config.js',
   '/js/app.js',
   '/js/firebase.js',
   '/manifest.json',

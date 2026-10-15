@@ -81,7 +81,7 @@ function initLocation(){
   localStorage.removeItem(LS_LOCATION);
   setTimeout(openLocation, 600);
  } else if(!hasSelected){
-  setTimeout(openLocation, 600);
+  localStorage.setItem(LS_LOCATION,'true');
  }
 
  // City options
@@ -182,29 +182,32 @@ function toggleWishlist(id){
 }
 
 // CATEGORIES - PREMIUM CIRCULAR
+const CAT_ALIAS = { alkoholi:'alkool', duhani:'cigare', buldak:'bulldak', pije:'pije-tonike', embelsira:'cokollata-embelsira', ushqime:'ushqime-pije' };
+const CAT_PATH = { 'alkool':'/alkoholi', 'cigare':'/cigare', 'bulldak':'/buldak', 'pije-tonike':'/pije', 'cokollata-embelsira':'/embelsira', 'ushqime-pije':'/ushqime' };
+const catHref = id => CAT_PATH[id] || `/market?cat=${encodeURIComponent(id)}`;
+
+function setupPageContext(){
+ const page = document.body.dataset.page || 'home';
+ if(page==='category') activeCategory = document.body.dataset.cat || null;
+ else if(page==='market'){
+  const c = new URLSearchParams(location.search).get('cat');
+  if(c) activeCategory = CAT_ALIAS[c] || c;
+ }
+}
+
 function renderCategories(){
  const track = $('#catTrack');
  if(!track) return;
  const visible = CATEGORIES.filter(c=>c.visible!==false).sort((x,y)=>(x.order||0)-(y.order||0));
  track.classList.add('cat-grid-huge');
- track.innerHTML = visible.map((cat,i)=>{
- const active = activeCategory===cat.id ? ' active' : '';
- const count = PRODUCTS.filter(p=>p.category===cat.id && p.status!=='archived').length;
+ track.style.setProperty('--cols', String(Math.min(visible.filter(c=>PRODUCTS.some(p=>p.category===c.id)).length,5)||3));
+ track.innerHTML = visible.map(cat=>({cat, count:PRODUCTS.filter(p=>p.category===cat.id && p.status!=='archived').length})).filter(x=>x.count>0).map(({cat,count})=>{
  const src = cat.image || 'images/hero-premium-bag-800w.webp';
- return `<button class="cat-item cat-huge${active}" data-cat="${cat.id}" style="--accent:${cat.accent||'#D4AF37'};animation-delay:${i*0.06}s" aria-label="${cat.name}">
+ return `<a class="cat-item cat-huge" href="${catHref(cat.id)}" style="--accent:${cat.accent||'#D4AF37'}" aria-label="${cat.name}">
  <span class="cat-thumb"><img src="${src}" alt="${cat.name}" loading="lazy" decoding="async"></span>
- <span class="cat-meta"><span class="cat-label">${cat.name}</span><span class="cat-count">${count} produkte →</span></span>
- </button>`;
+ <span class="cat-meta"><span class="cat-label">${cat.name}</span><span class="cat-count">${count} ${count===1?'produkt':'produkte'} →</span></span>
+ </a>`;
  }).join('');
- track.querySelectorAll('.cat-item').forEach(btn=>{
- btn.addEventListener('click', ()=>{
- const id = btn.dataset.cat;
- activeCategory = activeCategory===id ? null : id;
- track.querySelectorAll('.cat-item').forEach(b=>b.classList.toggle('active', b.dataset.cat===activeCategory));
- renderProducts();
- if(activeCategory) $('#ofertat')?.scrollIntoView({behavior:'smooth', block:'start'});
- });
- });
 }
 
 // PRODUCTS - PREMIUM CARDS WITH ANIMATION
@@ -224,54 +227,22 @@ function renderProducts(){
  const grid = $('#productGrid');
  const empty = $('#emptyState');
  if(!grid) return;
- const list = getFilteredProducts();
+ const page = document.body.dataset.page || 'home';
+ let list = getFilteredProducts();
+ if(page==='home') list = list.filter(p=>p.discount>0 || p.weeklyOffer).slice(0,8);
+ if(page==='market' && new URLSearchParams(location.search).get('filter')==='oferta') list = list.filter(p=>p.discount>0);
+ const count = $('#resultCount');
+ if(count) count.textContent = `${list.length} ${list.length===1?'produkt':'produkte'}`;
  if(list.length===0){
- grid.style.display='none';
- if(empty) empty.style.display='block';
- return;
+  grid.style.display='none';
+  if(empty) empty.style.display='block';
+  return;
  }
  grid.style.display='grid';
  if(empty) empty.style.display='none';
- grid.innerHTML = list.map((p,i)=>{
- const inCart = cart.find(c=>c.id===p.id);
- const isWish = wishlist.includes(p.id);
- const hasDiscount = p.originalPrice && p.discount>0;
- return `<article class="product-card" data-id="${p.id}" style="animation-delay:${i*0.04}s">
- <div class="product-media">
- ${hasDiscount?`<span class="badge-discount">-${p.discount}%</span>`:''}
- ${p.stock<5?`<span class="badge-discount" style="left:auto;right:10px;background:linear-gradient(135deg,#F59E0B,#D97706)">Pak stok</span>`:''}
- <button class="wish-btn ${isWish?'active':''}" data-wish="${p.id}">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="${isWish?'currentColor':'none'}" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-1.3 1.3-1.3-1.3c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l8 8 8-8c1.5-1.5 1.5-4 0-5.5z"/></svg>
- </button>
- <img src="${p.image||p.mainImage}" alt="${p.brand} ${p.name}" loading="lazy">
- </div>
- <div class="product-info">
- <span class="product-brand">${p.brand}</span>
- <h3 class="product-name">${p.name}</h3>
- <div class="product-prices">
-  ${hasDiscount?`<span class="price-old">${formatPrice(p.originalPrice)}</span>`:''}
-  <span class="price-new ${hasDiscount?'gold':''}">${formatPrice(p.price)}</span>
- </div>
- ${cardFootHtml(p)}
- </div>
- </article>`;
- }).join('');
- grid.querySelectorAll('[data-add]').forEach(b=>{
- b.addEventListener('click', e=>{
- e.stopPropagation();
- const card = b.closest('.product-card');
- const img = card?.querySelector('.product-media img');
- addToCart(b.dataset.add, 1, img || b);
- renderProducts();
- renderAlcoholGrid();
- renderTobaccoGrid();
- renderBuldakGrid();
- renderPopularGrid();
- });
- });
- grid.querySelectorAll('[data-wish]').forEach(b=>b.addEventListener('click', e=>{ e.stopPropagation(); toggleWishlist(b.dataset.wish); }));
- grid.querySelectorAll('[data-inc]').forEach(b=>b.addEventListener('click', ()=>{ const it=cart.find(c=>c.id===b.dataset.inc); if(it) setQty(b.dataset.inc, it.qty+1); renderProducts(); renderAlcoholGrid(); renderTobaccoGrid(); renderBuldakGrid(); renderPopularGrid(); }));
- grid.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click', ()=>{ const it=cart.find(c=>c.id===b.dataset.dec); if(it) setQty(b.dataset.dec, it.qty-1); renderProducts(); renderAlcoholGrid(); renderTobaccoGrid(); renderBuldakGrid(); renderPopularGrid(); }));
+ grid.innerHTML = list.map((p,i)=>renderProductCard(p,i)).join('');
+ bindProductGridEvents(grid);
+ if(window.HanaAutoBg) window.HanaAutoBg.scan(grid);
 }
 
 function getProductFinalPrice(p){
@@ -331,10 +302,7 @@ function renderProductCard(p,i=0){
  ${displayOriginal?`<span class="price-old">${formatPrice(displayOriginal)}</span>`:''}
  <span class="price-new ${hasDiscount?'gold':''}">${formatPrice(displayPrice)}</span>
  </div>
- <div class="product-foot">
- ${isOutOfStock?`<span style="font-size:11px;color:#FCA5A5">Jashtë stokut</span>`:inCart?`<div class="qty-mini"><button data-dec="${p.id}">−</button><span>${inCart.qty}</span><button data-inc="${p.id}">+</button></div>`:`<span style="font-size:11px;color:var(--text-4)">${p.stock>0?'Në stok':''}</span>`}
- <button class="add-btn" data-add="${p.id}" ${isOutOfStock?'disabled style="opacity:.4;pointer-events:none"':''}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h12l3 5v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7l3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg></button>
- </div>
+ ${cardFootHtml(p)}
  </div>
  </article>`;
 }
@@ -1131,8 +1099,9 @@ function initNavigation(){
  const nav = btn.dataset.nav;
  $$('.bottom-nav .bn-item').forEach(b=>b.classList.remove('active'));
  btn.classList.add('active');
- if(nav==='ballina') window.scrollTo({top:0, behavior:'smooth'});
- else if(nav==='kategorite') $('#kategorite')?.scrollIntoView({behavior:'smooth'});
+ const onHome = (document.body.dataset.page||'home')==='home';
+ if(nav==='ballina'){ if(onHome) window.scrollTo({top:0, behavior:'smooth'}); else location.href='/'; }
+ else if(nav==='kategorite'){ if(onHome) $('#kategorite')?.scrollIntoView({behavior:'smooth'}); else location.href='/#kategorite'; }
  else if(nav==='kerko') openSearch();
  else if(nav==='shporta') openCart();
  else if(nav==='llogaria') openAccount();
@@ -1391,7 +1360,6 @@ function initSmoothAnimations(){
 
 // INIT - SUPER HUGE BEST ANIMATION MOST LOGIC ANOTHER LEVEL - 100% CLEAN - CONNECTED TO SUPER ADMIN CMS - 100K with maintenance mode
 async function init(){
-  initLoadingScreen();
   
   // 100K: Maintenance mode check from STORE_SETTINGS
   try{
@@ -1464,6 +1432,7 @@ async function init(){
  const local = getLocalData();
  PRODUCTS = local.products; CATEGORIES = local.categories; PROMOS = local.promos; HERO_SLIDES = local.hero||[]; BRANDS = local.brands||[]; BANNERS = local.banners||[]; OFFERS = local.offers||[]; STORE_SETTINGS = local.storeSettings||null; DELIVERY_ZONES = local.deliveryZones||[];
  }
+ setupPageContext();
  renderCategories();
  renderProducts();
  renderAlcoholGrid();
@@ -1473,17 +1442,17 @@ async function init(){
  renderCartDrawer();
  renderWishlistDrawer();
  initLocation();
- initHero();
+ // initHero();
  initNavigation();
  initSearch();
  initAuth();
  initCheckout();
  initTracking();
- initSmoothAnimations();
- initFAB();
- initCountdown();
- initNewsletter();
- initMagneticButtons();
+ // initSmoothAnimations();
+ // initFAB();
+ // initCountdown();
+ // initNewsletter();
+ // initMagneticButtons();
 
  // Fix Shiko te gjitha - category filters - GO TO /market
  $('#viewAllCats')?.addEventListener('click', e=>{

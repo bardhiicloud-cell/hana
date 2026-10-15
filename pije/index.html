@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="/">
+<title>Pije & Energjike në Pejë | Hana Free Shop</title>
+<meta name="description" content="Red Bull dhe pije të tjera të njohura. Dorëzim brenda 30 minutash në Pejë.">
+<meta name="theme-color" content="#08080A">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://hanafreeshop.com/pije">
+<meta property="og:title" content="Pije & Energjike në Pejë | Hana Free Shop">
+<meta property="og:description" content="Red Bull dhe pije të tjera të njohura. Dorëzim brenda 30 minutash në Pejë.">
+<meta property="og:image" content="https://hanafreeshop.com/images/products/redbull-250ml.webp">
+<meta property="og:url" content="https://hanafreeshop.com/pije">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="sq_AL">
+<meta property="og:site_name" content="Hana Free Shop">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/images/icon-192x192.png" type="image/png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hana">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=9-100k">
+<link rel="stylesheet" href="css/hana-final.css?v=2">
+<link rel="stylesheet" href="css/site.css?v=1">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Ballina", "item": "https://hanafreeshop.com/"}, {"@type": "ListItem", "position": 2, "name": "Pije & Energjike", "item": "https://hanafreeshop.com/pije"}]}</script>
+<script type="importmap">
+{"imports":{
+ "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+ "firebase/firestore":"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+ "firebase/auth":"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+ "firebase/storage":"https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js",
+ "firebase/functions":"https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js"
+}}
+</script>
+<script src="js/config.js?v=12"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
+(function(){var id=window.HANA_CONFIG&&window.HANA_CONFIG.gaId;if(!id)return;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id='+id;document.head.appendChild(s);gtag('js',new Date());gtag('config',id,{anonymize_ip:true});})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js" defer></script>
+</head>
+<body data-page="category" data-cat="pije-tonike">
+<div class="app">
+<div class="location-modal-backdrop" id="locationBackdrop"></div>
+ <div class="location-modal" id="locationModal" aria-hidden="true">
+ <div class="location-modal-bg"></div>
+ <div class="location-modal-content">
+  <div class="loc-brand"><div class="loc-mark">H</div><div class="loc-brand-text"><strong>HANA</strong><span>FREE SHOP</span></div></div>
+  <h2 class="loc-title">Zgjidh pikën tënde</h2>
+  <p class="loc-sub">Zgjidh qytetin për të parë produktet dhe ofertat e disponueshme në zonën tënde</p>
+  
+  <div class="loc-options">
+  <button class="loc-option active" data-city="peje" aria-label="Zgjidh Pejë">
+   <div class="loc-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg></div>
+   <div class="loc-opt-text"><strong>Pejë</strong><span>Hapur • 08:00-22:00 • General Wesley Clark</span></div>
+   <div class="loc-opt-check">✓</div>
+  </button>
+  <button class="loc-option disabled" data-city="prishtine" aria-label="Prishtinë Coming Soon">
+   <div class="loc-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B6B76" stroke-width="1.8"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg></div>
+   <div class="loc-opt-text"><strong>Prishtinë</strong><span>Coming Soon • Së shpejti</span></div>
+   <span class="loc-badge soon">Soon</span>
+  </button>
+  </div>
+
+  <button class="btn btn-gold full loc-continue magnetic" id="locContinue">Vazhdo me Pejë →</button>
+  <p class="loc-foot">Produkte premium me cilësi të lartë • Dërgesë e shpejtë</p>
+ </div>
+ </div>
+
+
+ <header class="header" id="header">
+ <div class="header-main">
+  <a href="/" class="logo" aria-label="Hana Free Shop - Ballina">
+  <div class="logo-mark">H</div>
+  <div class="logo-text"><strong>HANA</strong><span>FREE SHOP</span></div>
+  </a>
+  <div class="location" id="locationBtn" role="button" tabindex="0" aria-label="Zgjidh lokacionin">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>
+  <span id="currentCity">Pejë</span>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <nav class="desktop-nav" aria-label="Navigimi kryesor">
+  <a href="/" >Ballina</a>
+  <a href="/alkoholi" >Alkool</a>
+  <a href="/cigare" >Cigare</a>
+  <a href="/buldak" >Buldak</a>
+  <a href="/pije" class="active">Pije</a>
+  <a href="/embelsira" >Ëmbëlsira</a>
+  <a href="/market" >Të gjitha</a>
+ </nav>
+  <div class="header-actions">
+  <button class="icon-btn" id="wishlistBtn" aria-label="Lista e dëshirave">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-1.3 1.3-1.3-1.3c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l8 8 8-8c1.5-1.5 1.5-4 0-5.5z"/></svg>
+   <span class="badge wishlist-badge" id="wishlistCount" style="display:none">0</span>
+  </button>
+  <button class="icon-btn cart-btn" id="cartBtn" aria-label="Shporta">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l3 5v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7l3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg>
+   <span class="badge gold" id="cartCount">0</span>
+  </button>
+  <button class="icon-btn profile-btn" id="accountBtn" aria-label="Llogaria ime">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  </button>
+  </div>
+ </div>
+ <div class="search-wrap">
+  <div class="search-field">
+  <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input id="searchInput" type="search" placeholder="Kërko produkte dhe marka..." autocomplete="off" aria-label="Kërko produkte">
+  </div>
+ </div>
+ </header>
+
+ <main class="s-main">
+  <section class="s-page-head">
+   <nav class="s-crumbs" aria-label="Breadcrumb"><a href="/">Ballina</a><span>/</span><span>Pije & Energjike</span></nav>
+   <h1>Pije & Energjike</h1>
+   <p>Red Bull dhe pije të tjera të njohura. Dorëzim brenda 30 minutash në Pejë.</p>
+  </section>
+  <div class="s-chips" role="navigation" aria-label="Kategoritë"><a class="s-chip" href="/market">Të gjitha</a><a class="s-chip" href="/alkoholi">Alkool Premium</a><a class="s-chip" href="/cigare">Cigare & Duhan</a><a class="s-chip" href="/buldak">Buldak & Ice Cups</a><a class="s-chip active" href="/pije">Pije & Energjike</a><a class="s-chip" href="/embelsira">Çokollata & Ëmbëlsira</a><a class="s-chip" href="/ushqime">Ushqime & Snacks</a></div>
+  <div class="s-count" id="resultCount"></div>
+  <div class="product-grid" id="productGrid"></div>
+  <div class="empty-state" id="emptyState" style="display:none"><h3>Nuk u gjet asnjë produkt</h3><p>Provo një kategori tjetër.</p><a class="s-btn s-btn-gold" href="/market">Të gjitha produktet</a></div>
+ </main>
+
+ <footer class="s-footer">
+  <div class="s-footer-grid">
+   <div>
+    <div class="s-footer-brand">HANA <span>FREE SHOP</span></div>
+    <p>General Wesley Clark, Pejë<br>Çdo ditë 08:00–22:00<br>Dorëzim brenda 30 minutash</p>
+    <p><a href="tel:+38348588886">+383 48 588 886</a> · <a href="https://wa.me/38348588886" rel="noopener" target="_blank">WhatsApp</a></p>
+   </div>
+   <div>
+    <h4>Kategoritë</h4>
+    <a href="/alkoholi">Alkool</a><a href="/cigare">Cigare & Duhan</a><a href="/buldak">Buldak & Ice Cups</a><a href="/pije">Pije & Energjike</a><a href="/embelsira">Çokollata & Ëmbëlsira</a><a href="/ushqime">Ushqime & Snacks</a>
+   </div>
+   <div>
+    <h4>Informacion</h4>
+    <a href="/shipping.html">Dërgesa</a><a href="/returns.html">Kthimet</a><a href="/terms.html">Kushtet</a><a href="/privacy.html">Privatësia</a>
+   </div>
+  </div>
+  <div class="s-footer-bottom">© 2026 Hana Free Shop. Të gjitha të drejtat e rezervuara.</div>
+ </footer>
+
+ <nav class="bottom-nav" aria-label="Navigimi mobile">
+ <button class="bn-item active" data-nav="ballina" aria-label="Ballina"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11l9-8z"/></svg></span><span>Ballina</span></button>
+ <button class="bn-item" data-nav="kategorite" aria-label="Kategoritë"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span>Kategoritë</span></button>
+ <button class="bn-item" data-nav="kerko" aria-label="Kërko"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg></span><span>Kërko</span></button>
+ <button class="bn-item" data-nav="shporta" aria-label="Shporta"><span class="bn-icon cart-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h12l3 5v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7l3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg><span class="bn-badge" id="bnCartCount">0</span></span><span>Shporta</span></button>
+ <button class="bn-item" data-nav="llogaria" aria-label="Llogaria"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Llogaria</span></button>
+ </nav>
+
+ <!-- CART FLY ANIMATION -->
+ <div class="cart-fly" id="cartFly"></div>
+
+ <!-- CART DRAWER -->
+ <div class="drawer-backdrop" id="drawerBackdrop"></div>
+ <aside class="drawer cart-drawer" id="cartDrawer" aria-label="Shporta e blerjeve">
+ <div class="drawer-head premium-head">
+  <div class="head-left"><div class="head-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8C67A" stroke-width="1.8"><path d="M6 2h12l4 6v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8l4-6z"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div><div><h3>Shporta e Blerjeve</h3><span class="head-sub"><span id="cartDrawerCount">0 artikuj</span> • <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg> Dërgesa në <span id="cartCity">Pejë</span></span></div></div>
+  <button class="icon-btn close-drawer" aria-label="Mbyll shportën">✕</button>
+ </div>
+
+ <div class="drawer-body" id="cartBody">
+  <div class="free-shipping" id="freeShipping">
+  <div class="free-top"><span class="free-icon">🚚</span><span class="free-text">Edhe <strong id="freeRemaining">3.10 €</strong> për dërgesë falas në Pejë</span><span class="free-percent" id="freePercent">88%</span></div>
+  <div class="free-bar"><div class="free-progress" id="freeProgress" style="width:88%"></div></div>
+  </div>
+
+  <div id="cartItems"></div>
+
+  <div class="cart-suggest" id="cartSuggest">
+  <div class="suggest-head"><span>✨ Shto të preferuarat me 1 klik:</span><span class="muted small">Sugjerime</span></div>
+  <div class="suggest-track" id="suggestTrack"></div>
+  </div>
+
+  <div class="cart-gift">
+  <label class="gift-option"><div class="gift-icon">🎁</div><span>Paketim Dhuratë Luksoze (Hana Bag)</span><input type="checkbox" id="giftWrap"><span class="gift-check"></span></label>
+  </div>
+  <button class="gift-note-btn" id="giftNoteBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg> Shto porosi ose shënim për paketimin</button>
+  <div class="gift-note-input" id="giftNoteInput" style="display:none"><textarea id="giftNoteText" class="input" placeholder="Shkruaj shënimin për paketimin ose porosinë..."></textarea><div id="giftPreview"></div></div>
+
+  <div class="delivery-30" role="note">
+    <span class="d30-icon">⚡</span>
+    <div><strong>Dorëzim brenda 30 minutash</strong><small>Në Pejë qytet • çdo ditë 08:00–22:00 • pagesa në dorë</small></div>
+  </div>
+
+  <div class="discount-row">
+  <div class="discount-field"><span class="disc-icon">🏷️</span><input id="discountInput" type="text" placeholder="Kodi i zbritjes (p.sh. HANA15, PEJA)"><button class="btn btn-gold btn-sm" id="discountApply">Apliko</button></div>
+  <div class="discount-msg" id="discountMsg" style="display:none"></div>
+  <div class="coupon-list" id="couponList" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+  </div>
+
+  <div class="cart-totals-premium" id="cartTotalsPremium">
+  <div class="total-row"><span>Nëntotali i artikujve:</span><strong id="cartSubtotal" class="count-up">21.90 €</strong></div>
+  <div class="total-row"><span>Dërgesa në <span class="cart-city-name">Pejë</span>:</span><strong id="cartDelivery">2.00 €</strong></div>
+  <div class="total-row" id="discountRow" style="display:none;"><span>Zbritja:</span><strong id="cartDiscount" style="color:#4ade80;">-0.00 €</strong></div>
+  <div class="total-row grand"><span>Gjithsej për pagesë:</span><strong id="cartGrandTotal" class="gold">23.90 €</strong></div>
+  </div>
+
+  <div class="cart-contact"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> <span>Pyetje? Thirr <strong>+383 48 588 886</strong> • Hana Free Shop</span></div>
+ </div>
+
+ <div class="drawer-foot premium-foot">
+  <button class="btn btn-gold full premium-checkout" id="checkoutBtn"><span>Vazhdo te Procedura e Porosisë</span><span>→</span></button>
+  <div class="secure-badges"><span>🔒 Pagesë e sigurt</span><span>🚚 Dërgesë 08:00-22:00</span><span>📞 +383 48 588 886</span></div>
+ </div>
+ </aside>
+
+ <aside class="drawer wishlist-drawer" id="wishlistDrawer" aria-label="Lista e dëshirave">
+ <div class="drawer-head"><h3>Wishlist <span id="wishlistDrawerCount">(0)</span></h3><button class="icon-btn close-drawer" data-close="wishlist" aria-label="Mbyll">✕</button></div>
+ <div class="drawer-body" id="wishlistItems"></div>
+ </aside>
+
+ <!-- SEARCH OVERLAY -->
+ <div class="search-overlay" id="searchOverlay">
+ <div class="search-overlay-head">
+  <div class="search-field large">
+  <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input id="searchOverlayInput" type="search" placeholder="Kërko puro, Golden Eagle, OCB, Bulldak, Ice..." aria-label="Kërko në overlay">
+  <button class="icon-btn" id="closeSearch" aria-label="Mbyll kërkimin">✕</button>
+  </div>
+ </div>
+ <div class="search-overlay-body">
+  <div class="search-suggestions" id="searchSuggestions">
+  <h4>Kërkime popullore</h4>
+  <div class="suggestion-chips">
+   <button class="chip">Grey Goose</button><button class="chip">Jack Daniel's</button><button class="chip">Puro</button><button class="chip">Golden Eagle</button><button class="chip">OCB</button><button class="chip">Buldak</button><button class="chip">Ice Cups</button><button class="chip">Red Bull</button>
+  </div>
+  </div>
+  <div class="search-results" id="searchResults"></div>
+ </div>
+ </div>
+
+ <!-- CHECKOUT MODAL - ENHANCED 100K -->
+ <div class="modal-backdrop" id="checkoutBackdrop"></div>
+ <div class="modal checkout-modal" id="checkoutModal">
+ <div class="modal-head"><h3>🛒 Finalizo Porosinë</h3><button class="icon-btn" id="closeCheckout" aria-label="Mbyll">✕</button></div>
+ <div class="modal-body">
+  <div class="checkout-steps"><div class="step active"><span>1</span> Shporta</div><div class="step-line"></div><div class="step active"><span>2</span> Të dhënat</div><div class="step-line"></div><div class="step"><span>3</span> Konfirmimi</div></div>
+  
+  <div class="checkout-form">
+  <div class="checkout-notice" style="background:rgba(232,198,122,0.1);border:1px solid rgba(232,198,122,0.2);border-radius:12px;padding:12px;margin-bottom:16px;">
+    <strong>⚡ Checkout i shpejtë:</strong> Mund të vazhdoni si vizitor pa llogari
+    <div style="margin-top:8px;display:flex;gap:8px;">
+      <button class="btn btn-sm btn-outline" id="guestCheckoutBtn">Vazhdo si vizitor →</button>
+      <button class="btn btn-sm btn-gold" id="useSavedAddressBtn" style="display:none;">📍 Përdor adresën e ruajtur</button>
+    </div>
+  </div>
+
+  <div class="form-row"><div class="form-group"><label>Emri dhe Mbiemri *</label><input id="coName" class="input" placeholder="Filan Fisteku" required autocomplete="name"></div><div class="form-group"><label>Telefoni * (obligativ)</label><input id="coPhone" class="input" type="tel" placeholder="+383 49 123 456" required autocomplete="tel"></div></div>
+  <div class="form-row"><div class="form-group"><label>Email * (korrekt)</label><input id="coEmail" class="input" type="email" placeholder="emri@email.com" required autocomplete="email"></div><div class="form-group"><label>Qyteti</label><select id="coCity" class="input"><option value="peje">Pejë</option><option value="prishtine" disabled>Prishtinë - Coming Soon</option></select></div></div>
+  <div class="form-group"><label>Adresa e plotë * (obligative)</label><input id="coAddress" class="input" placeholder="Rruga, numri, lagjja, qyteti" required autocomplete="street-address"><small class="muted">Shkruaj adresën e saktë për dërgesë</small></div>
+  <div class="form-group" style="display:flex;gap:12px;align-items:center;"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="saveAddressCheck"> <span>💾 Ruaj adresën për herën tjetër</span></label></div>
+  <div class="form-group"><label>Shënime (opsionale)</label><textarea id="coNotes" class="input" style="height:70px" placeholder="P.sh. Kati 2, dera majtas, telefononi para se të vini..."></textarea></div>
+  <div class="form-group"><label>🎁 Mesazh dhurate (opsionale)</label><textarea id="coGiftMsg" class="input" style="height:60px" placeholder="Shkruaj mesazhin për dhuratë..." maxlength="200"></textarea><div id="giftMsgPreview" style="margin-top:8px;"></div></div>
+  
+  <div class="checkout-summary" id="checkoutSummary"></div>
+  
+  <div class="checkout-notice">
+   <strong>📞 Procesi:</strong> Pas porosisë, ne ju telefonojmë për konfirmim. Porosia ka ID unike për tracking.
+   <br><span class="muted small">Pagesa bëhet me para në dorë ose online • Dërgesë e shpejtë • Tracking real-time</span>
+  </div>
+
+  <button class="btn btn-gold full" id="placeOrderBtn" style="height:52px;font-size:15px">Konfirmo Porosinë • Paguaj →</button>
+  <p class="muted small" style="text-align:center;margin-top:8px">Duke porositur, pranon kushtet e dërgesës • <a href="/privacy.html">Privatësia</a> • <a href="/terms.html">Kushtet</a></p>
+  </div>
+ </div>
+ </div>
+
+ <!-- ORDER TRACKING MODAL - ENHANCED 100K -->
+ <div class="modal-backdrop" id="trackingBackdrop"></div>
+ <div class="modal tracking-modal" id="trackingModal">
+ <div class="modal-head"><h3>📦 Gjurmo Porosinë</h3><button class="icon-btn" id="closeTracking" aria-label="Mbyll">✕</button></div>
+ <div class="modal-body">
+  <div class="tracking-search"><input id="trackingInput" class="input" placeholder="Shkruaj ID e porosisë (p.sh. ORD-ABC123)"><button class="btn btn-gold" id="trackingSearchBtn">Kërko</button></div>
+  <div id="trackingResult" style="margin-top:16px"></div>
+  <div id="trackingTimeline" style="margin-top:16px;"></div>
+  <div id="trackingMap" style="margin-top:16px;height:200px;background:var(--bg-2);border-radius:12px;display:none;place-items:center;color:var(--text-3);">🗺️ Harta e dërgesës - Google Maps integrimi</div>
+  <div class="tracking-info" style="margin-top:20px">
+  <h4 style="font-size:14px;margin-bottom:8px">Si funksionon?</h4>
+  <div class="tracking-steps">
+   <div class="t-step"><span class="t-dot pending"></span><div><strong>Pending</strong><small>Porosia u pranua</small></div></div>
+   <div class="t-step"><span class="t-dot confirmed"></span><div><strong>Konfirmuar</strong><small>Ne ju thirrëm, u konfirmua</small></div></div>
+   <div class="t-step"><span class="t-dot on_the_way"></span><div><strong>Në rrugë</strong><small>Korrieri është nisur</small></div></div>
+   <div class="t-step"><span class="t-dot delivered"></span><div><strong>Dërguar</strong><small>Porosia u dorëzua</small></div></div>
+  </div>
+  </div>
+ </div>
+ </div>
+
+ <!-- ACCOUNT MODAL -->
+ <div class="modal-backdrop" id="accountBackdrop"></div>
+ <div class="modal account-modal" id="accountModal">
+ <div class="modal-head"><h3>Llogaria Ime</h3><button class="icon-btn" id="closeAccount" aria-label="Mbyll">✕</button></div>
+ <div class="modal-body">
+  <div id="authState">
+  <div class="auth-icon">H</div>
+  <h4>Mirë se erdhe në Hana Free Shop</h4>
+  <p>Pa nevojë për ID. Vetëm email dhe fjalëkalim.</p>
+  <div class="auth-form">
+   <button class="btn full" id="googleLoginBtn" style="background:#fff;color:#1A1A1A;border:1px solid rgba(0,0,0,0.1);height:48px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 16px rgba(0,0,0,0.1);margin-bottom:4px">
+     <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+     Continue with Google
+   </button>
+   <div style="display:flex;align-items:center;gap:12px;margin:12px 0"><div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div><span style="font-size:11px;color:var(--text-4);font-weight:700;letter-spacing:0.08em">OSE</span><div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div></div>
+   <input id="authEmail" type="email" placeholder="Email (korrekt) • bardhiicloud@gmail.com = OWNER" class="input" autocomplete="email">
+   <input id="authPass" type="password" placeholder="Fjalëkalimi" class="input" autocomplete="current-password">
+   <button class="btn btn-gold full" id="loginBtn">Hyr</button>
+   <button class="btn btn-outline full" id="registerBtn">Regjistrohu (pa ID)</button>
+   <button class="btn btn-outline full" id="trackingOpenBtn">📦 Gjurmo Porosinë me ID</button>
+   <div style="margin-top:12px;display:flex;gap:8px;">
+     <button class="btn btn-sm btn-outline" onclick="Features100K.i18n.set('sq')" style="flex:1;">🇦🇱 Shqip</button>
+     <button class="btn btn-sm btn-outline" onclick="Features100K.i18n.set('en')" style="flex:1;">🇬🇧 English</button>
+     <button class="btn btn-sm btn-outline" onclick="Features100K.i18n.set('sr')" style="flex:1;">🇷🇸 Srpski</button>
+   </div>
+  </div>
+  </div>
+  <div id="userState" style="display:none">
+  <div class="user-info"><strong id="userEmail"></strong><span id="userMeta"></span></div>
+  <div class="account-actions">
+   <button class="btn btn-outline full" id="myOrdersBtn">📦 Porositë e mia & Tracking</button>
+   <button class="btn btn-outline full">📍 Adresat e mia</button>
+   <a href="/admin/" id="adminLink" class="btn btn-gold full" style="display:none;background:linear-gradient(135deg,#FFF1C6,#D4AF37);color:#1A1200;font-weight:800">👑 SUPER ADMIN CMS • Owner</a>
+   <button class="btn btn-gold full" id="logoutBtn">Dil</button>
+  </div>
+  </div>
+ </div>
+ </div>
+
+ <!-- COOKIE BANNER - GDPR -->
+ <div id="cookieBanner" style="position:fixed;bottom:0;left:0;right:0;background:var(--bg-2);border-top:1px solid var(--border);padding:14px 20px;z-index:9997;display:none;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+   <div style="font-size:13px;color:var(--text-2);flex:1;min-width:200px;">🍪 Përdorim cookies për të përmirësuar përvojën tuaj. Duke vazhduar, pranoni përdorimin e cookies. <a href="/privacy.html" style="color:var(--gold-300);">Mëso më shumë</a></div>
+   <div style="display:flex;gap:8px;">
+     <button class="btn btn-sm btn-outline" id="cookieDecline" style="padding:8px 14px;">Refuzo</button>
+     <button class="btn btn-sm btn-gold" id="cookieAccept" style="padding:8px 14px;">Prano</button>
+   </div>
+ </div>
+
+ <!-- PRODUCT MODAL WITH ZOOM + VIDEO + SIMILAR -->
+ <div class="modal-backdrop" id="productBackdrop"></div>
+ <div class="modal product-modal" id="productModal" style="max-width:900px;">
+   <div class="modal-head"><h3 id="productModalTitle">Produkti</h3><button class="icon-btn" id="closeProductModal" aria-label="Mbyll">✕</button></div>
+   <div class="modal-body" id="productModalBody" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+     <!-- Dynamic content -->
+   </div>
+ </div>
+
+ <div class="toast-stack" id="toastStack"></div>
+
+</div>
+<script src="js/security.js?v=11-super-huge"></script>
+<script src="js/features-100k.js?v=11-super-huge"></script>
+<script src="js/pwa.js?v=11-super-huge"></script>
+<script type="module" src="js/firebase.js?v=11-super-huge"></script>
+<script type="module" src="js/app.js?v=12"></script>
+<script src="js/app-100k-patch.js?v=11-super-huge"></script>
+<script src="js/auto-bg.js?v=1"></script>
+<script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
+</body>
+</html>

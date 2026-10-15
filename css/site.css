@@ -1,0 +1,93 @@
+/* HANA FREE SHOP — layout i pastër dhe profesional (animacione minimale) */
+
+html{scroll-behavior:auto}
+body{background:var(--bg-0)}
+
+/* Pa animacione dekorative: vetëm tranzicione të shkurtra hover/focus */
+.reveal,.stagger-container>*,.product-card,.cat-item,.s-main *{animation:none!important}
+.reveal{opacity:1!important;transform:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.s-main{max-width:var(--content-w);margin:0 auto;padding:12px 16px 40px}
+@media(min-width:900px){.s-main{padding:20px 32px 56px}}
+
+/* ---------- HERO (statik) ---------- */
+.s-hero{position:relative;display:flex;align-items:flex-end;min-height:480px;border-radius:24px;overflow:hidden;background:#0b0b0e;border:1px solid rgba(255,255,255,.07)}
+.s-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.s-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,7,9,.15) 0%,rgba(7,7,9,.55) 55%,rgba(7,7,9,.92) 100%)}
+.s-hero-body{position:relative;z-index:1;padding:28px 22px 26px;max-width:640px}
+.s-eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-300);margin-bottom:12px}
+.s-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,9vw,68px);line-height:1;font-weight:700;color:#fff;margin-bottom:14px}
+.s-hero p{font-size:15px;line-height:1.55;color:var(--text-2);margin-bottom:22px;max-width:46ch}
+.s-cta{display:flex;flex-wrap:wrap;gap:10px}
+@media(min-width:900px){.s-hero{min-height:560px}.s-hero-body{padding:48px}}
+
+.s-btn{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 24px;border-radius:14px;font-weight:700;font-size:14px;border:1px solid transparent;cursor:pointer;transition:background .2s,border-color .2s,transform .1s}
+.s-btn:active{transform:scale(.98)}
+.s-btn-gold{background:linear-gradient(135deg,#F6E3A8,#D4AF37 60%,#B8962E);color:#1A1200}
+.s-btn-gold:hover{filter:brightness(1.06)}
+.s-btn-ghost{background:rgba(255,255,255,.06);color:#fff;border-color:rgba(255,255,255,.18)}
+.s-btn-ghost:hover{background:rgba(255,255,255,.1)}
+
+/* ---------- Shiriti ---------- */
+.s-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:14px;border-radius:16px;overflow:hidden;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07)}
+.s-strip div{background:var(--bg-1);padding:14px 10px;text-align:center}
+.s-strip strong{display:block;font-size:17px;color:var(--gold-300);font-weight:800}
+.s-strip span{display:block;font-size:12px;color:var(--text-3);margin-top:2px}
+
+/* ---------- Seksione ---------- */
+.s-section{margin-top:44px}
+.s-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px}
+.s-head h2{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,5vw,36px);font-weight:700;color:#fff;line-height:1.1}
+.s-link{font-size:13px;font-weight:600;color:var(--text-3);white-space:nowrap}
+.s-link:hover{color:var(--gold-300)}
+
+#catTrack.cat-track{padding:0;margin:0}
+
+.s-why-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:760px){.s-why-grid{grid-template-columns:repeat(3,1fr)}}
+.s-why-grid div{padding:20px;border-radius:18px;background:var(--bg-1);border:1px solid rgba(255,255,255,.07)}
+.s-why-grid h3{font-size:16px;margin-bottom:6px;color:#fff}
+.s-why-grid p{font-size:14px;line-height:1.55;color:var(--text-3)}
+
+/* ---------- Faqet e kategorive ---------- */
+.s-page-head{padding:14px 0 6px}
+.s-crumbs{display:flex;gap:8px;font-size:13px;color:var(--text-3);margin-bottom:12px}
+.s-crumbs a:hover{color:var(--gold-300)}
+.s-page-head h1{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,7vw,52px);font-weight:700;line-height:1.05;color:#fff;margin-bottom:8px}
+.s-page-head p{font-size:15px;line-height:1.55;color:var(--text-3);max-width:60ch}
+.s-chips{display:flex;gap:8px;overflow-x:auto;padding:14px 0;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+.s-chips::-webkit-scrollbar{display:none}
+.s-chip{flex:none;height:38px;display:inline-flex;align-items:center;padding:0 16px;border-radius:999px;font-size:13px;font-weight:600;color:var(--text-2);background:var(--bg-2);border:1px solid rgba(255,255,255,.08);transition:background .2s,border-color .2s,color .2s}
+.s-chip:hover{border-color:var(--border-strong)}
+.s-chip.active{background:var(--gold-300);color:#1A1200;border-color:var(--gold-300)}
+.s-count{font-size:13px;color:var(--text-4);margin:4px 0 14px}
+
+.empty-state{text-align:center;padding:48px 16px;color:var(--text-3)}
+.empty-state h3{color:#fff;margin-bottom:6px}
+.empty-state .s-btn{margin-top:16px}
+
+/* ---------- Footer ---------- */
+.s-footer{border-top:1px solid rgba(255,255,255,.07);background:var(--bg-1);padding:36px 20px 24px;margin-top:8px}
+.s-footer-grid{max-width:var(--content-w);margin:0 auto;display:grid;grid-template-columns:1fr;gap:28px}
+@media(min-width:760px){.s-footer-grid{grid-template-columns:1.4fr 1fr 1fr}}
+.s-footer-brand{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:10px}
+.s-footer-brand span{font-size:12px;letter-spacing:.2em;color:var(--gold-300);font-family:'Manrope',sans-serif;margin-left:6px}
+.s-footer p{font-size:14px;line-height:1.7;color:var(--text-3);margin-bottom:8px}
+.s-footer p a{color:var(--gold-300)}
+.s-footer h4{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-4);margin-bottom:12px}
+.s-footer-grid>div>a{display:block;font-size:14px;color:var(--text-2);padding:5px 0}
+.s-footer-grid>div>a:hover{color:var(--gold-300)}
+.s-footer-bottom{max-width:var(--content-w);margin:26px auto 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.06);font-size:12px;color:var(--text-4)}
+
+/* Hiq elemente të vjetra dekorative nëse mbeten */
+.cursor-follower,.confetti-container,.loading-screen,.scroll-progress,.fab-float{display:none!important}
+
+/* kolonat e kategorive në desktop sipas numrit */
+@media(min-width:1000px){
+  #catTrack.cat-grid-huge{grid-template-columns:repeat(var(--cols,3),minmax(0,1fr))!important}
+  .cat-item.cat-huge{aspect-ratio:4/5}
+  .bottom-nav{display:none}
+  .app{padding-bottom:0}
+}
+.product-card .badge-discount.gold-shimmer{display:none}
