@@ -11,12 +11,6 @@ const PWA = {
     this.setupTouchGestures();
     this.setupHaptics();
     this.setupSearchAutocomplete();
-    this.setupScrollProgress();
-    this.setupCursorFollower();
-    this.setupHeroParallax();
-    this.setupStaggerObserver();
-    this.setup3DTilt();
-    this.setupMagneticButtons();
     console.log('[PWA] Initialized for 100k');
   },
 

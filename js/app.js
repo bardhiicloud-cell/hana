@@ -283,7 +283,7 @@ function renderProductCard(p,i=0){
  const lqip = mainImg.replace(/\.(jpg|jpeg|png|webp)$/i, '-lqip.jpg');
  const isHero = mainImg.includes('hero-');
  const hasWebP = isHero || mainImg.includes('products/') || mainImg.includes('image-search/');
- return `<article class="product-card tilt-card ${isOutOfStock?'out-of-stock':''}" data-id="${p.id}" style="animation-delay:${i*0.04}s" role="article" aria-label="${safeBrand} ${safeName} - ${p.price}€">
+ return `<article class="product-card ${isOutOfStock?'out-of-stock':''}" data-id="${p.id}" style="animation-delay:${i*0.04}s" role="article" aria-label="${safeBrand} ${safeName} - ${p.price}€">
  <div class="product-media image-wrapper">
  ${hasWebP?`<img class="lqip" src="${lqip}" alt="" loading="eager" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(20px);transform:scale(1.1);" onerror="this.style.display='none'">`:''}
  ${hasDiscount?`<span class="badge-discount gold-pulse">-${priceInfo.discount}%</span>`:''}

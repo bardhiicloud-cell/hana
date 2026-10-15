@@ -146,3 +146,17 @@ html.js .s-reveal.in{opacity:1;transform:none}
 
 .product-grid.s-rail{scroll-padding-left:16px}
 @media(min-width:900px){.product-grid.s-rail{scroll-padding-left:32px}}
+
+/* ============ Pa 3D / pa anim të forta në karta ============ */
+.product-card,.product-card:hover,.product-card:active{transform:none!important;perspective:none!important}
+.product-card:hover{box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.product-card .product-media img.main-image,.product-card:hover .product-media img.main-image{transform:none!important}
+.product-card .add-btn,.product-card .add-btn:hover{transform:none!important}
+.product-card .add-btn:active{transform:scale(.98)!important}
+.cat-item.cat-huge:hover{transform:none!important}
+.cat-huge:hover .cat-thumb img{transform:scale(1.03)!important}
+
+/* kartela e fundit plotëson rreshtin */
+#catTrack.cat-grid-huge .cat-huge:last-child:nth-child(odd){grid-column:span 2;aspect-ratio:16/9}
+@media(min-width:720px){#catTrack.cat-grid-huge .cat-huge:last-child:nth-child(odd){grid-column:auto;aspect-ratio:16/11}#catTrack.cat-grid-huge .cat-huge:last-child:nth-child(3n+2){grid-column:span 2;aspect-ratio:auto}}
+@media(min-width:1000px){#catTrack.cat-grid-huge .cat-huge:last-child:nth-child(n){grid-column:auto!important;aspect-ratio:4/5!important}}

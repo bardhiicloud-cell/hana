@@ -227,7 +227,7 @@ function initRecentlyViewed() {
   if(recent.length > 0 && section && grid) {
     section.style.display = 'block';
     grid.innerHTML = recent.slice(0,6).map(p => `
-      <article class="product-card tilt-card" data-id="${p.id}" style="cursor:pointer;">
+      <article class="product-card" data-id="${p.id}" style="cursor:pointer;">
         <div class="product-media">
           <img src="${p.image || 'images/hero-premium-bag-400w.webp'}" alt="${safeHtml(p.name)}" loading="lazy" decoding="async" style="width:100%;height:140px;object-fit:cover;">
         </div>
