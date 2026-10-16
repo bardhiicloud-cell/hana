@@ -9,7 +9,11 @@
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "sq",
-  "categories": ["shopping", "food", "lifestyle"],
+  "categories": [
+    "shopping",
+    "food",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "images/icon-192x192.webp",
@@ -48,29 +52,37 @@
       "short_name": "Ofertat",
       "description": "Shiko ofertat ekskluzive të javës",
       "url": "/#ofertat?utm_source=pwa_shortcut",
-      "icons": [{ "src": "images/hero-premium-bag-400w.webp", "sizes": "96x96" }]
+      "icons": [
+        {
+          "src": "images/hero-premium-bag-400w.webp",
+          "sizes": "96x96"
+        }
+      ]
     },
     {
       "name": "Market - Të Gjitha Produktet",
       "short_name": "Market",
       "description": "Shiko të gjitha produktet",
       "url": "/market/?utm_source=pwa_shortcut",
-      "icons": [{ "src": "images/hero-premium-bag-400w.webp", "sizes": "96x96" }]
+      "icons": [
+        {
+          "src": "images/hero-premium-bag-400w.webp",
+          "sizes": "96x96"
+        }
+      ]
     },
     {
       "name": "Gjurmo Porosinë",
       "short_name": "Tracking",
       "description": "Gjurmo porosinë me ID",
       "url": "/?tracking=1&utm_source=pwa_shortcut",
-      "icons": [{ "src": "images/hero-premium-bag-400w.webp", "sizes": "96x96" }]
+      "icons": [
+        {
+          "src": "images/hero-premium-bag-400w.webp",
+          "sizes": "96x96"
+        }
+      ]
     }
   ],
-  "screenshots": [
-    {
-      "src": "images/hero-premium-bag-800w.webp",
-      "sizes": "800x1200",
-      "type": "image/webp",
-      "form_factor": "narrow"
-    }
-  ]
+  "id": "/"
 }

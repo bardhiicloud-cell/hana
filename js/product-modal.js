@@ -59,6 +59,7 @@
               <div class="pm-qty" role="group" aria-label="Sasia"><button type="button" id="pmDec" aria-label="Pakëso">−</button><span id="pmQty">1</span><button type="button" id="pmInc" aria-label="Shto">+</button></div>
               <button type="button" class="s-btn s-btn-gold pm-add" id="pmAdd">Shto në shportë · <span id="pmSum">${fmt(price.finalPrice)}</span></button>`
               : `<div class="pm-soldout">Ky produkt nuk është në stok tani.</div>`}
+            <button type="button" class="pm-wish pm-share" id="pmShare" aria-label="Ndaj produktin"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/></svg></button>
             <button type="button" class="pm-wish${wished ? ' active' : ''}" id="pmWish" aria-label="Wishlist" aria-pressed="${wished}"><svg width="20" height="20" viewBox="0 0 24 24" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-1.3 1.3-1.3-1.3c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l8 8 8-8c1.5-1.5 1.5-4 0-5.5z"/></svg></button>
           </div>
         </div>
@@ -90,6 +91,14 @@
       b.classList.toggle('active', on); b.setAttribute('aria-pressed', on);
       b.querySelector('svg').setAttribute('fill', on ? 'currentColor' : 'none');
     });
+    $('#pmShare')?.addEventListener('click', async () => {
+      const url = location.origin + '/market?p=' + encodeURIComponent(p.id);
+      try {
+        if (navigator.share) { await navigator.share({ title: p.brand + ' ' + p.name, text: p.brand + ' ' + p.name + ' — Hana Free Shop', url }); return; }
+        await navigator.clipboard.writeText(url);
+        window.dispatchEvent(new CustomEvent('hana:toast', { detail: 'Linku u kopjua' }));
+      } catch (e) { /* anuluar */ }
+    });
     body.querySelectorAll('.pm-thumb').forEach(t => t.addEventListener('click', () => {
       $('#pmImg').src = t.dataset.src;
       body.querySelectorAll('.pm-thumb').forEach(x => x.classList.toggle('active', x === t));
@@ -106,6 +115,7 @@
     currentId = id; qty = 1;
     if (window.Features100K && Features100K.recentlyViewed) { try { Features100K.recentlyViewed.add(p); } catch (e) { /* */ } }
     render(p);
+    if (H.trackView) H.trackView(id);
     $('#productModal').classList.add('open');
     $('#productBackdrop').classList.add('open');
     $('#productModal').setAttribute('aria-hidden', 'false');

@@ -412,3 +412,73 @@ html.js .s-reveal .s-head h2.fx-ready{translate:none}
 .mc-ship.done .mc-ship-text{color:#86efac}
 .mc-ship.done .mc-ship-bar i{background:#4ade80}
 @media(min-width:1000px){.mini-cart{align-items:flex-end}.mc-ship{width:350px}}
+
+/* ================= Skeleton loading ================= */
+.sk-card{border-radius:20px;background:#121216;border:1px solid rgba(255,255,255,.06);overflow:hidden;padding-bottom:16px}
+.sk-card i{display:block;position:relative;overflow:hidden;background:#1a1a20}
+.sk-media{aspect-ratio:1/1}
+.sk-line{height:12px;margin:14px 14px 0;border-radius:6px}
+.sk-line.short{width:45%}
+.sk-card i::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);animation:sk-shim 1.6s ease-in-out infinite}
+@keyframes sk-shim{to{transform:translateX(100%)}}
+.s-rail>.sk-card{flex:0 0 min(68vw,250px)}
+@media(prefers-reduced-motion:reduce){.sk-card i::after{animation:none}}
+
+/* ================= Wishlist ================= */
+.wl-row{display:flex;align-items:center;gap:12px;padding:10px;margin-bottom:10px;border-radius:16px;background:var(--bg-1);border:1px solid rgba(255,255,255,.07)}
+.wl-img{flex:none;width:68px;height:68px;border-radius:12px;background:linear-gradient(180deg,#1E1E25,#121216);display:grid;place-items:center;border:0;padding:0;cursor:pointer}
+.wl-img img{width:86%;height:86%;object-fit:contain}
+.wl-info{flex:1;min-width:0;display:grid;gap:2px}
+.wl-info small{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-4);font-weight:700}
+.wl-info strong{font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl-info em{font-style:normal;font-weight:800;color:var(--gold-300);font-size:14px}
+.wl-actions{display:flex;align-items:center;gap:8px}
+.wl-add{width:40px;height:40px;border-radius:12px;border:0;background:linear-gradient(135deg,#F6E3A8,#D4AF37);color:#1A1200;font-size:20px;font-weight:700;cursor:pointer}
+.wl-rem{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--text-3);cursor:pointer}
+.wl-rem:hover{color:#fff;border-color:var(--border-strong)}
+.wl-out{font-size:11.5px;color:#fca5a5;font-weight:700}
+.wl-empty{text-align:center;padding:48px 20px}
+.wl-empty h3{color:#fff;margin-bottom:6px}
+.wl-empty p{color:var(--text-3);margin-bottom:18px;font-size:14px}
+
+/* ================= Porositë e mia + timeline ================= */
+.tr-list-title{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-4);font-weight:800;margin-bottom:8px}
+.tr-list{display:grid;gap:10px}
+.tr-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--bg-1);border:1px solid rgba(255,255,255,.08)}
+.tr-open{flex:1;min-width:0;text-align:left;background:none;border:0;color:inherit;cursor:pointer;display:grid;gap:3px;padding:2px}
+.tr-open strong{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.5px;letter-spacing:.04em;color:#fff;overflow:hidden;text-overflow:ellipsis}
+.tr-open span{font-size:12.5px;color:var(--text-3)}
+.tr-again{flex:none;height:38px;padding:0 14px;border-radius:12px;border:1px solid var(--border-strong);background:rgba(232,198,122,.08);color:var(--gold-300);font-weight:700;font-size:12.5px;cursor:pointer;transition:background .2s}
+.tr-again:hover{background:rgba(232,198,122,.16)}
+.tl{list-style:none;position:relative;display:grid;gap:0;margin:6px 0 4px}
+.tl-step{position:relative;display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:start;padding:0 0 22px}
+.tl-step:last-child{padding-bottom:4px}
+.tl-step::before{content:"";position:absolute;left:13px;top:26px;bottom:-2px;width:2px;background:rgba(255,255,255,.1)}
+.tl-step:last-child::before{display:none}
+.tl-step.done::before{background:var(--gold-400)}
+.tl-dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:2px solid rgba(255,255,255,.18);background:var(--bg-1);font-size:13px;font-weight:800;color:#1A1200;z-index:1}
+.tl-step.done .tl-dot{background:var(--gold-400);border-color:var(--gold-400)}
+.tl-step.current .tl-dot{border-color:var(--gold-300);box-shadow:0 0 0 5px rgba(232,198,122,.18);background:var(--gold-300)}
+.tl-body strong{display:block;font-size:14.5px;color:var(--text-3)}
+.tl-body small{display:block;font-size:12.5px;color:var(--text-4);margin-top:2px}
+.tl-step.done .tl-body strong,.tl-step.current .tl-body strong{color:#fff}
+.tl-time{font-size:12px;color:var(--text-4);font-variant-numeric:tabular-nums;padding-top:2px}
+.tl-eta{padding:12px 14px;margin-bottom:14px;border-radius:14px;background:rgba(232,198,122,.1);border:1px solid rgba(232,198,122,.28);color:var(--text-2);font-size:14px}
+.tl-eta b{color:var(--gold-300)}
+.tl-eta.ok{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.3);color:#86efac}
+.tl-eta.bad{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:#fca5a5}
+
+/* ================= Kërkimi: sugjerime ================= */
+.search-suggestions h4{display:flex;align-items:center;justify-content:space-between;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-4);font-weight:800;margin:18px 0 10px}
+.search-suggestions h4:first-child{margin-top:4px}
+.sg-clear{background:none;border:0;color:var(--gold-300);font-size:12px;font-weight:700;cursor:pointer;text-transform:none;letter-spacing:0}
+.suggestion-chips{display:flex;flex-wrap:wrap;gap:8px}
+.suggestion-chips .chip{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:999px;background:var(--bg-2);border:1px solid rgba(255,255,255,.1);color:var(--text-2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s}
+.suggestion-chips .chip:hover{border-color:var(--gold-300);color:#fff}
+
+/* ================= WhatsApp, instalim, offline ================= */
+.wa-order{height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;border-color:rgba(255,255,255,.14);color:var(--text-2)}
+.wa-order:hover{border-color:#25D366;color:#25D366}
+.s-install{margin-top:10px;height:40px;padding:0 16px;border-radius:12px;border:1px solid var(--border-strong);background:rgba(232,198,122,.08);color:var(--gold-300);font-weight:700;font-size:13px;cursor:pointer;text-align:left}
+.s-install[hidden]{display:none}
+#netBanner{position:fixed;left:0;right:0;top:0;z-index:400;padding:9px 16px;text-align:center;font-size:13px;font-weight:700;background:#7f1d1d;color:#fff}

@@ -20,16 +20,13 @@ const RATE_LIMITS = {
 const DEFAULT_CITIES = ['peje'];
 const TIME_SLOT_FEES = { morning: 0, afternoon: 0, evening: 0, express: 2.99 };
 
-// Kuponat e njohur (si në storefront). Kuponat aktivë nga koleksioni `coupons` e mbishkruajnë këtë listë.
-const BUILTIN_COUPONS = {
-  HANA15: { type: 'percent', value: 15 },
-  HANA10: { type: 'percent', value: 10, minOrder: 20 },
-  GOLDEN: { type: 'percent', value: 20 },
-  WELCOME5: { type: 'fixed', value: 5, minOrder: 15 },
-  PEJA: { freeDelivery: true },
-  FREE: { freeDelivery: true },
-  EXPRESSFREE: { type: 'fixed', value: 3.99, minOrder: 30 },
-};
+// Kuponat default (admini i mbishkruan me storeSettings.coupons)
+const BUILTIN_COUPONS = [
+  { code: 'HANA10', type: 'percent', value: 10, minOrder: 20 },
+  { code: 'HANA15', type: 'percent', value: 15, minOrder: 0 },
+  { code: 'WELCOME5', type: 'fixed', value: 5, minOrder: 15 },
+  { code: 'PEJA', type: 'freeship', value: 0, minOrder: 0 },
+];
 
 const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
 const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
@@ -143,15 +140,13 @@ exports.placeOrder = onCall({ cors: true, timeoutSeconds: 30 }, async req => {
   const minOrder = num(cityCfg.minOrder, dc.minOrder, 0);
   const maxOrder = num(dc.maxOrder, null, MAX_ORDER_TOTAL);
 
-  // Kuponi: koleksioni `coupons` ka përparësi mbi listën e brendshme
+  // Kuponi: nga cilësimet e adminit (ose default-et)
   let coupon = null;
   if (input.couponCode) {
-    const cs = await db.collection('coupons').doc(input.couponCode).get();
-    const c = cs.exists ? cs.data() : null;
-    if (c && c.status === 'active' && !(c.expiresAt && new Date(c.expiresAt) < now) && !(c.usageLimit && c.usedCount >= c.usageLimit)) {
-      coupon = { type: c.type, value: Number(c.discount ?? c.value ?? 0), minOrder: c.minOrder, freeDelivery: c.freeDelivery };
-    } else if (BUILTIN_COUPONS[input.couponCode]) {
-      coupon = BUILTIN_COUPONS[input.couponCode];
+    const couponList = Array.isArray(settings.coupons) ? settings.coupons : BUILTIN_COUPONS;
+    const c = couponList.find(x => String(x.code || '').toUpperCase() === input.couponCode);
+    if (c && c.active !== false && !(c.expiresAt && new Date(c.expiresAt) < now)) {
+      coupon = { type: c.type, value: Number(c.value || 0), minOrder: Number(c.minOrder || 0), freeDelivery: c.type === 'freeship' };
     }
   }
 

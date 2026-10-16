@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=13">
+<link rel="stylesheet" href="css/shop.css?v=14">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Ballina", "item": "https://hanafreeshop.com/"}, {"@type": "ListItem", "position": 2, "name": "Market", "item": "https://hanafreeshop.com/market"}, {"@type": "ListItem", "position": 3, "name": "Buldak & Ice Cups", "item": "https://hanafreeshop.com/buldak"}]}</script>
 <script type="importmap">
 {"imports":{
@@ -112,11 +112,11 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
   <div class="s-chips s-brands" id="brandChips" role="group" aria-label="Markat"></div>
   <div class="s-toolbar"><div class="s-count" id="resultCount"></div>
    <label class="s-sort"><span>Rendit</span><select id="sortSelect" aria-label="Rendit produktet"><option value="default">Të rekomanduara</option><option value="price-asc">Çmimi: ulët → lartë</option><option value="price-desc">Çmimi: lartë → ulët</option><option value="discount">Zbritjet më të mëdha</option><option value="name">Emri A–Z</option></select></label></div>
-  <div class="product-grid" id="productGrid"></div>
+  <div class="product-grid" id="productGrid"><div class="sk-card" aria-hidden="true"><i class="sk-media"></i><i class="sk-line"></i><i class="sk-line short"></i></div><div class="sk-card" aria-hidden="true"><i class="sk-media"></i><i class="sk-line"></i><i class="sk-line short"></i></div><div class="sk-card" aria-hidden="true"><i class="sk-media"></i><i class="sk-line"></i><i class="sk-line short"></i></div><div class="sk-card" aria-hidden="true"><i class="sk-media"></i><i class="sk-line"></i><i class="sk-line short"></i></div><div class="sk-card" aria-hidden="true"><i class="sk-media"></i><i class="sk-line"></i><i class="sk-line short"></i></div><div class="sk-card" aria-hidden="true"><i class="sk-media"></i><i class="sk-line"></i><i class="sk-line short"></i></div><div class="sk-card" aria-hidden="true"><i class="sk-media"></i><i class="sk-line"></i><i class="sk-line short"></i></div><div class="sk-card" aria-hidden="true"><i class="sk-media"></i><i class="sk-line"></i><i class="sk-line short"></i></div></div>
   <div class="empty-state" id="emptyState" style="display:none"><h3>Nuk u gjet asnjë produkt</h3><p>Provo një kategori tjetër.</p><a class="s-btn s-btn-gold" href="/market">Të gjitha produktet</a></div>
  </main>
 
- <footer class="s-footer" id="siteFooter"><div class="s-footer-grid"><div><div class="s-footer-brand">HANA <span>FREE SHOP</span></div><p>General Wesley Clark, Pejë<br>Çdo ditë 08:00–22:00<br>Dorëzim brenda 30 minutash</p><p><a href="tel:+38348588886">+383 48 588 886</a> · <a href="https://wa.me/38348588886" rel="noopener" target="_blank">WhatsApp</a></p></div><div><h4>Kategoritë</h4><a href="/alkoholi">Alkool Premium</a><a href="/cigare">Cigare &amp; Duhan</a><a href="/buldak">Buldak &amp; Ice Cups</a><a href="/pije">Pije &amp; Energjike</a><a href="/embelsira">Çokollata &amp; Ëmbëlsira</a><a href="/ushqime">Ushqime &amp; Snacks</a></div><div><h4>Informacion</h4><a href="/rreth-nesh">Rreth nesh</a><a href="/kontakt">Kontakt</a><a href="/shipping.html">Dërgesa</a><a href="/returns.html">Kthimet</a><a href="/terms.html">Kushtet</a><a href="/privacy.html">Privatësia</a></div></div><div class="s-footer-bottom">© 2026 Hana Free Shop. Të gjitha të drejtat e rezervuara.</div></footer>
+ <footer class="s-footer" id="siteFooter"><div class="s-footer-grid"><div><div class="s-footer-brand">HANA <span>FREE SHOP</span></div><p>General Wesley Clark, Pejë<br>Çdo ditë 08:00–22:00<br>Dorëzim brenda 30 minutash</p><p><a href="tel:+38348588886">+383 48 588 886</a> · <a href="https://wa.me/38348588886" rel="noopener" target="_blank">WhatsApp</a></p></div><div><h4>Kategoritë</h4><a href="/alkoholi">Alkool Premium</a><a href="/cigare">Cigare &amp; Duhan</a><a href="/buldak">Buldak &amp; Ice Cups</a><a href="/pije">Pije &amp; Energjike</a><a href="/embelsira">Çokollata &amp; Ëmbëlsira</a><a href="/ushqime">Ushqime &amp; Snacks</a></div><div><h4>Informacion</h4><a href="/rreth-nesh">Rreth nesh</a><a href="/kontakt">Kontakt</a><a href="/shipping.html">Dërgesa</a><a href="/returns.html">Kthimet</a><a href="/terms.html">Kushtet</a><a href="/privacy.html">Privatësia</a><button type="button" class="s-install" id="installBtn" hidden>Instalo aplikacionin</button></div></div><div class="s-footer-bottom">© 2026 Hana Free Shop. Të gjitha të drejtat e rezervuara.</div></footer>
 
  <nav class="bottom-nav" aria-label="Navigimi mobile">
  <button class="bn-item active" data-nav="ballina" aria-label="Ballina"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11l9-8z"/></svg></span><span>Ballina</span></button>
@@ -162,9 +162,8 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
   </div>
 
   <div class="discount-row">
-  <div class="discount-field"><input id="discountInput" type="text" placeholder="Kodi i zbritjes"><button class="btn btn-gold btn-sm" id="discountApply">Apliko</button></div>
+  <div class="discount-field"><input id="discountInput" type="text" placeholder="Kodi i zbritjes" autocomplete="off" autocapitalize="characters"><button class="btn btn-gold btn-sm" id="discountApply">Apliko</button></div>
   <div class="discount-msg" id="discountMsg" style="display:none"></div>
-  <div class="coupon-list" id="couponList" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;"></div>
   </div>
 
 
@@ -179,6 +178,7 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
   <div class="total-row grand"><span>Gjithsej për pagesë:</span><strong id="cartGrandTotal" class="gold">23.90 €</strong></div>
   </div>
   <button class="btn btn-gold full premium-checkout" id="checkoutBtn"><span>Vazhdo te Procedura e Porosisë</span><span>→</span></button>
+  <button type="button" class="btn btn-outline full wa-order" id="waOrderBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg> Porosit me WhatsApp</button>
   <div class="secure-badges"><span>Pagesa në dorë</span><span data-tpl="Dorëzim {minutes} min">Dorëzim 30 min</span></div>
  </div>
  </aside>
@@ -193,7 +193,7 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
  <div class="search-overlay-head">
   <div class="search-field large">
   <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg>
-  <input id="searchOverlayInput" type="search" placeholder="Kërko puro, Golden Eagle, OCB, Bulldak, Ice..." aria-label="Kërko në overlay">
+  <input id="searchOverlayInput" type="search" placeholder="Kërko produkte, marka ose kategori" aria-label="Kërko në overlay">
   <button class="icon-btn" id="closeSearch" aria-label="Mbyll kërkimin">✕</button>
   </div>
  </div>
@@ -315,15 +315,17 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
 <script src="js/pwa.js?v=11-super-huge"></script>
 <script src="js/home-defaults.js?v=1"></script>
 <script src="js/cities.js?v=2"></script>
-<script src="js/site-render.js?v=5"></script>
+<script src="js/coupons.js?v=1"></script>
+<script src="js/site-render.js?v=6"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=22"></script>
+<script type="module" src="js/app.js?v=23"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
 <script src="js/auto-bg.js?v=2"></script>
 <script src="js/text-fx.js?v=2"></script>
 <script src="js/home.js?v=4"></script>
-<script src="js/shop-ux.js?v=6"></script>
+<script src="js/a11y.js?v=1"></script>
+<script src="js/shop-ux.js?v=7"></script>
 <script>document.querySelector('.s-chip.active')?.scrollIntoView({inline:'center',block:'nearest'});</script>
 </body>
 </html>

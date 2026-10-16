@@ -71,7 +71,7 @@ function setView(view){
   if(view==='brands') renderBrands();
   if(view==='inventory') {renderInventory(); renderInventoryLogs();}
   if(view==='media') renderMedia();
-  if(view==='offers') renderOffers();
+  if(view==='offers'){ renderOffers(); renderCouponsEditor(); }
   if(view==='promos') renderPromos();
   if(view==='hero') renderHero();
   if(view==='homepage') renderHomepageEditor();
@@ -2028,6 +2028,76 @@ function collectCities(){
       flatFee: numOrUndef('flatFee'), freeThreshold: numOrUndef('freeThreshold'), minOrder: numOrUndef('minOrder')
     };
     Object.keys(c).forEach(k => c[k] === undefined && delete c[k]);
+    return c;
+  });
+}
+
+
+// ================= KUPONËT (Oferta & Zbritje) — ruhen te STORE_SETTINGS.coupons =================
+function renderCouponsEditor(){
+  const view = $('#view-offers');
+  if(!view || !window.HanaCoupons) return;
+  let host = $('#couponsEditor');
+  if(!host){ view.insertAdjacentHTML('beforeend', '<div class="card" id="couponsEditor" style="margin-top:20px"></div>'); host = $('#couponsEditor'); }
+  window.HanaCoupons.setOverrides(STORE_SETTINGS.coupons);
+  const list = window.HanaCoupons.list();
+  const rows = list.map(c => `
+    <div class="coupon-row" data-coupon style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;align-items:end;padding:12px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.02)">
+      <div class="form-group"><label>Kodi</label><input class="input" data-k="code" value="${hpEsc(c.code)}" style="text-transform:uppercase"></div>
+      <div class="form-group"><label>Lloji</label><select class="input" data-k="type">
+        <option value="percent" ${c.type === 'percent' ? 'selected' : ''}>Përqindje %</option>
+        <option value="fixed" ${c.type === 'fixed' ? 'selected' : ''}>Shumë fikse €</option>
+        <option value="freeship" ${c.type === 'freeship' ? 'selected' : ''}>Dërgesë falas</option></select></div>
+      <div class="form-group"><label>Vlera</label><input class="input" type="number" min="0" step="0.5" data-k="value" value="${hpEsc(c.value ?? 0)}"></div>
+      <div class="form-group"><label>Porosia min. €</label><input class="input" type="number" min="0" step="0.5" data-k="minOrder" value="${hpEsc(c.minOrder ?? 0)}"></div>
+      <div class="form-group"><label>Skadon (opsionale)</label><input class="input" type="date" data-k="expiresAt" value="${hpEsc((c.expiresAt || '').slice(0, 10))}"></div>
+      <label class="check" style="margin:0 0 10px"><input type="checkbox" data-k="active" ${c.active !== false ? 'checked' : ''}> Aktiv</label>
+      <div><button type="button" class="btn btn-danger btn-xs" data-coupon-del>Fshi</button></div>
+    </div>`).join('');
+  host.innerHTML = `
+    <div style="margin-bottom:12px"><strong style="font-size:15px">🎟️ Kuponët (kodet e zbritjes)</strong>
+      <div style="font-size:12px;color:var(--text-4);margin-top:3px">Klienti i shkruan te shporta. Çmimi përfundimtar llogaritet në server, kështu që kodet nuk mund të manipulohen nga klienti.</div></div>
+    <div style="display:grid;gap:10px">${rows || '<div style="color:var(--text-4);font-size:13px">Asnjë kupon. Shto të parin.</div>'}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+      <button type="button" class="btn btn-outline btn-sm" id="addCouponBtn">+ Shto kupon</button>
+      <button type="button" class="btn btn-gold btn-sm" id="saveCouponsBtn">💾 Ruaj kuponët</button>
+      <button type="button" class="btn btn-outline btn-sm" id="resetCouponsBtn">↺ Kthe te default</button>
+    </div>`;
+  host.querySelectorAll('[data-coupon-del]').forEach(b => b.addEventListener('click', () => b.closest('[data-coupon]').remove()));
+  $('#addCouponBtn').addEventListener('click', () => {
+    STORE_SETTINGS.coupons = [...collectCoupons(), { code: 'KODI' + Math.floor(Math.random() * 90 + 10), type: 'percent', value: 10, minOrder: 0, active: true }];
+    renderCouponsEditor();
+  });
+  $('#saveCouponsBtn').addEventListener('click', async () => {
+    const out = collectCoupons();
+    const codes = out.map(c => c.code);
+    if(out.some(c => !c.code)){ toast('Çdo kupon duhet të ketë kod'); return; }
+    if(new Set(codes).size !== codes.length){ toast('Ka kode të përsëritura'); return; }
+    STORE_SETTINGS.coupons = out;
+    saveLocalStoreSettings(STORE_SETTINGS);
+    await upsertStoreSettings(STORE_SETTINGS);
+    toast('✅ Kuponët u ruajtën');
+  });
+  $('#resetCouponsBtn').addEventListener('click', async () => {
+    if(!confirm('Të kthehen kuponët te lista fillestare?')) return;
+    delete STORE_SETTINGS.coupons;
+    saveLocalStoreSettings(STORE_SETTINGS);
+    await upsertStoreSettings(STORE_SETTINGS);
+    renderCouponsEditor();
+  });
+}
+
+function collectCoupons(){
+  return [...document.querySelectorAll('#couponsEditor [data-coupon]')].map(row => {
+    const g = k => row.querySelector(`[data-k="${k}"]`);
+    const c = {
+      code: g('code').value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, ''),
+      type: g('type').value,
+      value: Number(g('value').value) || 0,
+      minOrder: Number(g('minOrder').value) || 0,
+      active: g('active').checked
+    };
+    if(g('expiresAt').value) c.expiresAt = new Date(g('expiresAt').value + 'T23:59:59').toISOString();
     return c;
   });
 }

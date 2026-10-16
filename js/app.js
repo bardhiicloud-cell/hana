@@ -80,7 +80,7 @@ function refreshCityUI(){
  populateCitySelect();
  if(typeof applyHomeContent==='function'){
   applyHomeContent();
-  renderCategories(); renderBrands(); renderProducts(); renderPopularGrid();
+  renderCategories(); renderBrands(); renderProducts(); renderPopularGrid(); renderRecent();
  }
  renderCartDrawer();
  updateTotalsUI();
@@ -273,6 +273,27 @@ function setupPageContext(){
  }
 }
 
+
+// ---------- TË PARË SË FUNDMI ----------
+function trackView(id){
+ try{
+  const l = JSON.parse(localStorage.getItem('hana_recent')||'[]').filter(x=>x!==id);
+  l.unshift(id);
+  localStorage.setItem('hana_recent', JSON.stringify(l.slice(0,12)));
+ }catch{}
+ renderRecent();
+}
+function renderRecent(){
+ const sec = $('#recent'); const g = $('#recentGrid');
+ if(!sec || !g) return;
+ let ids=[]; try{ ids=JSON.parse(localStorage.getItem('hana_recent')||'[]'); }catch{}
+ const list = ids.map(id=>PRODUCTS.find(p=>p.id===id)).filter(Boolean).slice(0, homeLimit('recent',8));
+ if(!list.length){ sec.hidden = true; return; }
+ sec.hidden = window.HANA_HOMECFG?.sections?.recent?.visible===false;
+ g.innerHTML = list.map((p,i)=>renderProductCard(p,i)).join('');
+ bindProductGridEvents(g);
+ if(window.HanaAutoBg) window.HanaAutoBg.scan(g);
+}
 
 // ---------- MARKAT ----------
 function brandStats(){
@@ -609,6 +630,16 @@ function getDiscountCodes(){
   return codes;
 }
 
+function clearCoupon(){ discountCode=null; discountPercent=0; discountFreeDelivery=false; window._appliedCoupon=null; window._couponMin=0; }
+function setCoupon(c){
+ clearCoupon();
+ discountCode = String(c.code).toUpperCase();
+ window._couponMin = Number(c.minOrder||0);
+ if(c.type==='percent') discountPercent = Number(c.value);
+ else if(c.type==='fixed') window._appliedCoupon = { code:discountCode, type:'fixed', discount:Number(c.value) };
+ else discountFreeDelivery = true;
+}
+
 function calculateTotals(){
   // Secure: Calculate from trusted product data, not client input - 100K enhanced
   const subtotal = cartSubtotal();
@@ -637,19 +668,20 @@ function calculateTotals(){
     // Will show warning
   }
   
+  const couponOk = !window._couponMin || subtotal >= window._couponMin;
   let discountAmount = 0;
-  if(discountPercent>0){
+  if(discountPercent>0 && couponOk){
     discountAmount = Math.min(subtotal, subtotal * (discountPercent/100));
   }
   // 100K: Coupon from Features100K
-  if(typeof Features100K!=='undefined' && window._appliedCoupon){
+  if(window._appliedCoupon && couponOk){
     const coupon = window._appliedCoupon;
     if(coupon.type==='percent') discountAmount += subtotal * (coupon.discount/100);
     else if(coupon.type==='fixed') discountAmount += coupon.discount;
     discountAmount = Math.min(subtotal, discountAmount);
   }
   const afterDiscount = Math.max(0, subtotal - discountAmount);
-  const isFreeShipping = afterDiscount >= config.freeThreshold || discountFreeDelivery;
+  const isFreeShipping = afterDiscount >= config.freeThreshold || (discountFreeDelivery && couponOk);
   const delivery = isFreeShipping ? 0 : (cart.length>0 ? config.flatFee : 0);
   const gift = giftWrapEnabled ? GIFT_WRAP_FEE : 0;
   const express = (typeof Features100K!=='undefined' && Features100K.expressDelivery.isEnabled()) ? Features100K.expressDelivery.price : 0;
@@ -830,16 +862,22 @@ function renderWishlistDrawer(){
  const body = $('#wishlistItems');
  const count = $('#wishlistDrawerCount');
  if(!body) return;
- if(wishlist.length===0){
- body.innerHTML = `<div class="empty-state" style="margin:12px"><div class="empty-icon">💛</div><h3>Wishlist bosh</h3><p>Ruaj produktet e preferuara.</p></div>`;
- }else{
- body.innerHTML = wishlist.map(id=>{
- const p = PRODUCTS.find(x=>x.id===id);
- if(!p) return '';
- return `<div class="cart-item"><img src="${p.image||p.mainImage}" alt="${p.name}"><div class="cart-item-info"><strong>${p.brand} ${p.name}</strong><small>${formatPrice(p.price)}</small><div class="cart-item-actions"><button class="btn btn-gold btn-sm" data-wadd="${p.id}">Shto në shportë</button></div></div><button class="icon-btn" data-wrem="${p.id}" style="width:28px;height:28px">✕</button></div>`;
- }).join('');
- body.querySelectorAll('[data-wadd]').forEach(b=>b.addEventListener('click', ()=>{ const img = b.closest('.cart-item')?.querySelector('img'); addToCart(b.dataset.wadd,1,img); }));
- body.querySelectorAll('[data-wrem]').forEach(b=>b.addEventListener('click', ()=>toggleWishlist(b.dataset.wrem)));
+ const items = wishlist.map(id=>PRODUCTS.find(x=>x.id===id)).filter(Boolean);
+ if(items.length===0){
+  body.innerHTML = `<div class="wl-empty"><h3>Asnjë produkt i ruajtur</h3><p>Shtyp zemrën te një produkt për ta ruajtur këtu.</p><a class="s-btn s-btn-gold" href="/market">Shfleto produktet</a></div>`;
+ } else {
+  body.innerHTML = items.map(p=>{
+   const pr = getProductFinalPrice(p);
+   const out = p.stock<=0 || p.availability==='out_of_stock';
+   return `<div class="wl-row" data-id="${p.id}">
+    <button type="button" class="wl-img" data-wopen="${p.id}" aria-label="Hap ${escH(p.name)}"><img src="${p.mainImage||p.image}" alt="" loading="lazy"></button>
+    <div class="wl-info"><small>${escH(p.brand)}</small><strong>${escH(p.name)}</strong><em>${formatPrice(Math.max(0,pr.finalPrice))}</em></div>
+    <div class="wl-actions">${out?'<span class="wl-out">Jashtë stokut</span>':`<button type="button" class="wl-add" data-wadd="${p.id}" aria-label="Shto në shportë">+</button>`}<button type="button" class="wl-rem" data-wrem="${p.id}" aria-label="Hiq nga wishlist">✕</button></div>
+   </div>`;
+  }).join('');
+  body.querySelectorAll('[data-wadd]').forEach(b=>b.addEventListener('click', ()=>{ addToCart(b.dataset.wadd,1,b.closest('.wl-row')?.querySelector('img')); }));
+  body.querySelectorAll('[data-wrem]').forEach(b=>b.addEventListener('click', ()=>toggleWishlist(b.dataset.wrem)));
+  body.querySelectorAll('[data-wopen]').forEach(b=>b.addEventListener('click', ()=>{ closeWishlist(); if(window.openProductModal) window.openProductModal(b.dataset.wopen); }));
  }
  if(count) count.textContent = `(${wishlist.length})`;
 }
@@ -863,6 +901,25 @@ function updateWishlistUI(){
 }
 
 // SEARCH
+const escH = v => String(v==null?'':v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function getSearches(){ try{ return JSON.parse(localStorage.getItem('hana_searches')||'[]'); }catch{ return []; } }
+function saveSearch(q){
+ q = String(q||'').trim(); if(q.length<2) return;
+ const l = getSearches().filter(x=>x.toLowerCase()!==q.toLowerCase()); l.unshift(q);
+ try{ localStorage.setItem('hana_searches', JSON.stringify(l.slice(0,6))); }catch{}
+}
+function renderSearchSuggestions(){
+ const box = $('#searchSuggestions');
+ if(!box) return;
+ const recent = getSearches();
+ const brands = brandStats().slice(0,8).map(b=>b.brand);
+ const cats = CATEGORIES.filter(c=>c.visible!==false && PRODUCTS.some(p=>p.category===c.id));
+ box.innerHTML =
+  (recent.length ? `<h4>Kërkimet e fundit <button type="button" class="sg-clear" id="sgClear">Pastro</button></h4><div class="suggestion-chips">${recent.map(q=>`<button type="button" class="chip" data-q="${escH(q)}">${escH(q)}</button>`).join('')}</div>` : '') +
+  (brands.length ? `<h4>Marka popullore</h4><div class="suggestion-chips">${brands.map(b=>`<button type="button" class="chip" data-q="${escH(b)}">${escH(b)}</button>`).join('')}</div>` : '') +
+  (cats.length ? `<h4>Kategori</h4><div class="suggestion-chips">${cats.map(c=>`<a class="chip" href="${catHref(c.id)}">${escH(c.name)}</a>`).join('')}</div>` : '');
+}
+
 const normQ = x => String(x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ç/g,'c');
 
 function searchProducts(q, limit=20){
@@ -907,7 +964,7 @@ function openCart(){ $('#cartDrawer')?.classList.add('open'); $('#drawerBackdrop
 function closeCart(){ $('#cartDrawer')?.classList.remove('open'); if(!$('#wishlistDrawer')?.classList.contains('open')){ $('#drawerBackdrop')?.classList.remove('open'); document.body.style.overflow=''; } }
 function openWishlist(){ $('#wishlistDrawer')?.classList.add('open'); $('#drawerBackdrop')?.classList.add('open'); document.body.style.overflow='hidden'; }
 function closeWishlist(){ $('#wishlistDrawer')?.classList.remove('open'); if(!$('#cartDrawer')?.classList.contains('open')){ $('#drawerBackdrop')?.classList.remove('open'); document.body.style.overflow=''; } }
-function openSearch(){ $('#searchOverlay')?.classList.add('open'); setTimeout(()=>$('#searchOverlayInput')?.focus(),100); document.body.style.overflow='hidden'; }
+function openSearch(){ renderSearchSuggestions(); $('#searchOverlay')?.classList.add('open'); setTimeout(()=>$('#searchOverlayInput')?.focus(),100); document.body.style.overflow='hidden'; }
 function closeSearch(){ $('#searchOverlay')?.classList.remove('open'); document.body.style.overflow=''; }
 function openAccount(){ $('#accountModal')?.classList.add('open'); $('#accountBackdrop')?.classList.add('open'); }
 function closeAccount(){ $('#accountModal')?.classList.remove('open'); $('#accountBackdrop')?.classList.remove('open'); }
@@ -1039,69 +1096,29 @@ function initCheckout(){
  });
 
  // Discount code — 100K with Firestore dynamic coupons + rate limiting + XSS protection
- $('#discountApply')?.addEventListener('click', async ()=>{
+ $('#discountApply')?.addEventListener('click', ()=>{
  const input = $('#discountInput');
  const msg = $('#discountMsg');
  if(!input || !msg) return;
  const code = input.value.trim().toUpperCase();
- if(!code){ msg.style.display='none'; return; }
- 
- // 100K: Rate limiting check
- if(typeof Security!=='undefined' && !Security.rateLimiter.check('coupon_'+code, 5, 60000)){
-   msg.className='discount-msg error';
-   msg.style.display='block';
-   msg.textContent='⏳ Shumë kërkesa — provo pas 1 minute';
-   return;
+ if(!code){ msg.style.display='none'; clearCoupon(); updateTotalsUI(); updateFreeShipping(); return; }
+ if(typeof Security!=='undefined' && !Security.rateLimiter.check('coupon', 8, 60000)){
+  msg.className='discount-msg error'; msg.style.display='block'; msg.textContent='Shumë përpjekje. Provo pas 1 minute.'; return;
  }
- 
- // Try Features100K coupons first (Firestore)
- let applied = false;
- if(typeof Features100K!=='undefined'){
-   try{
-     const totals = calculateTotals();
-     const result = await Features100K.coupons.validate(code, totals.subtotal);
-     if(result.valid){
-       window._appliedCoupon = result.coupon;
-       discountCode = code;
-       if(result.coupon.type==='percent') discountPercent = result.coupon.discount;
-       else discountPercent = 0;
-       discountFreeDelivery = result.coupon.code==='EXPRESSFREE' || result.coupon.freeDelivery;
-       msg.className='discount-msg success';
-       msg.style.display='block';
-       const safeDesc = (typeof Security!=='undefined' ? Security.escapeHtml(result.coupon.description) : result.coupon.description);
-       msg.textContent = `✅ ${safeDesc} u aplikua! Kodi: ${code}`;
-       updateTotalsUI(); updateFreeShipping();
-       toast(`Kodi ${code} u aplikua: ${safeDesc}`, 'gold');
-       if(typeof Security!=='undefined') Security.logAudit('coupon_applied', {code});
-       if(typeof haptic!=='undefined') haptic('success');
-       applied=true;
-     }
-   }catch(e){ console.warn('Coupon validate failed', e); }
+ const r = window.HanaCoupons.validate(code, calculateTotals().subtotal);
+ msg.style.display='block';
+ if(!r.valid){
+  clearCoupon();
+  msg.className='discount-msg error'; msg.textContent = r.error;
+  if(typeof haptic!=='undefined') haptic('error');
+ } else {
+  setCoupon(r.coupon);
+  const desc = window.HanaCoupons.describe(r.coupon);
+  msg.className='discount-msg success'; msg.textContent = `${desc} u aplikua (${code})`;
+  toast(`Kodi ${code}: ${desc}`, 'gold');
+  if(typeof haptic!=='undefined') haptic('success');
  }
- 
- if(!applied){
-   const codes = getDiscountCodes();
-   if(codes[code]){
-     const c = codes[code];
-     discountCode = code;
-     discountPercent = c.percent || 0;
-     discountFreeDelivery = !!c.freeDelivery;
-     window._appliedCoupon = null;
-     msg.className = 'discount-msg success';
-     msg.style.display='block';
-     msg.textContent = `✅ ${c.desc} u aplikua! Kodi: ${code}`;
-     updateTotalsUI(); updateFreeShipping();
-     toast(`Kodi ${code} u aplikua: ${c.desc}`, 'gold');
-     if(typeof haptic!=='undefined') haptic('success');
-   }else{
-     discountCode = null; discountPercent = 0; discountFreeDelivery = false; window._appliedCoupon=null;
-     msg.className = 'discount-msg error';
-     msg.style.display='block';
-     msg.textContent = `❌ Kodi "${code}" nuk është valid. Provo HANA10, WELCOME5, EXPRESSFREE`;
-     updateTotalsUI(); updateFreeShipping();
-     if(typeof haptic!=='undefined') haptic('error');
-   }
- }
+ updateTotalsUI(); updateFreeShipping();
  });
  $('#discountInput')?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#discountApply')?.click(); } });
 
@@ -1156,7 +1173,7 @@ function initCheckout(){
              created = { id: srv.trackingId, total: srv.total, status: srv.status, createdAt: srv.createdAt };
              try{
                const mine = JSON.parse(localStorage.getItem('hana_my_orders')||'[]');
-               mine.unshift({ id: srv.trackingId, total: srv.total, createdAt: srv.createdAt, status: srv.status });
+               mine.unshift({ id: srv.trackingId, total: srv.total, createdAt: srv.createdAt, status: srv.status, items: cart.map(c=>({id:c.id, qty:c.qty})) });
                localStorage.setItem('hana_my_orders', JSON.stringify(mine.slice(0,30)));
              }catch{}
              totals.grand = srv.total;
@@ -1222,7 +1239,7 @@ async function renderTrackingResult(orderId){
  let order = null;
  if(isFirebaseEnabled()){
   result.innerHTML = '<div class="empty-state"><p>Duke kërkuar…</p></div>';
-  try{ const t = await trackOrderServer(safeId); order = { id:t.trackingId, status:t.status, total:t.total, createdAt:t.createdAt, itemCount:t.itemCount }; }
+  try{ const t = await trackOrderServer(safeId); order = { id:t.trackingId, status:t.status, total:t.total, createdAt:t.createdAt, itemCount:t.itemCount, history:t.history }; }
   catch(e){ if(e?.code==='functions/resource-exhausted'){ result.innerHTML='<div class="empty-state"><p>Shumë kërkime. Provo pas pak.</p></div>'; return; } return notFound(); }
  } else {
   let orders=[]; try{ orders=JSON.parse(localStorage.getItem('hana_orders')||'[]'); }catch{}
@@ -1241,16 +1258,21 @@ async function renderTrackingResult(orderId){
  const currentIdx = steps.indexOf(currentStatus);
  const esc = v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const pii = order.customer ? `<div style="margin-top:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:10px;font-size:11px;color:var(--text-3)">📍 ${esc(order.customer.address)} • 📞 ${esc(order.customer.phone)}</div>` : '';
+ const histMap = {}; (order.history||[]).forEach(h=>{ const k = h.status==='new' ? 'pending' : h.status; if(!histMap[k]) histMap[k] = h.timestamp; });
+ const fmtT = ts => ts ? new Date(ts).toLocaleTimeString('sq-AL',{hour:'2-digit',minute:'2-digit'}) : '';
  const stepsHtml = steps.map((s,i)=>{
   const info = statusMap[s];
-  const isActive = i<=currentIdx;
-  const isCurrent = i===currentIdx;
-  return `<div class="t-step ${isActive?'active':''}" style="${isCurrent?'border-color:var(--border-gold);background:rgba(232,198,122,.08)':''}"><span class="t-dot ${info.color}"></span><div><strong>${info.label} ${isCurrent?'• Tani':''}</strong><small>${info.desc}</small></div>${isActive?'<span style="margin-left:auto;color:var(--gold-300)">✓</span>':''}</div>`;
+  const done = i<currentIdx, cur = i===currentIdx;
+  const t = histMap[s] ? fmtT(histMap[s]) : (i===0 ? fmtT(order.createdAt) : '');
+  return `<li class="tl-step${done?' done':''}${cur?' current':''}"><span class="tl-dot">${done?'✓':''}</span><div class="tl-body"><strong>${info.label.split(' • ')[0]}</strong><small>${info.desc}</small></div><span class="tl-time">${t}</span></li>`;
  }).join('');
+ const minutes = (window.HanaCities && window.HanaCities.current() ? window.HanaCities.current().minutes : 30) || 30;
+ const eta = ['pending','confirmed','on_the_way'].includes(currentStatus) ? new Date(new Date(order.createdAt).getTime() + minutes*60000) : null;
+ const etaHtml = eta ? `<div class="tl-eta">Dorëzimi pritet rreth <b>${fmtT(eta)}</b></div>` : (currentStatus==='delivered' ? '<div class="tl-eta ok">Porosia u dorëzua</div>' : '');
  result.innerHTML = `<div class="card" style="padding:16px">
  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><strong style="font-size:16px">${esc(order.id)}</strong><span class="badge gold">${formatPrice(order.total)}</span></div>
  <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">${new Date(order.createdAt).toLocaleString('sq-AL')}${order.itemCount?` • ${order.itemCount} artikuj`:''}</div>
- ${cancelled ? `<div class="empty-state"><p>Kjo porosi është anuluar. Thirr ${esc(phoneTxt)} për detaje.</p></div>` : `<div class="tracking-steps">${stepsHtml}</div>`}
+ ${cancelled ? `<div class="tl-eta bad">Kjo porosi është anuluar. Thirr ${esc(phoneTxt)} për detaje.</div>` : `${etaHtml}<ol class="tl">${stepsHtml}</ol>`}
  ${pii}</div>`;
 }
 
@@ -1267,11 +1289,54 @@ function renderMyOrders(){
  const result = $('#trackingResult');
  let orders=[]; try{ orders=JSON.parse(localStorage.getItem(isFirebaseEnabled()?'hana_my_orders':'hana_orders')||'[]'); }catch{}
  if(orders.length===0){
- result.innerHTML = `<div class="tr-empty"><p>Porositë që bën nga kjo pajisje shfaqen këtu. Ose shkruaj ID-në më sipër.</p></div>`;
- return;
+  result.innerHTML = `<div class="tr-empty"><p>Porositë që bën nga kjo pajisje shfaqen këtu. Ose shkruaj ID-në më sipër.</p></div>`;
+  return;
  }
- result.innerHTML = `<div style="display:grid;gap:8px">${orders.map(o=>`<button class="loc-option" data-track="${o.id}" style="cursor:pointer"><div class="loc-opt-text"><strong>${o.id}</strong><span>${new Date(o.createdAt).toLocaleDateString('sq-AL')} • ${formatPrice(o.total)}</span></div><span class="promo-arrow">→</span></button>`).join('')}</div>`;
+ result.innerHTML = `<div class="tr-list-title">Porositë e tua</div><div class="tr-list">${orders.slice(0,10).map(o=>`<div class="tr-row">
+  <button type="button" class="tr-open" data-track="${o.id}"><strong>${o.id}</strong><span>${new Date(o.createdAt).toLocaleDateString('sq-AL')} • ${formatPrice(o.total)}</span></button>
+  ${(o.items&&o.items.length)?`<button type="button" class="tr-again" data-reorder="${o.id}">Blej përsëri</button>`:''}
+ </div>`).join('')}</div>`;
  result.querySelectorAll('[data-track]').forEach(b=>b.addEventListener('click', ()=>{ $('#trackingInput').value=b.dataset.track; renderTrackingResult(b.dataset.track); }));
+ result.querySelectorAll('[data-reorder]').forEach(b=>b.addEventListener('click', ()=>reorderFrom(b.dataset.reorder)));
+}
+
+function whatsappOrder(){
+ if(cart.length===0){ toast('Shporta është bosh'); return; }
+ const t = calculateTotals();
+ const c = window.HanaSite ? window.HanaSite.contactFrom(window.HANA_HOME_DEFAULTS||{}, STORE_SETTINGS||{}, window.HanaCities ? window.HanaCities.current() : null) : {};
+ const num = c.whatsapp || (window.HANA_CONFIG && window.HANA_CONFIG.whatsapp) || '38348588886';
+ const lines = cart.map(ci=>{
+  const p = PRODUCTS.find(x=>x.id===ci.id); if(!p) return null;
+  return `• ${ci.qty} × ${p.brand} ${p.name} — ${formatPrice(getProductFinalPrice(p).finalPrice*ci.qty)}`;
+ }).filter(Boolean);
+ const msg = [
+  `Përshëndetje! Dua të porosis nga Hana Free Shop (${cityName()}):`, '', ...lines, '',
+  `Nëntotali: ${formatPrice(t.subtotal)}`,
+  t.discountAmount>0 ? `Zbritja${discountCode?' ('+discountCode+')':''}: -${formatPrice(t.discountAmount)}` : null,
+  `Dërgesa: ${t.delivery===0?'Falas':formatPrice(t.delivery)}`,
+  `Totali: ${formatPrice(t.grand)}`, '', 'Emri:', 'Adresa:', 'Telefoni:'
+ ].filter(x=>x!==null).join('\n');
+ window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+}
+
+function reorderFrom(id){
+ let all=[]; try{ all=[...JSON.parse(localStorage.getItem('hana_my_orders')||'[]'), ...JSON.parse(localStorage.getItem('hana_orders')||'[]')]; }catch{}
+ const o = all.find(x=>x.id===id);
+ if(!o || !Array.isArray(o.items) || !o.items.length){ toast('Nuk gjetëm produktet e kësaj porosie.'); return; }
+ let added=0, skipped=0;
+ o.items.forEach(it=>{
+  const p = PRODUCTS.find(x=>x.id===it.id);
+  const have = cart.find(c=>c.id===it.id)?.qty || 0;
+  if(!p || p.status==='archived' || p.stock<=0 || p.availability==='out_of_stock'){ skipped++; return; }
+  const q = Math.min(Number(it.qty)||1, typeof p.stock==='number' ? Math.max(0,p.stock-have) : (Number(it.qty)||1));
+  if(q<=0){ skipped++; return; }
+  const ex = cart.find(c=>c.id===it.id);
+  if(ex) ex.qty += q; else cart.push({ id:it.id, qty:q });
+  added++;
+ });
+ saveCart(); closeTracking();
+ if(added){ openCart(); toast(`U shtuan ${added} produkte nga porosia${skipped?` (${skipped} nuk janë në stok)`:''}`, 'gold'); }
+ else toast('Asnjë nga produktet nuk është në stok tani.');
 }
 
 // NAVIGATION
@@ -1330,16 +1395,20 @@ function initSearch(){
  input?.addEventListener('input', e=>onSearch(e.target.value));
  input?.addEventListener('focus', ()=>{ openSearch(); });
  const goSearch = v=>{ const q=String(v||'').trim(); if(q) location.href='/market?q='+encodeURIComponent(q); };
- overlayInput?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); goSearch(overlayInput.value); } });
+ overlayInput?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); saveSearch(overlayInput.value); goSearch(overlayInput.value); } });
  $('#searchResults')?.addEventListener('click', e=>{
   const add = e.target.closest('[data-add]');
   if(add){ e.stopPropagation(); addToCart(add.dataset.add,1,add.closest('.sr-row')?.querySelector('img')); return; }
   const row = e.target.closest('.sr-row');
-  if(row){ closeSearch(); if(window.openProductModal) window.openProductModal(row.dataset.id); }
+  if(row){ saveSearch(overlayInput?.value); closeSearch(); if(window.openProductModal) window.openProductModal(row.dataset.id); }
  });
  $('#searchResults')?.addEventListener('keydown', e=>{ if((e.key==='Enter'||e.key===' ') && e.target.classList.contains('sr-row')){ e.preventDefault(); e.target.click(); } });
  overlayInput?.addEventListener('input', e=>onSearch(e.target.value));
- $$('.suggestion-chips .chip').forEach(chip=>{ chip.addEventListener('click', ()=>{ const v=chip.textContent; if(input) input.value=v; if(overlayInput) overlayInput.value=v; onSearch(v); }); });
+ $('#searchSuggestions')?.addEventListener('click', e=>{
+  if(e.target.closest('#sgClear')){ try{ localStorage.removeItem('hana_searches'); }catch{} renderSearchSuggestions(); return; }
+  const c = e.target.closest('[data-q]');
+  if(c){ const v=c.dataset.q; if(input) input.value=v; if(overlayInput) overlayInput.value=v; onSearch(v); saveSearch(v); }
+ });
  document.addEventListener('keydown', e=>{
  if(e.key==='Escape'){ closeCart(); closeWishlist(); closeSearch(); closeAccount(); closeCheckout(); closeTracking(); const locM=$('#locationModal'); if(locM?.classList.contains('open')){ locM.classList.remove('open'); $('#locationBackdrop')?.classList.remove('open'); document.body.style.overflow=''; } }
  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openSearch(); }
@@ -1621,6 +1690,7 @@ async function init(){
  const local = getLocalData();
  PRODUCTS = local.products; CATEGORIES = local.categories; PROMOS = local.promos; HERO_SLIDES = local.hero||[]; BRANDS = local.brands||[]; BANNERS = local.banners||[]; OFFERS = local.offers||[]; STORE_SETTINGS = local.storeSettings||null; DELIVERY_ZONES = local.deliveryZones||[];
  }
+ if(window.HanaCoupons) window.HanaCoupons.setOverrides(STORE_SETTINGS && STORE_SETTINGS.coupons);
  if(window.HanaCities){ window.HanaCities.setOverrides(STORE_SETTINGS && STORE_SETTINGS.cities, STORE_SETTINGS && STORE_SETTINGS.deliveryConfig); const cc = window.HanaCities.current(); if(cc) currentCity = cc.id; }
  setupPageContext();
  $('#sortSelect')?.addEventListener('change', e=>{ sortMode = e.target.value; renderProducts(); });
@@ -1629,6 +1699,7 @@ async function init(){
  renderCategories();
  renderBrands();
  renderBrandChips();
+ renderRecent();
  renderProducts();
  renderAlcoholGrid();
  renderTobaccoGrid();
@@ -1642,6 +1713,7 @@ async function init(){
  initSearch();
  // initAuth(); — pa llogari klienti: porosi si vizitor, gjurmim me ID
  initCheckout();
+ $('#waOrderBtn')?.addEventListener('click', whatsappOrder);
  initTracking();
  // initSmoothAnimations();
  // initFAB();
@@ -1675,6 +1747,8 @@ async function init(){
 
  try{
   const qp = new URLSearchParams(location.search);
+  const pid = qp.get('p');
+  if(pid && window.openProductModal) setTimeout(()=>window.openProductModal(pid), 400);
   const tid = qp.get('track');
   if(tid){ openTracking(); const ti=$('#trackingInput'); if(ti) ti.value=tid.toUpperCase(); renderTrackingResult(tid.toUpperCase()); }
   else if(qp.get('tracking')) openTrackingPanel();
@@ -1684,12 +1758,14 @@ async function init(){
 
 document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('DOMContentLoaded', ()=>{ const ph = window.HANA_CONFIG?.phone; const a = document.getElementById('trPhone'); if(a && ph){ a.textContent = ph; a.href = 'tel:' + ph.replace(/[^\d+]/g,''); } });
+window.addEventListener('hana:toast', e=>toast(e.detail));
 window.HANA = {
   getProducts:()=>PRODUCTS, getCart:()=>cart,
   getCartSummary:()=>({ count:cartCount(), subtotal:cartSubtotal(), total:(typeof calculateTotals==='function'? calculateTotals().grand : cartSubtotal()) }),
   openCart:()=>openCart(), closeCart:()=>closeCart(),
   openTracking:(id)=>{ openTracking(); if(id){ const i=$('#trackingInput'); if(i) i.value=id; renderTrackingResult(id); } },
   setCity:(id)=>setCity(id),
+  trackView:(id)=>trackView(id),
   addToCart:(id,qty,el)=>addToCart(id,qty,el),
   toggleWishlist:(id)=>{ toggleWishlist(id); syncCardControls(); },
   isWished:(id)=>wishlist.includes(id),

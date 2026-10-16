@@ -2,7 +2,7 @@
 // Cache strategy: CacheFirst for images/CSS/JS, NetworkFirst for API/Firestore
 // Versioned for cache busting
 
-const CACHE_VERSION = 'hana-v11-2026-10-15';
+const CACHE_VERSION = 'hana-v12-2026-10-16';
 const CACHE_STATIC = `${CACHE_VERSION}-static`;
 const CACHE_IMAGES = `${CACHE_VERSION}-images`;
 const CACHE_API = `${CACHE_VERSION}-api`;
@@ -18,6 +18,7 @@ const STATIC_ASSETS = [
   '/js/app.js',
   '/js/firebase.js',
   '/manifest.json',
+  '/offline.html',
   '/images/hero-premium-bag-400w.webp',
   '/images/hero-puro-tobacco-400w.webp',
   '/images/hero-buldak-ice-400w.webp',
@@ -124,7 +125,7 @@ self.addEventListener('fetch', event => {
         return caches.match(request).then(cached => {
           if(cached) return cached;
           // Offline fallback
-          return caches.match('/index.html');
+          return caches.match('/offline.html').then(o => o || caches.match('/index.html'));
         });
       })
     );

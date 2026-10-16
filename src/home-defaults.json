@@ -200,6 +200,15 @@
       "limit": 8,
       "linkText": "Të gjitha markat →",
       "linkHref": "/market"
+    },
+    "recent": {
+      "visible": true,
+      "order": 35,
+      "kicker": "Për ty",
+      "title": "Të parë së fundmi",
+      "limit": 8,
+      "linkText": "",
+      "linkHref": ""
     }
   },
   "contact": {
@@ -251,5 +260,35 @@
       "title": "Kontakt",
       "intro": "Na gjen çdo ditë {hours}. Telefono, shkruaj në WhatsApp ose na vizito në dyqan."
     }
-  }
+  },
+  "coupons": [
+    {
+      "code": "HANA10",
+      "type": "percent",
+      "value": 10,
+      "minOrder": 20,
+      "active": true
+    },
+    {
+      "code": "HANA15",
+      "type": "percent",
+      "value": 15,
+      "minOrder": 0,
+      "active": true
+    },
+    {
+      "code": "WELCOME5",
+      "type": "fixed",
+      "value": 5,
+      "minOrder": 15,
+      "active": true
+    },
+    {
+      "code": "PEJA",
+      "type": "freeship",
+      "value": 0,
+      "minOrder": 0,
+      "active": true
+    }
+  ]
 }

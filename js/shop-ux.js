@@ -182,6 +182,33 @@
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSuccess(); });
 
+  // ================= INSTALIM PWA =================
+  let installEvt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    installEvt = e;
+    const b = $('#installBtn'); if (b) b.hidden = false;
+  });
+  document.addEventListener('click', async e => {
+    if (!e.target.closest('#installBtn') || !installEvt) return;
+    installEvt.prompt();
+    try { await installEvt.userChoice; } catch (x) { /* */ }
+    installEvt = null;
+    const b = $('#installBtn'); if (b) b.hidden = true;
+  });
+  window.addEventListener('appinstalled', () => { const b = $('#installBtn'); if (b) b.hidden = true; });
+  // footer rirender-ohet nga CMS: shfaq përsëri butonin nëse mund të instalohet
+  new MutationObserver(() => { const b = $('#installBtn'); if (b && installEvt) b.hidden = false; }).observe(document.body, { childList: true, subtree: true });
+
+  // ================= OFFLINE =================
+  function netBanner() {
+    let b = $('#netBanner');
+    if (!navigator.onLine) {
+      if (!b) { b = document.createElement('div'); b.id = 'netBanner'; b.setAttribute('role', 'status'); b.textContent = 'Nuk ka internet. Disa funksione mund të mos punojnë.'; document.body.appendChild(b); }
+    } else if (b) b.remove();
+  }
+  window.addEventListener('online', netBanner); window.addEventListener('offline', netBanner); netBanner();
+
   window.HanaShopUX = { locate, getLocation: () => loc, resetGeo, cartChanged, orderSuccess, closeSuccess };
 
   initParallax();

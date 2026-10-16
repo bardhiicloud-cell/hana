@@ -126,6 +126,9 @@
       const group = Array.from({ length: reps }, () => items.map(b => '<span class="mq-item">' + esc(b) + '</span>').join('')).join('');
       return '<div class="mq-set">' + group + '</div><div class="mq-set" aria-hidden="true">' + group + '</div>';
     },
+    skeleton(n, cls) {
+      return Array.from({ length: n }, () => '<div class="sk-card' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><i class="sk-media"></i><i class="sk-line"></i><i class="sk-line short"></i></div>').join('');
+    },
     head(sec, arrowsFor) {
       const arrows = arrowsFor ? '<div class="s-arrows"><button type="button" class="s-arrow" data-rail="' + arrowsFor + '" data-dir="-1" aria-label="Mbrapa">‹</button><button type="button" class="s-arrow" data-rail="' + arrowsFor + '" data-dir="1" aria-label="Para">›</button></div>' : '';
       return '<div class="s-head"><div>' +
@@ -135,11 +138,12 @@
     },
     categories(sec) { return F.head(sec) + '<div class="cat-track" id="catTrack"></div>'; },
     offers(sec) {
-      return F.head(sec, 'productGrid') + '<div class="product-grid s-rail" id="productGrid"></div>' +
+      return F.head(sec, 'productGrid') + '<div class="product-grid s-rail" id="productGrid">' + F.skeleton(4) + '</div>' +
         '<div class="empty-state" id="emptyState" style="display:none"><h3>Nuk ka oferta për momentin</h3><p>Shiko të gjitha produktet.</p><a class="s-btn s-btn-gold" href="/market">Produktet</a></div>';
     },
     brands(sec) { return F.head(sec) + '<div class="brand-grid" id="brandGrid"></div>'; },
-    best(sec) { return F.head(sec, 'popularGrid') + '<div class="product-grid s-rail" id="popularGrid"></div>'; },
+    best(sec) { return F.head(sec, 'popularGrid') + '<div class="product-grid s-rail" id="popularGrid">' + F.skeleton(4) + '</div>'; },
+    recent(sec) { return F.head(sec, 'recentGrid') + '<div class="product-grid s-rail" id="recentGrid"></div>'; },
     steps(sec) {
       return F.head(sec) + '<ol class="s-steps">' + (sec.items || []).map((it, i) =>
         '<li><span class="s-step-n">' + (i + 1) + '</span><h3>' + esc(it.title) + '</h3><p>' + esc(it.text) + '</p></li>').join('') + '</ol>';
@@ -182,7 +186,7 @@
         '<p>' + (c.phone ? '<a href="tel:' + esc(c.tel) + '">' + esc(c.phone) + '</a>' : '') +
         (c.whatsapp ? ' · <a href="https://wa.me/' + esc(c.whatsapp) + '" rel="noopener" target="_blank">WhatsApp</a>' : '') + '</p></div>' +
         '<div><h4>Kategoritë</h4>' + (cats || []).map(k => '<a href="' + href(k.href) + '">' + esc(k.name) + '</a>').join('') + '</div>' +
-        '<div><h4>Informacion</h4><a href="/rreth-nesh">Rreth nesh</a><a href="/kontakt">Kontakt</a><a href="/shipping.html">Dërgesa</a><a href="/returns.html">Kthimet</a><a href="/terms.html">Kushtet</a><a href="/privacy.html">Privatësia</a>' + social + '</div>' +
+        '<div><h4>Informacion</h4><a href="/rreth-nesh">Rreth nesh</a><a href="/kontakt">Kontakt</a><a href="/shipping.html">Dërgesa</a><a href="/returns.html">Kthimet</a><a href="/terms.html">Kushtet</a><a href="/privacy.html">Privatësia</a>' + social + '<button type="button" class="s-install" id="installBtn" hidden>Instalo aplikacionin</button></div>' +
         '</div><div class="s-footer-bottom">© ' + new Date().getFullYear() + ' Hana Free Shop. Të gjitha të drejtat e rezervuara.</div>';
     }
   };
@@ -231,6 +235,7 @@
     setSection('ofertat', S.offers, F.offers(S.offers));
     setSection('hm-brands', S.brands, F.brands(S.brands));
     setSection('best', S.best, F.best(S.best));
+    setSection('recent', S.recent, F.recent(S.recent));
     setSection('si-funksionon', S.steps, F.steps(S.steps));
     setSection('hm-why', S.why, F.why(S.why));
     setSection('hm-cta', S.cta, F.cta(S.cta, contact));
