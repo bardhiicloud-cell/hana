@@ -94,7 +94,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=14">
+<link rel="stylesheet" href="css/shop.css?v=15">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -175,11 +175,11 @@ SCRIPTS = '''
 <script src="js/features-100k.js?v=11-super-huge"></script>
 <script src="js/pwa.js?v=11-super-huge"></script>
 <script src="js/home-defaults.js?v=1"></script>
-<script src="js/cities.js?v=2"></script>
+<script src="js/cities.js?v=3"></script>
 <script src="js/coupons.js?v=1"></script>
 <script src="js/site-render.js?v=6"></script>
 <script type="module" src="js/firebase.js?v=11-super-huge"></script>
-<script type="module" src="js/app.js?v=23"></script>
+<script type="module" src="js/app.js?v=26"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
 <script src="js/auto-bg.js?v=2"></script>

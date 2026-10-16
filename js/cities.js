@@ -46,6 +46,23 @@
     return { city: c.name || '', minutes: c.minutes || 30, hours: c.hours || '', freeThreshold: cfg(c.id).freeThreshold, phone: (root.HANA_CONFIG && root.HANA_CONFIG.phone) || '' };
   }
 
+  // hapur/mbyllur sipas orarit të qytetit, në orën e Kosovës
+  function status(cityId, now) {
+    const c = get(cityId) || current() || {};
+    const m = String(c.hours || '08:00–22:00').match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
+    const openM = m ? (+m[1]) * 60 + (+m[2]) : 8 * 60;
+    const closeM = m ? (+m[3]) * 60 + (+m[4]) : 22 * 60;
+    const pad = n => String(Math.floor(n / 60) % 24).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
+    let mins;
+    try {
+      const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(now || new Date());
+      const h = +parts.find(p => p.type === 'hour').value % 24, mi = +parts.find(p => p.type === 'minute').value;
+      mins = h * 60 + mi;
+    } catch (e) { const d = now || new Date(); mins = d.getHours() * 60 + d.getMinutes(); }
+    const open = closeM > openM ? (mins >= openM && mins < closeM) : (mins >= openM || mins < closeM);
+    return { open, openAt: pad(openM), closeAt: pad(closeM), tomorrow: open ? false : mins >= closeM };
+  }
+
   function distKm(lat1, lng1, lat2, lng2) {
     const R = 6371, rad = x => x * Math.PI / 180;
     const dLat = rad(lat2 - lat1), dLng = rad(lng2 - lng1);
@@ -72,7 +89,7 @@
   }
 
   root.HanaCities = {
-    all, list, listAll, get, name, current, set, ctx, cfg, nearest, distKm, fillDom,
+    all, list, listAll, get, name, current, set, ctx, cfg, status, nearest, distKm, fillDom,
     setOverrides(arr, dc) { overrides = Array.isArray(arr) ? arr : null; deliveryCfg = dc || {}; }
   };
 })(window);

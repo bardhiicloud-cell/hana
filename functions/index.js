@@ -77,6 +77,16 @@ async function enforceRateLimit(req, bucket) {
   });
 }
 
+// A është dyqani i hapur tani? (ora e Kosovës, orari i qytetit "08:00–22:00")
+function isOpenNow(hours) {
+  const m = String(hours || '08:00–22:00').match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
+  const openM = m ? (+m[1]) * 60 + (+m[2]) : 8 * 60;
+  const closeM = m ? (+m[3]) * 60 + (+m[4]) : 22 * 60;
+  const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Belgrade', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+  const mins = (+parts.find(p => p.type === 'hour').value % 24) * 60 + (+parts.find(p => p.type === 'minute').value);
+  return closeM > openM ? (mins >= openM && mins < closeM) : (mins >= openM || mins < closeM);
+}
+
 function validateInput(data) {
   const items = Array.isArray(data?.items) ? data.items : [];
   if (!items.length || items.length > 50) throw new HttpsError('invalid-argument', 'Shporta është bosh ose shumë e madhe.');
@@ -227,6 +237,7 @@ exports.placeOrder = onCall({ cors: true, timeoutSeconds: 30 }, async req => {
       paymentStatus: 'pending',
       deliveryMethod: 'delivery',
       status: 'pending',
+      afterHours: !isOpenNow(cityCfg.hours),
       statusHistory: [{ status: 'pending', timestamp: iso, user: 'system', note: 'Porosia u krijua' }],
       createdAt: iso,
       updatedAt: iso,

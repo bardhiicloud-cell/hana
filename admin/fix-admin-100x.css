@@ -534,3 +534,18 @@ tr:hover td {
     border-radius: 16px !important;
   }
 }
+
+/* ===== Dialogu i statusit + veprimet e porosisë ===== */
+.status-dialog{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);padding:16px}
+.sd-box{width:min(420px,100%);background:#16161c;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:22px;display:grid;gap:12px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.sd-box h3{font-size:18px}
+.sd-id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:var(--gold-300,#E8C67A)}
+.sd-list{display:grid;gap:8px}
+.sd-opt{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:border-color .2s,background .2s}
+.sd-opt:hover{border-color:rgba(232,198,122,.45)}
+.sd-opt input{accent-color:#D4AF37;width:18px;height:18px}
+.sd-opt:has(input:checked){border-color:#E8C67A;background:rgba(232,198,122,.08)}
+.sd-hint{font-size:12.5px;color:#fde68a;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);padding:9px 12px;border-radius:10px}
+.sd-hint[hidden]{display:none}
+.sd-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:4px}
+.od-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}

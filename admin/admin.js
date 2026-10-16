@@ -2,7 +2,7 @@ import {
   initFirebase, getLocalData, isFirebaseEnabled,
   saveLocalProducts, saveLocalCategories, saveLocalPromos, saveLocalBrands, saveLocalHero, saveLocalBanners, saveLocalOffers, saveLocalMedia, saveLocalDeliveryZones, saveLocalStoreSettings, saveLocalOrders,
   fetchProducts, fetchCategories, fetchPromos, fetchBrands, fetchHero, fetchBanners, fetchOffers, fetchMedia, fetchDeliveryZones, fetchStoreSettings, fetchOrders, fetchCustomers, fetchInventoryLogs, fetchAuditLogs, fetchAdminUsers,
-  upsertProduct, deleteProduct as fbDeleteProduct, upsertCategory, deleteCategory, upsertBrand, deleteBrand, upsertHeroSlide, deleteHeroSlide, upsertBanner, deleteBanner, upsertOffer, deleteOffer, upsertMediaItem, deleteMediaItem, upsertDeliveryZone, deleteDeliveryZone, upsertStoreSettings, upsertOrder, updateOrderStatus, addAuditLog, upsertAdminUser, deleteAdminUser,
+  upsertProduct, deleteProduct as fbDeleteProduct, upsertCategory, deleteCategory, upsertBrand, deleteBrand, upsertHeroSlide, deleteHeroSlide, upsertBanner, deleteBanner, upsertOffer, deleteOffer, upsertMediaItem, deleteMediaItem, upsertDeliveryZone, deleteDeliveryZone, upsertStoreSettings, upsertOrder, updateOrderStatus, canonStatus, ORDER_STATUSES, listenOrders, addAuditLog, upsertAdminUser, deleteAdminUser,
   onAuthState, signInLocal, signUpLocal, signInWithGoogle, ensureOwnerAdmin, signOutLocal, exportToCSV, parseCSV, validateProduct, calculateDiscount, calculateFinalPrice, ADMIN_OWNER_EMAIL
 } from '../js/firebase.js';
 
@@ -103,7 +103,7 @@ function renderDashboard(){
   setText('statOrders',ORDERS.length);
   setText('statOffers',OFFERS.filter(o=>o.status==='active').length);
   setText('statCustomers',CUSTOMERS.length);
-  const pending = ORDERS.filter(o=>['new','pending','confirmed'].includes(o.status)).length;
+  const pending = ORDERS.filter(o=>['pending','confirmed'].includes(cs(o.status))).length;
   setText('statPending',pending);
   setText('badgeOrders',pending);
   setText('badgeOrdersNav',pending);
@@ -877,7 +877,8 @@ function renderOrders(){
   const statusFilter=$('#orderStatusFilter')?.value||'';
   let list=[...ORDERS];
   if(search) list=list.filter(o=>o.id.toLowerCase().includes(search)||o.customer?.name?.toLowerCase().includes(search)||o.customer?.email?.toLowerCase().includes(search)||o.customer?.phone?.includes(search));
-  if(statusFilter) list=list.filter(o=>o.status===statusFilter);
+  ensureStatusFilter();
+  if(statusFilter) list=list.filter(o=>cs(o.status)===statusFilter);
 
   setText('ordersCount',list.length+' porosi');
   const tbody=$('#ordersTable tbody');
@@ -893,7 +894,7 @@ function renderOrders(){
       <td><span class="badge gold">${o.items?.length||0} artikuj</span></td>
       <td><strong style="color:var(--gold-300)">${o.total?.toFixed(2)||'0.00'}€</strong><br><small style="color:var(--text-4)">Dërgesa: ${o.deliveryFee?.toFixed(2)||'0.00'}€</small></td>
       <td><span class="badge ${o.paymentStatus==='paid'?'green':o.paymentStatus==='pending'?'gold':'red'}">${o.paymentStatus||'pending'}</span><br><small>${o.paymentMethod||'cash'}</small></td>
-      <td><span class="badge ${o.status==='new'?'gold':o.status==='confirmed'?'blue':o.status==='delivered'?'green':o.status==='cancelled'?'red':'blue'}">${o.status}</span></td>
+      <td><span class="badge ${ST_BADGE[cs(o.status)]||'blue'}">${ST_LABEL[cs(o.status)]||o.status}</span>${o.afterHours?'<br><small class="badge gold" style="margin-top:4px">Jashtë orarit</small>':''}</td>
       <td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-xs" data-order-view="${o.id}">Shiko</button><button class="btn btn-outline btn-xs" data-order-status="${o.id}">Statusi</button></div></td>
     </tr>
   `).join('');
@@ -921,23 +922,10 @@ function viewOrder(id){
       </div>
     </div>
   `;
+  addOrderActions(order);
   $('#orderDetailCard').scrollIntoView({behavior:'smooth'});
 }
 
-function changeOrderStatus(id){
-  const order=ORDERS.find(o=>o.id===id);
-  if(!order) return;
-  const newStatus=prompt(`Ndrysho statusin për porosinë ${id}\n\nStatusi aktual: ${order.status}\n\nZgjedh statusin e ri:\nnew, confirmed, preparing, ready, out_for_delivery, delivered, cancelled, refunded\n\nShkruaj statusin:`, order.status);
-  if(!newStatus || newStatus===order.status) return;
-  const validStatuses=['new','confirmed','preparing','ready','out_for_delivery','delivered','cancelled','refunded','pending'];
-  if(!validStatuses.includes(newStatus)){toast('❌ Status i pavlefshëm'); return;}
-  const note=prompt('Shënim për ndryshimin (opsionale):')||'';
-  updateOrderStatus(id, newStatus, note, currentUser?.email||'admin').then(()=>{
-    renderOrders(); renderDashboard();
-    if($('#orderDetailCard') && !$('#orderDetailCard').classList.contains('hidden')) viewOrder(id);
-    toast(`✅ Statusi u ndryshua: ${order.status} → ${newStatus}`);
-  }).catch(e=>toast('❌ '+e.message));
-}
 
 function saveOrderNote(id){
   const note=$('#orderInternalNote')?.value||'';
@@ -947,6 +935,7 @@ function saveOrderNote(id){
     orders[idx].internalNotes=note;
     orders[idx].updatedAt=new Date().toISOString();
     saveLocalOrders(orders);
+    try{ upsertOrder(orders[idx]); }catch{}
     ORDERS=orders;
     toast('✅ Shënimi u ruajt');
   }
@@ -1062,7 +1051,7 @@ function renderReports(period='7d'){
   const todayOrders=ORDERS.filter(o=>o.createdAt.slice(0,10)===today).length;
   const weekOrders=ORDERS.filter(o=>new Date(o.createdAt)>=new Date(weekAgo)).length;
   const revenue=ORDERS.filter(o=>['delivered','confirmed'].includes(o.status)).reduce((s,o)=>s+o.total,0);
-  const pending=ORDERS.filter(o=>['new','pending'].includes(o.status)).length;
+  const pending=ORDERS.filter(o=>cs(o.status)==='pending').length;
   const avgOrder = ORDERS.length>0 ? revenue/ORDERS.length : 0;
   setText('reportTodayOrders',todayOrders);
   setText('reportWeekOrders',weekOrders);
@@ -1349,6 +1338,7 @@ async function init(){
       setText('userInfo',user.email||user.displayName||'Admin');
       setText('userAvatar',(user.email||'A')[0].toUpperCase());
       setText('userRole',(user.role||'owner')+' • Full Access');
+      startOrdersListener();
     }else{
       $('#loginView').classList.remove('hidden');
       $('#adminView').classList.add('hidden');
@@ -1378,7 +1368,7 @@ async function init(){
       toast(isOwner ? '✅ U kyçe si OWNER • bardhiicloud@gmail.com • Super Admin' : '✅ U kyçe me sukses — Super Admin');
     }catch(e){ toast('❌ '+e.message); }
   });
-  $('#registerBtn').addEventListener('click', async()=>{
+  $('#registerBtn')?.addEventListener('click', async()=>{
     const email=$('#email').value.trim(), pass=$('#pass').value;
     if(!email||!pass) return toast('Plotëso fushat');
     try{
@@ -2099,6 +2089,129 @@ function collectCoupons(){
     };
     if(g('expiresAt').value) c.expiresAt = new Date(g('expiresAt').value + 'T23:59:59').toISOString();
     return c;
+  });
+}
+
+
+// ================= POROSITË: statuse, dialog, veprime, kohë reale =================
+const ST_LABEL = { pending: 'Në pritje', confirmed: 'Konfirmuar', on_the_way: 'Në rrugë', delivered: 'Dërguar', cancelled: 'Anuluar' };
+const ST_BADGE = { pending: 'gold', confirmed: 'blue', on_the_way: 'blue', delivered: 'green', cancelled: 'red' };
+const cs = st => canonStatus(st);
+
+function ensureStatusFilter(){
+  const sel = $('#orderStatusFilter');
+  if(!sel || sel.dataset.v2) return;
+  sel.dataset.v2 = '1';
+  sel.innerHTML = '<option value="">Të gjitha statuset</option>' + ORDER_STATUSES.map(s => `<option value="${s}">${ST_LABEL[s]}</option>`).join('');
+}
+
+function changeOrderStatus(id){
+  const order = ORDERS.find(o => o.id === id);
+  if(!order) return;
+  const cur = cs(order.status);
+  const wrap = document.createElement('div');
+  wrap.className = 'status-dialog';
+  wrap.innerHTML = `<div class="sd-box" role="dialog" aria-modal="true" aria-label="Statusi i porosisë">
+    <h3>Statusi i porosisë</h3><p class="sd-id">${hpEsc(id)}</p>
+    <div class="sd-list">${ORDER_STATUSES.map(s => `<label class="sd-opt${s === cur ? ' current' : ''}"><input type="radio" name="sdst" value="${s}" ${s === cur ? 'checked' : ''}><span class="badge ${ST_BADGE[s]}">${ST_LABEL[s]}</span></label>`).join('')}</div>
+    <div class="sd-hint" id="sdHint" hidden>Stoku i produkteve do të rikthehet automatikisht.</div>
+    <textarea class="input" id="sdNote" rows="2" placeholder="Shënim i brendshëm (opsionale)"></textarea>
+    <div class="sd-actions"><button type="button" class="btn btn-outline" data-sd-close>Mbyll</button><button type="button" class="btn btn-gold" data-sd-save>Ruaj statusin</button></div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const close = () => wrap.remove();
+  wrap.addEventListener('click', e => { if(e.target === wrap || e.target.closest('[data-sd-close]')) close(); });
+  wrap.addEventListener('change', () => {
+    const v = wrap.querySelector('input[name="sdst"]:checked').value;
+    wrap.querySelector('#sdHint').hidden = !(v === 'cancelled' && cur !== 'cancelled' && cur !== 'delivered');
+  });
+  wrap.querySelector('[data-sd-save]').addEventListener('click', async e => {
+    const v = wrap.querySelector('input[name="sdst"]:checked').value;
+    if(v === cur){ close(); return; }
+    e.currentTarget.disabled = true;
+    try{
+      const updated = await updateOrderStatus(id, v, wrap.querySelector('#sdNote').value.trim(), currentUser?.email || 'admin');
+      const i = ORDERS.findIndex(o => o.id === id);
+      if(i >= 0 && updated) ORDERS[i] = { ...ORDERS[i], ...updated };
+      renderOrders(); renderDashboard();
+      if(!$('#orderDetailCard').classList.contains('hidden')) viewOrder(id);
+      toast(`✅ ${ST_LABEL[cur]} → ${ST_LABEL[v]}`);
+      close();
+    }catch(err){ toast('❌ ' + err.message); e.currentTarget.disabled = false; }
+  });
+}
+
+function printOrder(order){
+  const w = window.open('', '_blank', 'width=420,height=640');
+  if(!w) return;
+  const c = order.customer || {};
+  const map = c.mapsLink || (c.location ? `https://www.google.com/maps?q=${c.location.lat},${c.location.lng}` : '');
+  const rows = (order.items || []).map(i => `<tr><td>${i.qty} ×</td><td>${hpEsc(i.name || i.id)}</td><td style="text-align:right">${(i.lineTotal != null ? i.lineTotal : 0).toFixed ? Number(i.lineTotal || 0).toFixed(2) : ''}€</td></tr>`).join('');
+  w.document.write(`<!doctype html><meta charset="utf-8"><title>${hpEsc(order.id)}</title><style>body{font:14px system-ui,sans-serif;margin:18px;color:#111}h2{margin:0 0 4px}table{width:100%;border-collapse:collapse;margin:10px 0}td{padding:4px 0;border-bottom:1px solid #ddd}.b{font-weight:700}small{color:#555}</style>
+    <h2>Hana Free Shop</h2><div class="b">${hpEsc(order.id)}</div><small>${new Date(order.createdAt).toLocaleString('sq-AL')}${order.afterHours ? ' · JASHTË ORARIT' : ''}</small>
+    <hr><div class="b">${hpEsc(c.name)}</div><div>${hpEsc(c.phone)}</div><div>${hpEsc(c.address)} ${hpEsc(c.city || '')}</div>${map ? `<div><small>${hpEsc(map)}</small></div>` : ''}${c.notes ? `<div>Shënim: ${hpEsc(c.notes)}</div>` : ''}
+    <table>${rows}</table><div class="b">Totali: ${Number(order.total || 0).toFixed(2)}€ (pagesa në dorë)</div><script>window.print()<\/script>`);
+  w.document.close();
+}
+
+function addOrderActions(order){
+  const host = $('#orderDetailContent');
+  if(!host) return;
+  const c = cs(order.status);
+  const next = { pending: ['confirmed', 'Konfirmo porosinë'], confirmed: ['on_the_way', 'Nis dërgesën'], on_the_way: ['delivered', 'Shëno si dërguar'] }[c];
+  const bar = document.createElement('div');
+  bar.className = 'od-actions';
+  bar.innerHTML = (next ? `<button type="button" class="btn btn-gold btn-sm" data-od-next="${next[0]}">${next[1]}</button>` : '') +
+    (c !== 'cancelled' && c !== 'delivered' ? `<button type="button" class="btn btn-danger btn-sm" data-od-cancel>Anulo porosinë</button>` : '') +
+    `<button type="button" class="btn btn-outline btn-sm" data-od-print>Printo fletën</button>` +
+    (order.customer?.phone ? `<a class="btn btn-outline btn-sm" href="tel:${hpEsc(order.customer.phone)}">Telefono klientin</a>` : '') +
+    (order.afterHours ? `<span class="badge gold">Porosi jashtë orarit</span>` : '');
+  host.prepend(bar);
+  const quick = async (st) => {
+    try{
+      const upd = await updateOrderStatus(order.id, st, '', currentUser?.email || 'admin');
+      const i = ORDERS.findIndex(o => o.id === order.id); if(i >= 0 && upd) ORDERS[i] = { ...ORDERS[i], ...upd };
+      renderOrders(); renderDashboard(); viewOrder(order.id);
+      toast(`✅ ${ST_LABEL[st]}`);
+    }catch(err){ toast('❌ ' + err.message); }
+  };
+  bar.querySelector('[data-od-next]')?.addEventListener('click', e => quick(e.currentTarget.dataset.odNext));
+  bar.querySelector('[data-od-cancel]')?.addEventListener('click', () => { if(confirm('Të anulohet porosia? Stoku do të rikthehet.')) quick('cancelled'); });
+  bar.querySelector('[data-od-print]')?.addEventListener('click', () => printOrder(order));
+}
+
+// ---- kohë reale + njoftim për porosi të re ----
+let stopOrdersListener = null;
+function beep(){
+  try{
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    [880, 1320].forEach((f, i) => {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'sine'; o.frequency.value = f; o.connect(g); g.connect(ac.destination);
+      const t = ac.currentTime + i * 0.18;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+      o.start(t); o.stop(t + 0.18);
+    });
+  }catch{}
+}
+function startOrdersListener(){
+  if(stopOrdersListener) return;
+  const known = new Set(ORDERS.map(o => o.id));
+  let seeded = !isFirebaseEnabled();
+  const baseTitle = document.title;
+  stopOrdersListener = listenOrders(list => {
+    const fresh = list.filter(o => !known.has(o.id));
+    list.forEach(o => known.add(o.id));
+    ORDERS = list;
+    renderOrders(); renderDashboard();
+    if(seeded && fresh.length){
+      beep();
+      const o = fresh[0];
+      toast(`🛎️ Porosi e re: ${o.id} • ${Number(o.total || 0).toFixed(2)}€ • ${o.customer?.name || ''}`);
+      document.title = `(${fresh.length}) Porosi e re • Admin`;
+      window.addEventListener('focus', () => { document.title = baseTitle; }, { once: true });
+    }
+    seeded = true;
   });
 }
 

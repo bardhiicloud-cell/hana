@@ -82,6 +82,7 @@ function refreshCityUI(){
   applyHomeContent();
   renderCategories(); renderBrands(); renderProducts(); renderPopularGrid(); renderRecent();
  }
+ renderStoreStatus();
  renderCartDrawer();
  updateTotalsUI();
 }
@@ -251,6 +252,7 @@ function refreshCityTexts(){
 }
 
 function applyHomeContent(){
+ try{ setTimeout(renderStoreStatus,0); }catch{}
  try{
   if(window.HanaSite){
    const cats = CATEGORIES.filter(c=>c.visible!==false && PRODUCTS.some(p=>p.category===c.id)).sort((x,y)=>(x.order||0)-(y.order||0)).map(c=>({name:c.name, href:catHref(c.id)}));
@@ -443,7 +445,6 @@ function renderProductCard(p,i=0){
  const hasWebP = isHero || mainImg.includes('products/') || mainImg.includes('image-search/');
  return `<article class="product-card ${isOutOfStock?'out-of-stock':''}" data-id="${p.id}" style="animation-delay:${i*0.04}s" role="article" aria-label="${safeBrand} ${safeName} - ${p.price}€">
  <div class="product-media image-wrapper">
- ${hasWebP?`<img class="lqip" src="${lqip}" alt="" loading="eager" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(20px);transform:scale(1.1);" onerror="this.style.display='none'">`:''}
  ${hasDiscount?`<span class="badge-discount gold-pulse">-${priceInfo.discount}%</span>`:''}
  ${priceInfo.appliedOffer?`<span class="badge-discount gold-shimmer" style="background:linear-gradient(135deg,#D4AF37,#B8962E);left:auto;right:10px">${priceInfo.appliedOffer.badge||'OFERTË'}</span>`:''}
  ${isLowStock && !isOutOfStock?`<span class="badge-discount" style="left:auto;right:${hasDiscount||priceInfo.appliedOffer?'70px':'10px'};background:linear-gradient(135deg,#F59E0B,#D97706)">Pak stok</span>`:''}
@@ -630,6 +631,92 @@ function getDiscountCodes(){
   return codes;
 }
 
+
+// ---------- LOGJIKA E PORosisë: statuse, validim, kufij, orari ----------
+const normStatus = st => ({ new:'pending', preparing:'confirmed', ready:'confirmed', out_for_delivery:'on_the_way', refunded:'cancelled' }[st] || st);
+
+function normPhone(v){
+ let t = String(v||'').replace(/[\s\-().]/g,'');
+ if(/^00/.test(t)) t = '+' + t.slice(2);
+ else if(/^383\d/.test(t)) t = '+' + t;
+ else if(/^0\d{7,9}$/.test(t)) t = '+383' + t.slice(1);
+ return t;
+}
+function validateCheckout({name,phone,email,address}){
+ const e = {};
+ const geo = window.HanaShopUX ? window.HanaShopUX.getLocation() : null;
+ if(!name || name.trim().length<3) e.coName = 'Shkruaj emrin dhe mbiemrin.';
+ if(!/^\+\d{9,15}$/.test(normPhone(phone))) e.coPhone = 'Shkruaj një numër të vlefshëm, p.sh. +383 49 123 456 ose 049 123 456.';
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email||'')) e.coEmail = 'Shkruaj një email të vlefshëm, p.sh. emri@email.com.';
+ if(!address || address.trim().length < (geo?3:8)) e.coAddress = geo ? 'Shkruaj lagjen ose rrugën.' : 'Shkruaj adresën e plotë (rruga, numri, lagjja) ose përdor lokacionin.';
+ return e;
+}
+function clearFieldErrors(){
+ document.querySelectorAll('.co-form .field-err').forEach(n=>n.remove());
+ document.querySelectorAll('.co-form [aria-invalid]').forEach(i=>{ i.removeAttribute('aria-invalid'); i.removeAttribute('aria-describedby'); });
+}
+function showFieldErrors(errs){
+ clearFieldErrors();
+ let first = null;
+ Object.entries(errs).forEach(([id,msg])=>{
+  const inp = document.getElementById(id);
+  if(!inp) return;
+  inp.setAttribute('aria-invalid','true');
+  inp.setAttribute('aria-describedby', id+'Err');
+  const d = document.createElement('div');
+  d.className = 'field-err'; d.id = id+'Err'; d.textContent = msg;
+  inp.insertAdjacentElement('afterend', d);
+  if(!first) first = inp;
+ });
+ if(first){ first.focus(); first.scrollIntoView({ block:'center', behavior:'smooth' }); }
+}
+
+function updateCheckoutGate(){
+ const btn = $('#checkoutBtn'), warn = $('#cartWarn');
+ if(!btn) return;
+ const t = calculateTotals(), cfg = t.config;
+ let msg = '';
+ if(cart.length>0){
+  if(cfg.minOrder>0 && t.subtotal<cfg.minOrder) msg = `Porosia minimale është ${formatPrice(cfg.minOrder)}. Shto edhe ${formatPrice(cfg.minOrder-t.subtotal)}.`;
+  else if(cfg.maxOrder>0 && t.grand>cfg.maxOrder) msg = `Për porosi mbi ${formatPrice(cfg.maxOrder)} na telefono: ${(window.HANA_CONFIG&&window.HANA_CONFIG.phone)||'+383 48 588 886'}.`;
+ }
+ btn.disabled = cart.length===0 || !!msg;
+ if(warn){ warn.textContent = msg; warn.hidden = !msg; }
+}
+
+function renderStoreStatus(){
+ const HC = window.HanaCities;
+ if(!HC) return;
+ const st = HC.status(currentCity);
+ const when = st.tomorrow ? 'nesër' : 'sot';
+ ['storeStatusCart','storeStatusCo'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.hidden = st.open;
+  el.textContent = `Tani jemi të mbyllur. Porosia dërgohet ${when} nga ora ${st.openAt}.`;
+ });
+ const strip = document.querySelector('#hm-strip > div:nth-child(3)');
+ if(strip){
+  const lab = strip.querySelector('span:last-child');
+  if(lab) lab.textContent = st.open ? `Hapur tani · deri ${st.closeAt}` : `Hapet ${when} ${st.openAt}`;
+  strip.classList.toggle('is-closed', !st.open);
+ }
+}
+
+function renderCategoryChips(){
+ const wrap = document.querySelector('.s-chips[aria-label="Kategoritë"]');
+ if(!wrap) return;
+ const cats = CATEGORIES.filter(c=>c.visible!==false && PRODUCTS.some(p=>p.category===c.id)).sort((a,b)=>(a.order||0)-(b.order||0));
+ wrap.innerHTML = `<a class="s-chip${!activeCategory?' active':''}" href="/market">Të gjitha</a>` +
+  cats.map(c=>`<a class="s-chip${activeCategory===c.id?' active':''}" href="${catHref(c.id)}">${escH(c.name)}</a>`).join('');
+ if((document.body.dataset.page||'')==='market'){
+  const h1 = document.querySelector('.s-page-head h1');
+  const cat = cats.find(c=>c.id===activeCategory);
+  if(h1) h1.textContent = cat ? cat.name : 'Të gjitha produktet';
+ }
+ wrap.querySelector('.active')?.scrollIntoView({ inline:'center', block:'nearest' });
+}
+
 function clearCoupon(){ discountCode=null; discountPercent=0; discountFreeDelivery=false; window._appliedCoupon=null; window._couponMin=0; }
 function setCoupon(c){
  clearCoupon();
@@ -746,6 +833,7 @@ function renderSuggestions(){
 }
 
 function updateTotalsUI(){
+ updateCheckoutGate();
  const { subtotal, discountAmount, delivery, gift, grand, timeSlotFee, express } = calculateTotals();
  const subEl = $('#cartSubtotal');
  const delEl = $('#cartDelivery');
@@ -1124,18 +1212,18 @@ function initCheckout(){
 
  $('#placeOrderBtn')?.addEventListener('click', async()=>{
  const name = $('#coName').value.trim();
- const phone = $('#coPhone').value.trim();
+ let phone = $('#coPhone').value.trim();
  const email = $('#coEmail').value.trim();
  const address = $('#coAddress').value.trim();
  const city = $('#coCity').value;
  const notes = $('#coNotes').value.trim();
  const giftNote = $('#giftNoteText')?.value.trim() || '';
 
- if(!name || name.length<3){ toast('Emri dhe Mbiemri obligativ • min 3 shkronja'); $('#coName').focus(); return; }
- if(!phone || phone.length<8){ toast('📞 Telefoni obligativ • +383 48 588 886 • p.sh. +383 49 123 456'); $('#coPhone').focus(); return; }
- if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ toast('📧 Email korrekt obligativ • emri@email.com'); $('#coEmail').focus(); return; }
  const geo = window.HanaShopUX ? window.HanaShopUX.getLocation() : null;
- if(!address || address.length<(geo?3:8)){ toast('📍 Shkruaj adresën (rruga, numri, lagjja)'); $('#coAddress').focus(); return; }
+ clearFieldErrors();
+ const errs = validateCheckout({ name, phone, email, address });
+ if(Object.keys(errs).length){ showFieldErrors(errs); return; }
+ phone = normPhone(phone);
 
  const btn = $('#placeOrderBtn');
  btn.textContent = 'Duke procesuar...'; btn.disabled=true;
@@ -1179,6 +1267,7 @@ function initCheckout(){
              totals.grand = srv.total;
            } else if(isLocalDemoHost()){
              order.timeSlot = slot;
+             order.afterHours = window.HanaCities ? !window.HanaCities.status(city).open : false;
              order.express = (typeof Features100K!=='undefined') ? Features100K.expressDelivery.isEnabled() : false;
              order.coupon = (typeof window._appliedCoupon!=='undefined') ? window._appliedCoupon : null;
              order.giftMessage = (typeof Features100K!=='undefined') ? Features100K.giftMessage.get() : giftNote;
@@ -1252,14 +1341,14 @@ async function renderTrackingResult(orderId){
  on_the_way:{label:'Në rrugë • Korrieri u nis',desc:'Porosia është nisur drejt adresës suaj',color:'on_the_way'},
  delivered:{label:'Dërguar • Dorëzuar',desc:'Porosia u dorëzua me sukses',color:'delivered'}
  };
- const currentStatus = order.status==='new' ? 'pending' : (order.status || 'pending');
+ const currentStatus = normStatus(order.status || 'pending');
  const steps = ['pending','confirmed','on_the_way','delivered'];
  const cancelled = currentStatus==='cancelled';
  const currentIdx = steps.indexOf(currentStatus);
  const esc = v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const pii = order.customer ? `<div style="margin-top:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:10px;font-size:11px;color:var(--text-3)">📍 ${esc(order.customer.address)} • 📞 ${esc(order.customer.phone)}</div>` : '';
  const histMap = {}; (order.history||[]).forEach(h=>{ const k = h.status==='new' ? 'pending' : h.status; if(!histMap[k]) histMap[k] = h.timestamp; });
- const fmtT = ts => ts ? new Date(ts).toLocaleTimeString('sq-AL',{hour:'2-digit',minute:'2-digit'}) : '';
+ const fmtT = ts => ts ? new Date(ts).toLocaleTimeString('sq-AL',{hour:'2-digit',minute:'2-digit',hour12:false}) : '';
  const stepsHtml = steps.map((s,i)=>{
   const info = statusMap[s];
   const done = i<currentIdx, cur = i===currentIdx;
@@ -1697,6 +1786,7 @@ async function init(){
  applyHomeContent();
  refreshCityTexts();
  renderCategories();
+ renderCategoryChips();
  renderBrands();
  renderBrandChips();
  renderRecent();
@@ -1714,6 +1804,9 @@ async function init(){
  // initAuth(); — pa llogari klienti: porosi si vizitor, gjurmim me ID
  initCheckout();
  $('#waOrderBtn')?.addEventListener('click', whatsappOrder);
+ $('#checkoutModal')?.addEventListener('input', e=>{ const t=e.target; if(t.getAttribute && t.getAttribute('aria-invalid')){ t.removeAttribute('aria-invalid'); document.getElementById(t.id+'Err')?.remove(); } });
+ renderStoreStatus(); setInterval(renderStoreStatus, 60000);
+ updateCheckoutGate();
  initTracking();
  // initSmoothAnimations();
  // initFAB();

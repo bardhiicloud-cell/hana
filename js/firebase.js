@@ -540,28 +540,76 @@ export async function createOrder(order){
   return fullOrder;
 }
 
+export const ORDER_STATUSES = ['pending','confirmed','on_the_way','delivered','cancelled'];
+export const canonStatus = st => ({ new:'pending', preparing:'confirmed', ready:'confirmed', out_for_delivery:'on_the_way', refunded:'cancelled' }[st] || st);
+
 export async function updateOrderStatus(orderId, newStatus, note='', user='admin'){
+  const now = new Date().toISOString();
+  newStatus = canonStatus(newStatus);
+  if(!ORDER_STATUSES.includes(newStatus)) throw new Error('Status i pavlefshëm');
+
+  // ----- PRODUKSION (Firebase): lexo/shkruaj te Firestore, rikthe stokun kur anulohet -----
+  if(firebaseEnabled && db){
+    const { doc, runTransaction } = await import('firebase/firestore');
+    const ref = doc(db, 'orders', orderId);
+    const result = await runTransaction(db, async tx=>{
+      const snap = await tx.get(ref);
+      if(!snap.exists()) throw new Error('Porosia nuk u gjet');
+      const o = snap.data();
+      const old = canonStatus(o.status);
+      if(old === newStatus) return { ...o, id:orderId };
+      const restock = newStatus==='cancelled' && old!=='cancelled' && old!=='delivered';
+      const prodSnaps = restock ? await Promise.all((o.items||[]).map(it=>tx.get(doc(db,'products',it.id)))) : [];
+      const hist = [...(o.statusHistory||[]), { status:newStatus, timestamp:now, user, note, oldStatus:old }];
+      tx.update(ref, { status:newStatus, updatedAt:now, statusHistory:hist });
+      if(restock){
+        (o.items||[]).forEach((it,i)=>{
+          const ps = prodSnaps[i];
+          if(ps && ps.exists() && typeof ps.data().stock==='number') tx.update(ps.ref, { stock: ps.data().stock + (Number(it.qty)||0), updatedAt: now });
+        });
+      }
+      return { ...o, id:orderId, status:newStatus, statusHistory:hist, updatedAt:now };
+    });
+    await addAuditLog({ action:'update_order_status', collection:'orders', docId:orderId, data:{ newStatus, note } });
+    return result;
+  }
+
+  // ----- LOKAL (demo) -----
   let orders = loadLS(LS_KEYS.ORDERS, []);
   const idx = orders.findIndex(o=>o.id===orderId);
-  if(idx<0) throw new Error('Order not found');
-  
-  const oldStatus = orders[idx].status;
+  if(idx<0) throw new Error('Porosia nuk u gjet');
+  const old = canonStatus(orders[idx].status);
+  if(old === newStatus) return orders[idx];
   orders[idx].status = newStatus;
-  orders[idx].updatedAt = new Date().toISOString();
-  orders[idx].statusHistory = [...(orders[idx].statusHistory||[]), {status:newStatus, timestamp:new Date().toISOString(), user, note, oldStatus}];
-  
+  orders[idx].updatedAt = now;
+  orders[idx].statusHistory = [...(orders[idx].statusHistory||[]), { status:newStatus, timestamp:now, user, note, oldStatus:old }];
+  if(newStatus==='cancelled' && old!=='cancelled' && old!=='delivered'){
+    const products = loadLS(LS_KEYS.PRODUCTS, FALLBACK_PRODUCTS);
+    (orders[idx].items||[]).forEach(it=>{ const p = products.find(x=>x.id===it.id); if(p && typeof p.stock==='number') p.stock += Number(it.qty)||0; });
+    saveLS(LS_KEYS.PRODUCTS, products); localProducts = products;
+  }
   saveLS(LS_KEYS.ORDERS, orders);
   localOrders = orders;
-
-  if(firebaseEnabled && db){
-    try{
-      const { doc, updateDoc } = await import('firebase/firestore');
-      await updateDoc(doc(db,'orders',orderId), {status:newStatus, updatedAt:orders[idx].updatedAt, statusHistory:orders[idx].statusHistory});
-    }catch(e){ console.warn('updateOrderStatus firestore', e); }
-  }
-  
-  await addAuditLog({action:'update_order_status', collection:'orders', docId:orderId, data:{oldStatus, newStatus, note}});
+  await addAuditLog({ action:'update_order_status', collection:'orders', docId:orderId, data:{ oldStatus:old, newStatus, note } });
   return orders[idx];
+}
+
+// Dëgjon porositë në kohë reale (Firestore) ose nga skedat e tjera (localStorage). Kthen funksionin për ndalim.
+export function listenOrders(cb){
+  if(firebaseEnabled && db){
+    let unsub = ()=>{};
+    let stopped = false;
+    import('firebase/firestore').then(({ collection, query, orderBy, limit, onSnapshot })=>{
+      if(stopped) return;
+      unsub = onSnapshot(query(collection(db,'orders'), orderBy('createdAt','desc'), limit(300)), snap=>{
+        cb(snap.docs.map(d=>({ id:d.id, ...d.data() })), snap.docChanges().filter(c=>c.type==='added').map(c=>c.doc.id));
+      }, err=>console.warn('listenOrders', err));
+    });
+    return ()=>{ stopped = true; unsub(); };
+  }
+  const handler = e=>{ if(e.key===LS_KEYS.ORDERS){ const list = loadLS(LS_KEYS.ORDERS, []); localOrders = list; cb(list, []); } };
+  window.addEventListener('storage', handler);
+  return ()=>window.removeEventListener('storage', handler);
 }
 
 // Auth
@@ -858,7 +906,7 @@ export async function createOrderWithTransaction(orderData) {
     // Fallback local with simulated transaction
     console.log('[Firebase 100K] Local transaction fallback');
     const orders = JSON.parse(localStorage.getItem(LS_KEYS.ORDERS) || '[]');
-    const products = JSON.parse(localStorage.getItem(LS_KEYS.PRODUCTS) || '[]');
+    const products = loadLS(LS_KEYS.PRODUCTS, FALLBACK_PRODUCTS);
     
     // Check stock atomically
     for(const item of orderData.items) {
@@ -874,6 +922,7 @@ export async function createOrderWithTransaction(orderData) {
       if(prod) prod.stock -= item.qty;
     }
     localStorage.setItem(LS_KEYS.PRODUCTS, JSON.stringify(products));
+    localProducts = products;
     
     const trackingId = `ORD-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substr(2,4).toUpperCase()}`;
     const order = {
