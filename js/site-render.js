@@ -136,9 +136,15 @@
         '<h2>' + esc(sec.title) + '</h2></div>' + arrows +
         (sec.linkText ? '<a href="' + href(sec.linkHref) + '" class="s-link">' + esc(sec.linkText) + '</a>' : '') + '</div>';
     },
+    headPlain(sec) {
+      return '<div class="s-head"><div>' +
+        (sec.kicker ? '<span class="s-kicker">' + esc(sec.kicker) + '</span>' : '') +
+        '<h2>' + esc(sec.title) + '</h2></div></div>';
+    },
     categories(sec) { return F.head(sec) + '<div class="cat-track" id="catTrack"></div>'; },
     offers(sec) {
-      return F.head(sec, 'productGrid') + '<div class="product-grid s-rail" id="productGrid">' + F.skeleton(4) + '</div>' +
+      // Auto-scroll: pa buton "Shiko të gjitha" dhe pa shigjeta — karuseli lëviz vetë
+      return F.headPlain(sec) + '<div class="product-grid s-rail s-autoscroll" id="productGrid">' + F.skeleton(4) + '</div>' +
         '<div class="empty-state" id="emptyState" style="display:none"><h3>Nuk ka oferta për momentin</h3><p>Shiko të gjitha produktet.</p><a class="s-btn s-btn-gold" href="/market">Produktet</a></div>';
     },
     brands(sec) { return F.head(sec) + '<div class="brand-grid" id="brandGrid"></div>'; },
@@ -252,8 +258,49 @@
     if (footer) footer.innerHTML = F.footer(contact, data.categories || []);
 
     if (root.HanaHome) root.HanaHome.refresh();
+    if (root.HanaAutoScroll) root.HanaAutoScroll.init();
   }
 
   root.HanaSite = { F, ICONS, esc, href, merge, fill, deepFill, buildConfig, contactFrom, activeHero, apply };
+  // ---------- Auto-scroll për karuselin e Ofertave (lëviz vetë, pa shigjeta) ----------
+  function initAutoScroll() {
+    const rails = document.querySelectorAll('.s-autoscroll');
+    if (!rails.length) return;
+    const reduce = root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    rails.forEach(rail => {
+      if (rail.dataset.autoBound) return;
+      rail.dataset.autoBound = '1';
+      if (reduce) return;
+      // duplikato kartat për loop të pafundëm
+      const duplicate = () => {
+        const kids = Array.from(rail.children).filter(c => c.classList.contains('product-card'));
+        if (!kids.length || rail.children.length > kids.length) return;
+        kids.forEach(k => {
+          const c = k.cloneNode(true);
+          c.setAttribute('aria-hidden', 'true');
+          rail.appendChild(c);
+        });
+      };
+      // vëzhgo sa herë renderProducts rifreskon grid-in
+      const mo = new MutationObserver(() => { duplicate(); if (rail.scrollLeft > rail.scrollWidth / 2) rail.scrollLeft = 0; });
+      mo.observe(rail, { childList: true });
+      let raf = null, paused = false;
+      const step = () => {
+        if (!paused && !document.hidden) {
+          rail.scrollLeft += 0.6;
+          if (rail.scrollLeft >= rail.scrollWidth / 2) rail.scrollLeft = 0;
+        }
+        raf = requestAnimationFrame(step);
+      };
+      rail.addEventListener('mouseenter', () => { paused = true; });
+      rail.addEventListener('mouseleave', () => { paused = false; });
+      rail.addEventListener('touchstart', () => { paused = true; }, { passive: true });
+      rail.addEventListener('touchend', () => setTimeout(() => { paused = false; }, 3000), { passive: true });
+      duplicate();
+      raf = requestAnimationFrame(step);
+    });
+  }
+
+  root.HanaAutoScroll = { init: initAutoScroll, scan: initAutoScroll };
   if (typeof module !== 'undefined' && module.exports) module.exports = root.HanaSite;
 })(typeof window !== 'undefined' ? window : globalThis);

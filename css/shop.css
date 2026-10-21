@@ -492,3 +492,222 @@ html.js .s-reveal .s-head h2.fx-ready{translate:none}
 .store-status{padding:11px 14px;margin:6px 0;border-radius:12px;background:rgba(248,113,113,.09);border:1px solid rgba(248,113,113,.3);color:#fca5a5;font-size:13px;line-height:1.45;font-weight:600}
 .store-status[hidden]{display:none}
 .s-strip .is-closed strong{color:#fca5a5}
+
+/* ==================================================================
+   PREMIUM UX — v3 (filters + shporta + wishlist) — Hana Free Shop
+   ================================================================== */
+
+/* ---------- 1. FILTERAT — premium pills me ikonë ari + sticky ---------- */
+.s-main-list .s-chips{
+  position:sticky;top:0;z-index:30;
+  padding:10px 16px;margin:0 -16px;
+  background:linear-gradient(180deg,rgba(8,8,12,.92),rgba(8,8,12,.75));
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  scroll-padding-left:16px;
+}
+.s-chip{
+  height:40px;padding:0 18px;font-weight:700;letter-spacing:.01em;
+  border-radius:999px;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 1px 0 rgba(255,255,255,.05) inset;
+  transition:transform .18s cubic-bezier(.22,1,.36,1),background .2s,border-color .2s,color .2s,box-shadow .2s;
+}
+.s-chip:hover{border-color:rgba(232,198,122,.4);color:#fff;transform:translateY(-1px)}
+.s-chip:active{transform:scale(.96)}
+.s-chip.active{
+  background:linear-gradient(135deg,#F6E3A8,#D4AF37);
+  color:#1A1200;border-color:transparent;
+  box-shadow:0 6px 18px rgba(212,175,55,.35),inset 0 1px 0 rgba(255,255,255,.55);
+  font-weight:800;
+}
+/* markat — nivel i dytë, më delikat */
+.s-chip.sm{
+  height:36px;padding:0 15px;font-size:12.5px;font-weight:600;
+  background:rgba(255,255,255,.035);
+}
+.s-chip.sm.active{
+  background:rgba(232,198,122,.16);
+  box-shadow:0 0 0 1px rgba(232,198,122,.35) inset,0 4px 14px rgba(212,175,55,.15);
+}
+
+/* ---------- 2. TOOLBAR — numri + renditja si kapsulë qelqi ---------- */
+.s-toolbar{
+  margin:14px 0 16px;
+}
+.s-count{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:700;color:var(--text-2);
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+  padding:8px 14px;border-radius:999px;
+}
+.s-count::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold-300);box-shadow:0 0 8px rgba(212,175,55,.8)}
+.s-sort select{
+  height:44px;padding:0 38px 0 16px;border-radius:999px;
+  background:rgba(255,255,255,.05) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23E8C67A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center;
+  border:1px solid rgba(255,255,255,.1);color:var(--text-1);
+  font:inherit;font-size:13px;font-weight:700;appearance:none;-webkit-appearance:none;cursor:pointer;
+  transition:border-color .2s,box-shadow .2s;
+}
+.s-sort select:hover{border-color:rgba(232,198,122,.4)}
+.s-sort select:focus-visible{outline:none;border-color:var(--gold-300);box-shadow:0 0 0 4px rgba(212,175,55,.14)}
+
+/* ---------- 3. SHPORTA — premium redesign ---------- */
+.cart-drawer{
+  background:linear-gradient(180deg,#101018 0%,#0B0B10 100%);
+  border-left:1px solid rgba(232,198,122,.14);
+  box-shadow:-30px 0 80px rgba(0,0,0,.6);
+}
+@media(max-width:600px){
+  .cart-drawer{width:100vw;height:92vh;border-radius:26px 26px 0 0;border-left:0;
+    box-shadow:0 -20px 60px rgba(0,0,0,.7)}
+}
+.cart-drawer::before{
+  content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:44px;height:5px;border-radius:999px;background:rgba(255,255,255,.18);
+}
+@media(max-width:600px){.cart-drawer{height:92vh}}
+.cart-drawer .drawer-head{padding:22px 20px 16px;position:relative}
+.cart-drawer .drawer-head::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(232,198,122,.35),transparent);
+}
+.cart-drawer .head-icon{
+  width:46px;height:46px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(232,198,122,.2),rgba(232,198,122,.06));
+  border:1px solid rgba(232,198,122,.3);
+  box-shadow:0 4px 16px rgba(212,175,55,.18);
+}
+.cart-drawer .head-sub{font-family:'Manrope',sans-serif;font-variant-numeric:tabular-nums}
+
+/* artikujt e shportës — kartela me hije ari në hover */
+.cart-drawer .cart-item{
+  position:relative;border-radius:18px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.07);
+  transition:border-color .25s,transform .25s cubic-bezier(.22,1,.36,1);
+}
+.cart-drawer .cart-item:hover{border-color:rgba(232,198,122,.3);transform:translateY(-1px)}
+.cart-drawer .cart-item img{
+  width:72px;height:72px;border-radius:14px;
+  background:linear-gradient(180deg,#17171E,#101014);
+  border:1px solid rgba(255,255,255,.06);
+}
+.cart-drawer .cart-item-info strong{font-size:13.5px;font-weight:700}
+.cart-drawer .cart-price{
+  font-size:14.5px;font-weight:800;color:var(--gold-200);
+  background:linear-gradient(135deg,#F6E3A8,#D4AF37);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* totals + butoni kryesor */
+.cart-totals-premium{
+  background:linear-gradient(180deg,rgba(232,198,122,.07),rgba(232,198,122,.02));
+  border:1px solid rgba(232,198,122,.16);
+}
+.total-row.grand strong{
+  text-shadow:0 0 22px rgba(212,175,55,.35);
+}
+.premium-checkout{
+  background:linear-gradient(135deg,#F6E3A8 0%,#D4AF37 55%,#B8962E 100%);
+  border-radius:18px;
+  box-shadow:0 10px 30px rgba(212,175,55,.4),inset 0 1px 0 rgba(255,255,255,.65),inset 0 -2px 0 rgba(0,0,0,.12);
+  transition:transform .2s cubic-bezier(.22,1,.36,1),box-shadow .25s;
+}
+.premium-checkout:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(212,175,55,.5),inset 0 1px 0 rgba(255,255,255,.65)}
+.premium-checkout:active{transform:translateY(0) scale(.985)}
+
+/* ---------- 4. WISHLIST — dizajn "zemër" premium ---------- */
+.wishlist-drawer{
+  background:linear-gradient(180deg,#101018 0%,#0B0B10 100%);
+  border-left:1px solid rgba(232,198,122,.14);
+  box-shadow:-30px 0 80px rgba(0,0,0,.6);
+}
+@media(max-width:600px){
+  .wishlist-drawer{width:100vw;height:88vh;border-radius:26px 26px 0 0;border-left:0}
+  .wishlist-drawer::before{
+    content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);
+    width:44px;height:5px;border-radius:999px;background:rgba(255,255,255,.18);
+  }
+}
+.wishlist-drawer .drawer-head{padding:22px 20px 16px;position:relative}
+.wishlist-drawer .drawer-head::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(232,198,122,.35),transparent);
+}
+.wishlist-drawer .drawer-head h3{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Manrope',sans-serif;font-size:17px;font-weight:800;
+}
+.wishlist-drawer .drawer-head h3::before{
+  content:"♥";font-size:22px;line-height:1;
+  background:linear-gradient(135deg,#F6E3A8,#D4AF37);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 2px 8px rgba(212,175,55,.45));
+}
+.wishlist-drawer .drawer-head h3 span{font-size:13px;font-weight:700;color:var(--text-3)}
+
+.wl-row{
+  position:relative;border-radius:18px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.07);
+  transition:border-color .25s,transform .25s cubic-bezier(.22,1,.36,1),box-shadow .25s;
+}
+.wl-row:hover{
+  border-color:rgba(232,198,122,.32);transform:translateY(-2px);
+  box-shadow:0 10px 26px rgba(0,0,0,.4);
+}
+/* vija ari në anën e majtë — si "cursor" i zemrës */
+.wl-row::before{
+  content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;
+  background:linear-gradient(180deg,#F6E3A8,#D4AF37);opacity:0;transition:opacity .25s;
+}
+.wl-row:hover::before{opacity:1}
+.wl-img{
+  width:76px;height:76px;border-radius:14px;
+  background:linear-gradient(180deg,#17171E,#101014);
+  border:1px solid rgba(255,255,255,.06);
+  transition:transform .25s cubic-bezier(.22,1,.36,1);
+}
+.wl-img:hover{transform:scale(1.04)}
+.wl-info small{color:var(--gold-300);opacity:.85}
+.wl-info strong{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.wl-info em{
+  font-style:normal;font-weight:800;font-size:14px;
+  background:linear-gradient(135deg,#F6E3A8,#D4AF37);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.wl-add{
+  width:42px;height:42px;border-radius:13px;
+  background:linear-gradient(135deg,#F6E3A8,#D4AF37);
+  color:#1A1200;font-size:22px;font-weight:800;
+  box-shadow:0 6px 18px rgba(212,175,55,.35),inset 0 1px 0 rgba(255,255,255,.6);
+  transition:transform .2s cubic-bezier(.22,1,.36,1),box-shadow .2s;
+}
+.wl-add:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 10px 24px rgba(212,175,55,.45)}
+.wl-add:active{transform:scale(.94)}
+.wl-rem{
+  width:34px;height:34px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.1);color:var(--text-4);
+  transition:.2s;
+}
+.wl-rem:hover{color:#fca5a5;border-color:rgba(252,165,165,.4);background:rgba(252,165,165,.08);transform:rotate(90deg)}
+/* empty state e wishlist — zemër e madhe ari */
+.wl-empty{
+  text-align:center;padding:56px 24px;position:relative;
+}
+.wl-empty::before{
+  content:"♥";display:block;font-size:64px;line-height:1;margin-bottom:14px;
+  background:linear-gradient(135deg,rgba(246,227,168,.5),rgba(212,175,55,.25));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 6px 20px rgba(212,175,55,.2));
+  animation:wlBeat 2.2s ease-in-out infinite;
+}
+@keyframes wlBeat{0%,100%{transform:scale(1)}12%{transform:scale(1.12)}24%{transform:scale(1)}36%{transform:scale(1.08)}}
+@media(prefers-reduced-motion:reduce){.wl-empty::before{animation:none}}
+
+/* ---------- 5. Shporta në mobile: mbyllje me swipe-down (JS e vogël) ---------- */
+@media(max-width:600px){
+  .cart-drawer .drawer-body{overscroll-behavior:contain}
+}

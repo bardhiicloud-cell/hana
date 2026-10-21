@@ -25,6 +25,10 @@ export default defineConfig({
         market: resolve(__dirname, 'market/index.html'),
         admin: resolve(__dirname, 'admin/index.html'),
       },
+      // faqet publike e admin-i punojnë me skripte të thjeshta (jo bundle) —
+      // Vite i lë si files statikë; ndërtoni vetëm një output minimal
+      preserveEntrySignatures: false,
+      treeshake: false,
       output: {
         entryFileNames: 'js/[name]-[hash].js',
         chunkFileNames: 'js/[name]-[hash].js',
@@ -48,10 +52,25 @@ export default defineConfig({
     chunkSizeWarningLimit: 500,
   },
   server: {
-    port: 5173,
+    port: 3005,
     host: '0.0.0.0',
     open: false,
   },
+  // /market → /market/index.html (në prodhim këtë e bën Firebase Hosting me cleanUrls)
+  plugins: [{
+    name: 'clean-urls-dev',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const raw = req.url || '/';
+        const q = raw.indexOf('?');
+        const path = q === -1 ? raw : raw.slice(0, q);
+        if (path !== '/' && !path.endsWith('/') && !/\.\w+$/.test(path) && !path.startsWith('/@') && !path.startsWith('/node_modules')) {
+          req.url = path + '/index.html' + (q === -1 ? '' : raw.slice(q));
+        }
+        next();
+      });
+    },
+  }],
   preview: {
     port: 4173,
     host: '0.0.0.0',
