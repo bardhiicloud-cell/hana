@@ -707,7 +707,89 @@ html.js .s-reveal .s-head h2.fx-ready{translate:none}
 @keyframes wlBeat{0%,100%{transform:scale(1)}12%{transform:scale(1.12)}24%{transform:scale(1)}36%{transform:scale(1.08)}}
 @media(prefers-reduced-motion:reduce){.wl-empty::before{animation:none}}
 
-/* ---------- 5. Shporta në mobile: mbyllje me swipe-down (JS e vogël) ---------- */
+/* ---------- 5. Shporta në mobile: sheet + mbyllje me swipe-down ---------- */
 @media(max-width:600px){
   .cart-drawer .drawer-body{overscroll-behavior:contain}
+  /* footer kompakt: totals në një rresht, butona më të shkurtër */
+  .cart-drawer .premium-foot{padding:10px 14px calc(12px + env(safe-area-inset-bottom))}
+  .cart-drawer .premium-checkout{height:48px;font-size:14px;border-radius:14px}
+  .cart-drawer .wa-order{height:44px;font-size:13.5px}
+  .cart-drawer .secure-badges{display:none}
+  /* artikujt më kompakt */
+  .cart-drawer .cart-item{padding:8px;border-radius:14px;gap:10px}
+  .cart-drawer .cart-item img{width:56px;height:56px;border-radius:10px}
+  /* sugjerimet "Shto edhe këto" më të ngushta */
+  .cart-drawer .cart-suggest{margin-top:10px}
+}
+
+/* Çmimet e kartave më të vogla dhe më të pastra */
+.product-card .price-new{font-size:15px;font-weight:800}
+.product-card .price-old{font-size:11.5px;opacity:.75}
+@media(min-width:900px){
+  .product-card .price-new{font-size:16.5px}
+}
+
+/* Modal i produktit në mobile: sheet me sticky action-bar */
+@media(max-width:700px){
+  .product-modal .modal-body{padding:0 0 calc(76px + env(safe-area-inset-bottom))}
+  .pm{gap:14px;padding:14px 14px 0}
+  .pm-stage{border-radius:18px;max-height:46vh}
+  .pm-name{font-size:clamp(24px,6vw,30px);margin:4px 0 10px}
+  .pm-price{margin-bottom:10px}
+  .pm-price strong{font-size:26px}
+  .pm-facts{padding:11px;font-size:12.5px;gap:6px;border-radius:13px}
+  .pm-desc{font-size:13.5px;margin-bottom:12px}
+  .pm-actions{
+    position:fixed;left:0;right:0;bottom:0;z-index:5;
+    display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg,rgba(11,11,14,.2),rgba(11,11,14,.97) 40%);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-top:1px solid rgba(232,198,122,.16);
+  }
+  .pm-actions .pm-qty{height:46px}
+  .pm-actions .pm-qty button{width:40px;font-size:18px}
+  .pm-actions .pm-add{flex:1;height:46px;border-radius:13px;font-size:14px}
+  .pm-actions .pm-wish{width:46px;height:46px;flex:none}
+  .pm-related{padding:0 14px 20px}
+}
+
+/* Wishlist drawer në mobile: sheet + footer me veprime masive */
+@media(max-width:600px){
+  .wishlist-drawer{height:82vh}
+  .wishlist-drawer .wl-row{padding:10px;border-radius:14px;gap:10px}
+  .wishlist-drawer .wl-img{width:58px;height:58px;border-radius:10px}
+  .wishlist-drawer .wl-add{width:38px;height:38px;border-radius:11px;font-size:18px}
+  .wishlist-drawer .wl-rem{width:30px;height:30px}
+  /*"Shfleto produktet" si buton fiks poshtë kur lista bosh */
+  .wishlist-drawer .wl-empty{padding:40px 20px}
+}
+
+/* Toast më i vogël në mobile që s'i mbulon butonat */
+@media(max-width:600px){
+  .toast{font-size:12.5px;padding:10px 14px}
+  /* ngrit mbi mini-cart + bottom nav + fiks shportë */
+  .toast-stack{bottom:calc(var(--bottom-nav-h) + 160px + env(safe-area-inset-bottom))}
+}
+
+/* ---------- Butoni WhatsApp në modalin e produktit ---------- */
+.pm-wa{
+  height:54px;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.4);color:#4ade80;
+  font-weight:700;font-size:14px;cursor:pointer;transition:.2s;flex:none;padding:0 18px;
+}
+.pm-wa:hover{background:rgba(37,211,102,.18);border-color:rgba(37,211,102,.6)}
+@media(max-width:700px){
+  .pm-wa{height:46px;border-radius:13px;font-size:13px;padding:0 14px}
+  /* në action-bar: WhatsApp i ngjeshur vetëm me ikonë */
+  .pm-actions .pm-wa{width:46px;padding:0;font-size:0;gap:0}
+  .pm-actions .pm-wa svg{width:20px;height:20px}
+  /* butoni kryesor — tekst i plotë, pa prerje */
+  .pm-actions .pm-add{flex:1;min-width:0;font-size:12.5px;padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;justify-content:center;gap:4px}
+  .pm-actions .pm-add span#pmSum{display:none}
+  .pm-actions{gap:6px}
+  .pm-actions .pm-qty{min-width:88px;flex:none}
+  .pm-actions .pm-qty button{width:28px;font-size:16px}
+  .pm-actions .pm-qty span{min-width:16px;font-size:13px}
+  .pm-actions .pm-wa{width:40px}
+  .pm-actions .pm-wish{width:40px;height:46px}
 }
