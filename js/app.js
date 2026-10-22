@@ -27,7 +27,8 @@ let searchQuery = '';
 let heroIndex = 0;
 let heroTimer = null;
 let currentCity = 'peje';
-let sortMode = 'default';\nlet priceFilterMode = 'all';
+let sortMode = 'default';
+let priceFilterMode = 'all';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -365,7 +366,8 @@ function renderCategories(){
 // PRODUCTS - PREMIUM CARDS WITH ANIMATION
 function getFilteredProducts(){
  let list = [...PRODUCTS];
- if(activeCategory) list = list.filter(p=>p.category===activeCategory);\n if(priceFilterMode!=='all') list=list.filter(p=>{const price=getProductFinalPrice(p).finalPrice; if(priceFilterMode==='under5')return price<=5; if(priceFilterMode==='5to10')return price>5&&price<=10; if(priceFilterMode==='10to25')return price>10&&price<=25; if(priceFilterMode==='over25')return price>25; return true;});
+ if(activeCategory) list = list.filter(p=>p.category===activeCategory);
+ if(priceFilterMode!=='all') list=list.filter(p=>{const price=getProductFinalPrice(p).finalPrice; if(priceFilterMode==='under5')return price<=5; if(priceFilterMode==='5to10')return price>5&&price<=10; if(priceFilterMode==='10to25')return price>10&&price<=25; if(priceFilterMode==='over25')return price>25; return true;});
  if(activeBrand) list = list.filter(p=>String(p.brand).toLowerCase()===activeBrand.toLowerCase());
  if(activePromo==='week') list = list.filter(p=>p.weeklyOffer);
  else if(activePromo==='popular') list = list.filter(p=>p.popular);
@@ -1103,7 +1105,8 @@ function renderHeroFromCMS(){
       <div class="hero-inner clean-hero">
         <div class="hero-content">
           <span class="eyebrow">${h.eyebrow||'HANA EXCLUSIVE'}</span>
-          <h1 class="hero-title">${(h.headline||'').replace(/\n/g,'<br>')}</h1>
+          <h1 class="hero-title">${(h.headline||'').replace(/
+/g,'<br>')}</h1>
           <p class="hero-sub">${h.subtext||''}</p>
           <div class="hero-ctas">
             ${h.primaryBtnText?`<button class="btn btn-gold" onclick="handleHeroCTA('${h.primaryBtnLink||'#ofertat'}')">${h.primaryBtnText}</button>`:''}
@@ -1404,7 +1407,8 @@ function whatsappOrder(){
   t.discountAmount>0 ? `Zbritja${discountCode?' ('+discountCode+')':''}: -${formatPrice(t.discountAmount)}` : null,
   `Dërgesa: ${t.delivery===0?'Falas':formatPrice(t.delivery)}`,
   `Totali: ${formatPrice(t.grand)}`, '', 'Emri:', 'Adresa:', 'Telefoni:'
- ].filter(x=>x!==null).join('\n');
+ ].filter(x=>x!==null).join('
+');
  window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
 }
 
@@ -1584,7 +1588,11 @@ function initAuth(){
      closeAccount();
      if(isOwner){
        setTimeout(()=>{
-         if(confirm(`🎉 Je kyçur me Google si OWNER\n\n${user.email}\n\nDëshiron të hapësh SUPER ADMIN CMS?`)){
+         if(confirm(`🎉 Je kyçur me Google si OWNER
+
+${user.email}
+
+Dëshiron të hapësh SUPER ADMIN CMS?`)){
            location.href='/admin/';
          }
        },600);
@@ -1782,7 +1790,8 @@ async function init(){
  if(window.HanaCoupons) window.HanaCoupons.setOverrides(STORE_SETTINGS && STORE_SETTINGS.coupons);
  if(window.HanaCities){ window.HanaCities.setOverrides(STORE_SETTINGS && STORE_SETTINGS.cities, STORE_SETTINGS && STORE_SETTINGS.deliveryConfig); const cc = window.HanaCities.current(); if(cc) currentCity = cc.id; }
  setupPageContext();
- $('#sortSelect')?.addEventListener('change', e=>{ sortMode = e.target.value; renderProducts(); });\n $('#priceFilterSelect')?.addEventListener('change', e=>{ priceFilterMode=e.target.value||'all'; renderProducts(); });
+ $('#sortSelect')?.addEventListener('change', e=>{ sortMode = e.target.value; renderProducts(); });
+ $('#priceFilterSelect')?.addEventListener('change', e=>{ priceFilterMode=e.target.value||'all'; renderProducts(); });
  applyHomeContent();
  refreshCityTexts();
  renderCategories();
