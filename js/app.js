@@ -367,7 +367,7 @@ function renderCategories(){
 function getFilteredProducts(){
  let list = [...PRODUCTS];
  if(activeCategory) list = list.filter(p=>p.category===activeCategory);
- if(priceFilterMode!=='all') list=list.filter(p=>{const price=getProductFinalPrice(p).finalPrice; if(priceFilterMode==='under5')return price<=5; if(priceFilterMode==='5to10')return price>5&&price<=10; if(priceFilterMode==='10to25')return price>10&&price<=25; if(priceFilterMode==='over25')return price>25; return true;});
+ if(priceFilterMode!=='all') list = list.filter(p=>{ const price=getProductFinalPrice(p).finalPrice; if(priceFilterMode==='under5') return price<=5; if(priceFilterMode==='5to10') return price>5 && price<=10; if(priceFilterMode==='10to25') return price>10 && price<=25; if(priceFilterMode==='over25') return price>25; return true; });
  if(activeBrand) list = list.filter(p=>String(p.brand).toLowerCase()===activeBrand.toLowerCase());
  if(activePromo==='week') list = list.filter(p=>p.weeklyOffer);
  else if(activePromo==='popular') list = list.filter(p=>p.popular);
@@ -1105,8 +1105,7 @@ function renderHeroFromCMS(){
       <div class="hero-inner clean-hero">
         <div class="hero-content">
           <span class="eyebrow">${h.eyebrow||'HANA EXCLUSIVE'}</span>
-          <h1 class="hero-title">${(h.headline||'').replace(/
-/g,'<br>')}</h1>
+          <h1 class="hero-title">${(h.headline||'').replace(/\n/g,'<br>')}</h1>
           <p class="hero-sub">${h.subtext||''}</p>
           <div class="hero-ctas">
             ${h.primaryBtnText?`<button class="btn btn-gold" onclick="handleHeroCTA('${h.primaryBtnLink||'#ofertat'}')">${h.primaryBtnText}</button>`:''}
@@ -1407,8 +1406,7 @@ function whatsappOrder(){
   t.discountAmount>0 ? `Zbritja${discountCode?' ('+discountCode+')':''}: -${formatPrice(t.discountAmount)}` : null,
   `Dërgesa: ${t.delivery===0?'Falas':formatPrice(t.delivery)}`,
   `Totali: ${formatPrice(t.grand)}`, '', 'Emri:', 'Adresa:', 'Telefoni:'
- ].filter(x=>x!==null).join('
-');
+ ].filter(x=>x!==null).join('\n');
  window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
 }
 
@@ -1588,11 +1586,7 @@ function initAuth(){
      closeAccount();
      if(isOwner){
        setTimeout(()=>{
-         if(confirm(`🎉 Je kyçur me Google si OWNER
-
-${user.email}
-
-Dëshiron të hapësh SUPER ADMIN CMS?`)){
+         if(confirm(`🎉 Je kyçur me Google si OWNER\n\n${user.email}\n\nDëshiron të hapësh SUPER ADMIN CMS?`)){
            location.href='/admin/';
          }
        },600);
