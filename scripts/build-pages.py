@@ -37,8 +37,7 @@ def read(path):
 
 def write(path, content):
     os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
-    with open(path, 'w', encoding='utf-8', newline='
-') as f:
+    with open(path, 'w', encoding='utf-8', newline='\n') as f:
         f.write(content)
     print('wrote', path)
 
@@ -170,9 +169,7 @@ def header(active):
 '''
 
 
-FOOTER = f'
- <footer class="s-footer" id="siteFooter">{FRAG["footer"]}</footer>
-'
+FOOTER = f'\n <footer class="s-footer" id="siteFooter">{FRAG["footer"]}</footer>\n'
 
 SCRIPTS = '''
 </div>
@@ -210,12 +207,10 @@ def home():
     h = head('Hana Free Shop — Marka botërore në Pejë | Dorëzim në 30 minuta',
              'Hana Free Shop në Pejë: alkool, cigare, pije energjike, çokollata dhe ushqime të importuara. Dorëzim brenda 30 minutash, çdo ditë 08:00–22:00.',
              '/', 'images/hero-premium-bag-800w.webp', 'home',
-             extra_ld=f'<script type="application/ld+json">{ld}</script>
-')
+             extra_ld=f'<script type="application/ld+json">{ld}</script>\n')
 
     def sec(idv, key, frag, cls='s-section s-reveal'):
-        return f'  <section id="{idv}" class="{cls}" style="order:{ORDER[key]}">{FRAG[frag]}</section>
-'
+        return f'  <section id="{idv}" class="{cls}" style="order:{ORDER[key]}">{FRAG[frag]}</section>\n'
 
     main = f'''>
 {header('home')}
@@ -251,8 +246,7 @@ def listing(slug, cat_id, title, desc, image):
     attrs = 'data-cat="%s"' % cat_id if cat_id else ''
     page = 'market' if is_market else 'category'
     h = head(seo_title, seo_desc, path, image or 'images/hero-premium-bag-800w.webp', page,
-             extra_ld=f'<script type="application/ld+json">{ld}</script>
-')
+             extra_ld=f'<script type="application/ld+json">{ld}</script>\n')
     chips = ['<a class="s-chip%s" href="/market">Të gjitha</a>' % (' active' if is_market else '')]
     for s_, _, t_, _, _ in CATS:
         chips.append('<a class="s-chip%s" href="/%s">%s</a>' % (' active' if s_ == slug else '', s_, t_))
@@ -306,9 +300,7 @@ def info_page(slug, kind, title, desc):
 
 if __name__ == '__main__':
     defaults = json.loads(read('src/home-defaults.json'))
-    write('js/home-defaults.js', '// Gjeneruar nga scripts/build-pages.py nga src/home-defaults.json — mos e ndrysho me dorë
-window.HANA_HOME_DEFAULTS = ' + json.dumps(defaults, ensure_ascii=False) + ';
-')
+    write('js/home-defaults.js', '// Gjeneruar nga scripts/build-pages.py nga src/home-defaults.json — mos e ndrysho me dorë\nwindow.HANA_HOME_DEFAULTS = ' + json.dumps(defaults, ensure_ascii=False) + ';\n')
     write('index.html', home())
     write('market/index.html', listing(None, None, None, None, None))
     for slug, cid, title, desc, img in CATS:
@@ -318,12 +310,8 @@ window.HANA_HOME_DEFAULTS = ' + json.dumps(defaults, ensure_ascii=False) + ';
     write('kontakt/index.html', info_page('kontakt', 'contact', 'Kontakt', 'Kontakti i Hana Free Shop në Pejë: telefon, WhatsApp, adresa dhe orari.'))
 
     urls = [('/', '1.0', 'daily'), ('/market', '0.9', 'daily'), ('/rreth-nesh', '0.5', 'monthly'), ('/kontakt', '0.5', 'monthly')] + [(f'/{c[0]}', '0.8', 'daily') for c in CATS]
-    xml = '<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-'
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for loc, pr, cf in urls:
-        xml += f'  <url><loc>{SITE}{loc}</loc><changefreq>{cf}</changefreq><priority>{pr}</priority></url>
-'
-    xml += '</urlset>
-'
+        xml += f'  <url><loc>{SITE}{loc}</loc><changefreq>{cf}</changefreq><priority>{pr}</priority></url>\n'
+    xml += '</urlset>\n'
     write('sitemap.xml', xml)
