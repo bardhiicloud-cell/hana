@@ -37,7 +37,8 @@ def read(path):
 
 def write(path, content):
     os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
-    with open(path, 'w', encoding='utf-8', newline='\n') as f:
+    with open(path, 'w', encoding='utf-8', newline='
+') as f:
         f.write(content)
     print('wrote', path)
 
@@ -94,7 +95,8 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=15">\n<link rel="stylesheet" href="css/market-polish.css">
+<link rel="stylesheet" href="css/shop.css?v=15">
+<link rel="stylesheet" href="css/market-polish.css">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -143,7 +145,8 @@ def header(active):
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
   </div>
   {nav}
-  <div class="header-actions">\n  <button class="theme-toggle" type="button" data-theme-toggle aria-label="Aktivizo pamjen e ditës" title="Pamja e ditës"></button>
+  <div class="header-actions">
+  <button class="theme-toggle" type="button" data-theme-toggle aria-label="Aktivizo pamjen e ditës" title="Pamja e ditës"></button>
   <button class="icon-btn" id="wishlistBtn" aria-label="Lista e dëshirave">
    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-1.3 1.3-1.3-1.3c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l8 8 8-8c1.5-1.5 1.5-4 0-5.5z"/></svg>
    <span class="badge wishlist-badge" id="wishlistCount" style="display:none">0</span>
@@ -167,7 +170,9 @@ def header(active):
 '''
 
 
-FOOTER = f'\n <footer class="s-footer" id="siteFooter">{FRAG["footer"]}</footer>\n'
+FOOTER = f'
+ <footer class="s-footer" id="siteFooter">{FRAG["footer"]}</footer>
+'
 
 SCRIPTS = '''
 </div>
@@ -182,7 +187,8 @@ SCRIPTS = '''
 <script type="module" src="js/app.js?v=26"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
-<script src="js/auto-bg.js?v=2"></script>\n<script src="js/theme.js"></script>
+<script src="js/auto-bg.js?v=2"></script>
+<script src="js/theme.js"></script>
 <script src="js/text-fx.js?v=2"></script>
 <script src="js/home.js?v=4"></script>
 <script src="js/a11y.js?v=1"></script>
@@ -204,10 +210,12 @@ def home():
     h = head('Hana Free Shop — Marka botërore në Pejë | Dorëzim në 30 minuta',
              'Hana Free Shop në Pejë: alkool, cigare, pije energjike, çokollata dhe ushqime të importuara. Dorëzim brenda 30 minutash, çdo ditë 08:00–22:00.',
              '/', 'images/hero-premium-bag-800w.webp', 'home',
-             extra_ld=f'<script type="application/ld+json">{ld}</script>\n')
+             extra_ld=f'<script type="application/ld+json">{ld}</script>
+')
 
     def sec(idv, key, frag, cls='s-section s-reveal'):
-        return f'  <section id="{idv}" class="{cls}" style="order:{ORDER[key]}">{FRAG[frag]}</section>\n'
+        return f'  <section id="{idv}" class="{cls}" style="order:{ORDER[key]}">{FRAG[frag]}</section>
+'
 
     main = f'''>
 {header('home')}
@@ -243,7 +251,8 @@ def listing(slug, cat_id, title, desc, image):
     attrs = 'data-cat="%s"' % cat_id if cat_id else ''
     page = 'market' if is_market else 'category'
     h = head(seo_title, seo_desc, path, image or 'images/hero-premium-bag-800w.webp', page,
-             extra_ld=f'<script type="application/ld+json">{ld}</script>\n')
+             extra_ld=f'<script type="application/ld+json">{ld}</script>
+')
     chips = ['<a class="s-chip%s" href="/market">Të gjitha</a>' % (' active' if is_market else '')]
     for s_, _, t_, _, _ in CATS:
         chips.append('<a class="s-chip%s" href="/%s">%s</a>' % (' active' if s_ == slug else '', s_, t_))
@@ -297,7 +306,9 @@ def info_page(slug, kind, title, desc):
 
 if __name__ == '__main__':
     defaults = json.loads(read('src/home-defaults.json'))
-    write('js/home-defaults.js', '// Gjeneruar nga scripts/build-pages.py nga src/home-defaults.json — mos e ndrysho me dorë\nwindow.HANA_HOME_DEFAULTS = ' + json.dumps(defaults, ensure_ascii=False) + ';\n')
+    write('js/home-defaults.js', '// Gjeneruar nga scripts/build-pages.py nga src/home-defaults.json — mos e ndrysho me dorë
+window.HANA_HOME_DEFAULTS = ' + json.dumps(defaults, ensure_ascii=False) + ';
+')
     write('index.html', home())
     write('market/index.html', listing(None, None, None, None, None))
     for slug, cid, title, desc, img in CATS:
@@ -307,8 +318,12 @@ if __name__ == '__main__':
     write('kontakt/index.html', info_page('kontakt', 'contact', 'Kontakt', 'Kontakti i Hana Free Shop në Pejë: telefon, WhatsApp, adresa dhe orari.'))
 
     urls = [('/', '1.0', 'daily'), ('/market', '0.9', 'daily'), ('/rreth-nesh', '0.5', 'monthly'), ('/kontakt', '0.5', 'monthly')] + [(f'/{c[0]}', '0.8', 'daily') for c in CATS]
-    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    xml = '<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+'
     for loc, pr, cf in urls:
-        xml += f'  <url><loc>{SITE}{loc}</loc><changefreq>{cf}</changefreq><priority>{pr}</priority></url>\n'
-    xml += '</urlset>\n'
+        xml += f'  <url><loc>{SITE}{loc}</loc><changefreq>{cf}</changefreq><priority>{pr}</priority></url>
+'
+    xml += '</urlset>
+'
     write('sitemap.xml', xml)
