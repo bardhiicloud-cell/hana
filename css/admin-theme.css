@@ -1,0 +1,31 @@
+/* HANA admin theme tokens and readable light mode */
+html[data-theme="light"]{
+  color-scheme:light;
+  --bg-0:#f4f6f9;--bg-1:#fff;--bg-2:#f0f2f5;--bg-3:#e7ebf0;--bg-4:#dce2e9;
+  --gold-100:#3b2b05;--gold-200:#59420b;--gold-300:#80610e;--gold-400:#9a7410;--gold-500:#75580b;
+  --border:rgba(25,35,50,.12);--border-gold:rgba(154,116,16,.28);
+  --text-1:#171b22;--text-2:#424a56;--text-3:#626d7b;--text-4:#7c8795;
+}
+html[data-theme="light"],html[data-theme="light"] body,html[data-theme="light"] .admin-layout{background:#f4f6f9;color:#171b22;color-scheme:light}
+html[data-theme="light"] .sidebar{background:linear-gradient(180deg,#fff,#f2f4f7);border-color:#dfe4eb}
+html[data-theme="light"] .sidebar-top,html[data-theme="light"] .sidebar-foot{border-color:#e1e5eb}
+html[data-theme="light"] .nav-item{color:#596373}
+html[data-theme="light"] .nav-item:hover{background:#e9edf2;color:#171b22}
+html[data-theme="light"] .nav-item.active{background:#f7efd7;border-color:#d8c17d;color:#59420b;box-shadow:none}
+html[data-theme="light"] .login-screen{background:#eef1f5}
+html[data-theme="light"] .login-card{background:rgba(255,255,255,.96);border-color:#e0e5ec;box-shadow:0 24px 70px rgba(22,30,45,.12)}
+html[data-theme="light"] .login-bg::after{background:linear-gradient(180deg,rgba(244,246,249,.62),rgba(244,246,249,.94))}
+html[data-theme="light"] .input{background:#fff;border-color:#d5dce5;color:#171b22}
+html[data-theme="light"] .input::placeholder{color:#737e8c}
+html[data-theme="light"] .btn-outline{background:#fff;border-color:#d5dce5;color:#303846}
+html[data-theme="light"] .card,html[data-theme="light"] .stat-card,html[data-theme="light"] .table-wrap,html[data-theme="light"] .modal{background:#fff;border-color:#e0e5ec;color:#171b22}
+html[data-theme="light"] .card-head,html[data-theme="light"] .modal-head{border-color:#e5e9ef}
+html[data-theme="light"] .topbar{background:rgba(255,255,255,.94);border-color:#e0e5ec}
+html[data-theme="light"] .topbar-title,html[data-theme="light"] .card-head h3{color:#171b22}
+html[data-theme="light"] table th{background:#f3f5f8;color:#566171}
+html[data-theme="light"] table td{border-color:#e7ebf0;color:#303846}
+html[data-theme="light"] .theme-toggle{width:36px;height:36px;display:grid;place-items:center;border-radius:999px;background:#fff;border:1px solid #d5dce5;color:#303846;flex:none;cursor:pointer}
+.admin-theme-toggle{margin-left:8px}
+html[data-theme="light"] .admin-theme-toggle{background:#fff;border-color:#d5dce5;color:#303846}
+html[data-theme="light"] .theme-toggle:focus-visible{outline:3px solid #9a7410;outline-offset:3px}
+@media(max-width:520px){.admin-theme-toggle{margin-left:auto}.sidebar-top{gap:8px}.sidebar-brand strong{font-size:13px}.sidebar-top .badge{font-size:9px;padding:4px 6px}}

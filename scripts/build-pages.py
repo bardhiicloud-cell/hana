@@ -95,6 +95,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
 <link rel="stylesheet" href="css/shop.css?v=15">
+<link rel="stylesheet" href="css/market-polish.css">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -144,6 +145,7 @@ def header(active):
   </div>
   {nav}
   <div class="header-actions">
+  <button class="theme-toggle" type="button" data-theme-toggle aria-label="Aktivizo pamjen e ditës" title="Pamja e ditës"></button>
   <button class="icon-btn" id="wishlistBtn" aria-label="Lista e dëshirave">
    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-1.3 1.3-1.3-1.3c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l8 8 8-8c1.5-1.5 1.5-4 0-5.5z"/></svg>
    <span class="badge wishlist-badge" id="wishlistCount" style="display:none">0</span>
@@ -183,6 +185,7 @@ SCRIPTS = '''
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
 <script src="js/auto-bg.js?v=2"></script>
+<script src="js/theme.js"></script>
 <script src="js/text-fx.js?v=2"></script>
 <script src="js/home.js?v=4"></script>
 <script src="js/a11y.js?v=1"></script>
@@ -261,7 +264,8 @@ def listing(slug, cat_id, title, desc, image):
   <div class="s-chips" role="navigation" aria-label="Kategoritë">{''.join(chips)}</div>
   <div class="s-chips s-brands" id="brandChips" role="group" aria-label="Markat"></div>
   <div class="s-toolbar"><div class="s-count" id="resultCount"></div>
-   <label class="s-sort"><span>Rendit</span><select id="sortSelect" aria-label="Rendit produktet"><option value="default">Të rekomanduara</option><option value="price-asc">Çmimi: ulët → lartë</option><option value="price-desc">Çmimi: lartë → ulët</option><option value="discount">Zbritjet më të mëdha</option><option value="name">Emri A–Z</option></select></label></div>
+   <div class="s-filter-controls"><label class="s-price-filter"><span>Çmimi</span><select id="priceFilterSelect" aria-label="Filtro sipas çmimit"><option value="all">Të gjitha</option><option value="under5">Deri në 5 €</option><option value="5to10">5–10 €</option><option value="10to25">10–25 €</option><option value="over25">Mbi 25 €</option></select></label>
+   <label class="s-sort"><span>Rendit</span><select id="sortSelect" aria-label="Rendit produktet"><option value="default">Të rekomanduara</option><option value="price-asc">Çmimi: ulët → lartë</option><option value="price-desc">Çmimi: lartë → ulët</option><option value="discount">Zbritjet më të mëdha</option><option value="name">Emri A–Z</option></select></label></div></div>
   <div class="product-grid" id="productGrid">{FRAG["skeletonGrid"]}</div>
   <div class="empty-state" id="emptyState" style="display:none"><h3>Nuk u gjet asnjë produkt</h3><p>Provo një kategori tjetër.</p><a class="s-btn s-btn-gold" href="/market">Të gjitha produktet</a></div>
  </main>

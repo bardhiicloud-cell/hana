@@ -1,116 +1,55 @@
-// HANA FREE SHOP — Unit Tests for 100k
-// Test calculateFinalPrice, validateProduct, getDeliveryConfig
+import { describe, expect, it } from 'vitest';
+import {
+  applyAdvancedFilters,
+  calculateDiscount,
+  calculateFinalPrice,
+  parseCSV,
+  validateProduct,
+} from '../js/firebase.js';
 
-// Mock functions for testing
-function calculateFinalPrice(product, offers) {
-  if(!product || typeof product.price !== 'number') throw new Error('Invalid product');
-  let finalPrice = product.price;
-  let appliedOffer = null;
-  
-  if(offers && offers.length > 0) {
-    const now = new Date();
-    const activeOffers = offers.filter(o => {
-      if(o.status !== 'active') return false;
-      if(o.endDate && new Date(o.endDate) < now) return false;
-      if(o.startDate && new Date(o.startDate) > now) return false;
-      if(o.productIds && !o.productIds.includes(product.id)) return false;
-      if(o.categoryIds && !o.categoryIds.includes(product.category)) return false;
-      return true;
-    });
-    
-    // Find best offer
-    let bestDiscount = 0;
-    for(const offer of activeOffers) {
-      let discount = 0;
-      if(offer.type === 'percent') discount = product.price * (offer.value / 100);
-      else if(offer.type === 'fixed') discount = offer.value;
-      if(discount > bestDiscount) {
-        bestDiscount = discount;
-        appliedOffer = offer;
-      }
-    }
-    finalPrice = Math.max(0, product.price - bestDiscount);
-  }
-  
-  return {
-    finalPrice,
-    originalPrice: finalPrice < product.price ? product.price : null,
-    discount: product.price - finalPrice,
-    hasDiscount: finalPrice < product.price,
-    appliedOffer
-  };
-}
+describe('Hana production helpers', () => {
+  it('calculates an active percentage offer using the real helper', () => {
+    const product = { id: 'p1', name: 'Test', price: 10, category: 'snacks' };
+    const offer = { id: 'o1', status: 'active', type: 'percentage', value: 20, products: ['p1'] };
+    expect(calculateFinalPrice(product, [offer]).finalPrice).toBe(8);
+  });
 
-function validateProduct(product) {
-  const errors = [];
-  if(!product.name || product.name.length < 2) errors.push('Emri shumë i shkurtër');
-  if(!product.price || product.price <= 0) errors.push('Çmimi invalid');
-  if(!product.category) errors.push('Kategoria mungon');
-  if(product.stock < 0) errors.push('Stoku negativ');
-  if(product.discount && (product.discount < 0 || product.discount > 100)) errors.push('Zbritja invalid');
-  return errors;
-}
+  it('does not apply inactive offers', () => {
+    const product = { id: 'p1', price: 10, category: 'snacks' };
+    const offer = { id: 'o1', status: 'inactive', type: 'percentage', value: 20, products: ['p1'] };
+    expect(calculateFinalPrice(product, [offer]).finalPrice).toBe(10);
+  });
 
-function getDeliveryConfig(city, zones) {
-  const zone = zones.find(z => z.city.toLowerCase() === city.toLowerCase());
-  if(!zone) return {fee: 2, freeThreshold: 25, expressFee: 3.99};
-  return zone;
-}
+  it('never returns a negative price for a fixed offer', () => {
+    const product = { id: 'p1', price: 3, category: 'snacks' };
+    const offer = { id: 'o1', status: 'active', type: 'fixed', value: 8, products: ['p1'] };
+    expect(calculateFinalPrice(product, [offer]).finalPrice).toBe(0);
+  });
 
-// Tests
-console.log('🧪 Running Unit Tests for 100k...');
+  it('validates required product fields and rejects negative stock', () => {
+    expect(validateProduct({ name: 'Test', brand: 'Hana', category: 'snacks', price: 2, stock: 1 })).toEqual([]);
+    expect(validateProduct({ name: 'T', brand: '', category: '', price: -1, stock: -2 }).length).toBeGreaterThan(0);
+  });
 
-// Test calculateFinalPrice
-(() => {
-  const product = {id: '1', price: 10, category: 'ushqime'};
-  const offers = [{id: 'o1', status: 'active', type: 'percent', value: 20, productIds: ['1']}];
-  const result = calculateFinalPrice(product, offers);
-  console.assert(result.finalPrice === 8, 'calculateFinalPrice percent failed');
-  console.assert(result.hasDiscount === true, 'hasDiscount failed');
-  console.log('✅ calculateFinalPrice tests passed');
-})();
+  it('calculates discount percentages safely', () => {
+    expect(calculateDiscount(8, 10)).toBe(20);
+    expect(calculateDiscount(10, 8)).toBe(0);
+  });
 
-// Test validateProduct
-(() => {
-  const valid = {name: 'Red Bull', price: 1.5, category: 'pije', stock: 10};
-  const errors = validateProduct(valid);
-  console.assert(errors.length === 0, 'validateProduct valid failed');
-  
-  const invalid = {name: 'A', price: -1, stock: -5};
-  const errors2 = validateProduct(invalid);
-  console.assert(errors2.length >= 3, 'validateProduct invalid failed');
-  console.log('✅ validateProduct tests passed');
-})();
+  it('filters by price and stock using the production helper', () => {
+    const products = [
+      { id: 'a', name: 'A', price: 2, stock: 5 },
+      { id: 'b', name: 'B', price: 12, stock: 0 },
+      { id: 'c', name: 'C', price: 20, stock: 3 },
+    ];
+    expect(applyAdvancedFilters(products, { priceMin: 10, priceMax: 20, inStock: true }).map(p => p.id)).toEqual(['c']);
+  });
 
-// Test getDeliveryConfig
-(() => {
-  const zones = [{city: 'peje', fee: 2, freeThreshold: 25}];
-  const config = getDeliveryConfig('peje', zones);
-  console.assert(config.fee === 2, 'getDeliveryConfig failed');
-  console.assert(config.freeThreshold === 25, 'freeThreshold failed');
-  console.log('✅ getDeliveryConfig tests passed');
-})();
+  it('parses quoted commas in CSV values', () => {
+    expect(parseCSV('name,brand\n"Chips, spicy",Hana')).toEqual([{ name: 'Chips, spicy', brand: 'Hana' }]);
+  });
 
-// Test XSS protection
-(() => {
-  const malicious = '<script>alert("xss")</script><img src=x onerror=alert(1)>';
-  const sanitized = malicious.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').replace(/on\w+="[^"]*"/gi, '');
-  console.assert(!sanitized.includes('<script>'), 'XSS sanitization failed');
-  console.log('✅ XSS protection tests passed');
-})();
-
-// Test rate limiting
-(() => {
-  const attempts = new Map();
-  const check = (ip, limit = 10) => {
-    let data = attempts.get(ip);
-    if(!data) { attempts.set(ip, {count: 1}); return true; }
-    data.count++;
-    return data.count <= limit;
-  };
-  for(let i=0; i<10; i++) check('127.0.0.1');
-  console.assert(check('127.0.0.1') === false, 'Rate limiting failed');
-  console.log('✅ Rate limiting tests passed');
-})();
-
-console.log('🎉 All unit tests passed for 100k!');
+  it('rejects an empty CSV', () => {
+    expect(() => parseCSV('name,brand')).toThrow();
+  });
+});

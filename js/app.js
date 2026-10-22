@@ -28,6 +28,7 @@ let heroIndex = 0;
 let heroTimer = null;
 let currentCity = 'peje';
 let sortMode = 'default';
+let priceFilterMode = 'all';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -366,6 +367,7 @@ function renderCategories(){
 function getFilteredProducts(){
  let list = [...PRODUCTS];
  if(activeCategory) list = list.filter(p=>p.category===activeCategory);
+ if(priceFilterMode!=='all') list = list.filter(p=>{ const price=getProductFinalPrice(p).finalPrice; if(priceFilterMode==='under5') return price<=5; if(priceFilterMode==='5to10') return price>5 && price<=10; if(priceFilterMode==='10to25') return price>10 && price<=25; if(priceFilterMode==='over25') return price>25; return true; });
  if(activeBrand) list = list.filter(p=>String(p.brand).toLowerCase()===activeBrand.toLowerCase());
  if(activePromo==='week') list = list.filter(p=>p.weeklyOffer);
  else if(activePromo==='popular') list = list.filter(p=>p.popular);
@@ -382,6 +384,16 @@ function renderProducts(){
  if(!grid) return;
  const page = document.body.dataset.page || 'home';
  let list = getFilteredProducts();
+ if(priceFilterMode!=='all'){
+  list = list.filter(p=>{
+   const price = getProductFinalPrice(p).finalPrice;
+   if(priceFilterMode==='under5') return price<=5;
+   if(priceFilterMode==='5to10') return price>5 && price<=10;
+   if(priceFilterMode==='10to25') return price>10 && price<=25;
+   if(priceFilterMode==='over25') return price>25;
+   return true;
+  });
+ }
  if(page==='home') list = list.filter(p=>p.discount>0 || p.weeklyOffer).slice(0, homeLimit('offers',8));
  if(page==='market' && new URLSearchParams(location.search).get('filter')==='oferta') list = list.filter(p=>p.discount>0);
  if(page!=='home'){
@@ -1783,6 +1795,7 @@ async function init(){
  if(window.HanaCities){ window.HanaCities.setOverrides(STORE_SETTINGS && STORE_SETTINGS.cities, STORE_SETTINGS && STORE_SETTINGS.deliveryConfig); const cc = window.HanaCities.current(); if(cc) currentCity = cc.id; }
  setupPageContext();
  $('#sortSelect')?.addEventListener('change', e=>{ sortMode = e.target.value; renderProducts(); });
+ $('#priceFilterSelect')?.addEventListener('change', e=>{ priceFilterMode=e.target.value||'all'; renderProducts(); });
  applyHomeContent();
  refreshCityTexts();
  renderCategories();
