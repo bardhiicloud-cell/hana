@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: JavaScript syntax check
-        run: find js tests -type f -name '*.js' -print0 | xargs -0 -n1 node --check
+        run: find js admin tests -type f -name '*.js' -print0 | xargs -0 -n1 node --check && node --check playwright.config.js
       - name: Unit tests
         run: npm test
       - name: Production build
