@@ -23,6 +23,7 @@
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <link rel="stylesheet" href="/fix-admin-100x.css">
+<link rel="stylesheet" href="/css/admin-theme.css">
 <style>
 :root{
   --bg-0:#070709; --bg-1:#0E0E11; --bg-2:#15151A; --bg-3:#1E1E24; --bg-4:#26262F;
@@ -279,7 +280,8 @@ tr:last-child td{border-bottom:0} tr:hover td{background:rgba(255,255,255,.02)}
     <div class="sidebar-top">
       <div class="sidebar-logo">H</div>
       <div class="sidebar-brand"><strong>HANA</strong><span>FREE SHOP</span></div>
-      <span class="badge gold" style="margin-left:auto">SUPER ADMIN</span>
+      <span class="badge gold" style="margin-left:0">SUPER ADMIN</span>
+      <button class="theme-toggle admin-theme-toggle" type="button" data-theme-toggle aria-label="Aktivizo pamjen e ditës" title="Pamja e ditës" aria-pressed="false"></button>
     </div>
     <nav class="sidebar-nav" id="sidebarNav">
       <div class="nav-section">Kryesore</div>
@@ -806,6 +808,7 @@ service cloud.firestore {
 <script src="/js/cities.js"></script>
 <script src="/js/coupons.js"></script>
 <script src="/js/site-render.js"></script>
+<script src="/js/theme.js"></script>
 <script type="module" src="admin.js"></script>
 </body>
 </html">
