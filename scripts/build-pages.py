@@ -261,7 +261,8 @@ def listing(slug, cat_id, title, desc, image):
   <div class="s-chips" role="navigation" aria-label="Kategoritë">{''.join(chips)}</div>
   <div class="s-chips s-brands" id="brandChips" role="group" aria-label="Markat"></div>
   <div class="s-toolbar"><div class="s-count" id="resultCount"></div>
-   <label class="s-sort"><span>Rendit</span><select id="sortSelect" aria-label="Rendit produktet"><option value="default">Të rekomanduara</option><option value="price-asc">Çmimi: ulët → lartë</option><option value="price-desc">Çmimi: lartë → ulët</option><option value="discount">Zbritjet më të mëdha</option><option value="name">Emri A–Z</option></select></label></div>
+   <div class="s-filter-controls"><label class="s-price-filter"><span>Çmimi</span><select id="priceFilterSelect" aria-label="Filtro sipas çmimit"><option value="all">Të gjitha</option><option value="under5">Deri në 5 €</option><option value="5to10">5–10 €</option><option value="10to25">10–25 €</option><option value="over25">Mbi 25 €</option></select></label>
+   <label class="s-sort"><span>Rendit</span><select id="sortSelect" aria-label="Rendit produktet"><option value="default">Të rekomanduara</option><option value="price-asc">Çmimi: ulët → lartë</option><option value="price-desc">Çmimi: lartë → ulët</option><option value="discount">Zbritjet më të mëdha</option><option value="name">Emri A–Z</option></select></label></div></div>
   <div class="product-grid" id="productGrid">{FRAG["skeletonGrid"]}</div>
   <div class="empty-state" id="emptyState" style="display:none"><h3>Nuk u gjet asnjë produkt</h3><p>Provo një kategori tjetër.</p><a class="s-btn s-btn-gold" href="/market">Të gjitha produktet</a></div>
  </main>
