@@ -94,7 +94,7 @@ def head(title, desc, path, image, page, extra_ld=''):
 <link rel="stylesheet" href="css/style.css?v=9-100k">
 <link rel="stylesheet" href="css/hana-final.css?v=2">
 <link rel="stylesheet" href="css/site.css?v=7">
-<link rel="stylesheet" href="css/shop.css?v=15">
+<link rel="stylesheet" href="css/shop.css?v=15">\n<link rel="stylesheet" href="css/market-polish.css">
 {extra_ld}<script type="importmap">
 {{"imports":{{
  "firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
@@ -143,7 +143,7 @@ def header(active):
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
   </div>
   {nav}
-  <div class="header-actions">
+  <div class="header-actions">\n  <button class="theme-toggle" type="button" data-theme-toggle aria-label="Aktivizo pamjen e ditës" title="Pamja e ditës"></button>
   <button class="icon-btn" id="wishlistBtn" aria-label="Lista e dëshirave">
    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0l-1.3 1.3-1.3-1.3c-1.5-1.5-4-1.5-5.5 0-1.5 1.5-1.5 4 0 5.5l8 8 8-8c1.5-1.5 1.5-4 0-5.5z"/></svg>
    <span class="badge wishlist-badge" id="wishlistCount" style="display:none">0</span>
@@ -182,7 +182,7 @@ SCRIPTS = '''
 <script type="module" src="js/app.js?v=26"></script>
 <script src="js/app-100k-patch.js?v=11-super-huge"></script>
 <script src="js/product-modal.js?v=1"></script>
-<script src="js/auto-bg.js?v=2"></script>
+<script src="js/auto-bg.js?v=2"></script>\n<script src="js/theme.js"></script>
 <script src="js/text-fx.js?v=2"></script>
 <script src="js/home.js?v=4"></script>
 <script src="js/a11y.js?v=1"></script>
