@@ -384,6 +384,16 @@ function renderProducts(){
  if(!grid) return;
  const page = document.body.dataset.page || 'home';
  let list = getFilteredProducts();
+ if(priceFilterMode!=='all'){
+  list = list.filter(p=>{
+   const price = getProductFinalPrice(p).finalPrice;
+   if(priceFilterMode==='under5') return price<=5;
+   if(priceFilterMode==='5to10') return price>5 && price<=10;
+   if(priceFilterMode==='10to25') return price>10 && price<=25;
+   if(priceFilterMode==='over25') return price>25;
+   return true;
+  });
+ }
  if(page==='home') list = list.filter(p=>p.discount>0 || p.weeklyOffer).slice(0, homeLimit('offers',8));
  if(page==='market' && new URLSearchParams(location.search).get('filter')==='oferta') list = list.filter(p=>p.discount>0);
  if(page!=='home'){
